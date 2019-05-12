@@ -12,7 +12,7 @@ docker build --tag code_checkers \
   .
 
 docker run --volume "$(pwd)":/workdir code_checkers \
-  prettier --check '**/*.+(json|yaml|yml)'
+  prettier --check '**/*.+(json|md|yaml|yml)'
 
 stack --system-ghc test
 
