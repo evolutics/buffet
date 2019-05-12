@@ -5,6 +5,9 @@ cache:
     - $HOME/.stack
     - $TRAVIS_BUILD_DIR/.stack-work
 
+services:
+  - docker
+
 install:
   - curl --silent --show-error --location https://get.haskellstack.org | sh
   - stack --version
