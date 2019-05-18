@@ -1,7 +1,7 @@
 name: freezer
 version: 0.1.0.0
 github: "evolutics/freezer"
-license: BSD3
+license: MIT
 author: "Benjamin Fischer"
 maintainer: "benjamin.fischer@evolutics.info"
 copyright: "2019 Benjamin Fischer"
