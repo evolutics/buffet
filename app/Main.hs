@@ -1,6 +1,10 @@
-module Main where
+module Main
+  ( main
+  )
+where
 
-import Lib
+import           Lib                            ( someFunc )
+import           Prelude                        ( IO )
 
 main :: IO ()
 main = someFunc
