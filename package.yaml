@@ -33,6 +33,7 @@ executables:
       - -threaded
       - -rtsopts
       - -with-rtsopts=-N
+      - -Werror
     dependencies:
       - freezer
 
@@ -44,5 +45,6 @@ tests:
       - -threaded
       - -rtsopts
       - -with-rtsopts=-N
+      - -Werror
     dependencies:
       - freezer
