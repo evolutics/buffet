@@ -2,6 +2,7 @@ FROM alpine:3.9.4
 
 ARG git=''
 ARG gitlint=''
+ARG hlint=''
 ARG hunspell=''
 ARG prettier=''
 
@@ -14,6 +15,14 @@ RUN if [[ -n "${git}" ]]; then \
 RUN if [[ -n "${gitlint}" ]]; then \
     apk add --no-cache git python3 \
     && pip3 install "gitlint==${gitlint}" \
+    ; fi
+
+RUN if [[ -n "${hlint}" ]]; then \
+    apk add --no-cache cabal ghc gmp libffi musl-dev wget \
+    && cabal update \
+    && cabal install --jobs alex happy \
+    && cabal install --jobs "hlint-${hlint}" \
+    && mv "${HOME}/.cabal/bin/hlint" /usr/local/bin/hlint \
     ; fi
 
 RUN if [[ -n "${hunspell}" ]]; then \
