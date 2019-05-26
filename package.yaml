@@ -1,30 +1,23 @@
 name: freezer
-version: 0.1.0.0
+version: "0.1.0.0"
 github: "evolutics/freezer"
 license: MIT
 author: "Benjamin Fischer"
 maintainer: "benjamin.fischer@evolutics.info"
 copyright: "2019 Benjamin Fischer"
-
 extra-source-files:
   - README.md
-  - ChangeLog.md
-
 # Metadata used when publishing your package
 # synopsis:            Short description of your package
 # category:            Development
-
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
 description: Please see the README on GitHub at <https://github.com/evolutics/freezer#readme>
-
 dependencies:
   - base >= 4.7 && < 5
-
 library:
   source-dirs: src
-
 executables:
   freezer-exe:
     main: Main.hs
@@ -38,7 +31,6 @@ executables:
       - -Wno-safe
     dependencies:
       - freezer
-
 tests:
   freezer-test:
     main: Spec.hs
