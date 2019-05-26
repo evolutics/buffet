@@ -25,7 +25,7 @@ docker run --volume "$(pwd)":/workdir code_checkers \
   gitlint --config ci/.gitlint --commits "${COMMITS_TO_CHECK}"
 
 docker run --volume "$(pwd)":/workdir code_checkers \
-  hlint --git .
+  hlint --git --hint ci/.hlint.yaml .
 
 docker run --volume "$(pwd)":/workdir code_checkers sh -c \
   "git log --format=%B ${COMMITS_TO_CHECK} \
