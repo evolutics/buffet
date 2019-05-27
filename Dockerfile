@@ -1,5 +1,6 @@
 FROM alpine:3.9.4
 
+ARG brittany=''
 ARG git=''
 ARG gitlint=''
 ARG hlint=''
@@ -7,6 +8,13 @@ ARG hunspell=''
 ARG prettier=''
 
 WORKDIR /workdir
+
+RUN if [[ -n "${brittany}" ]]; then \
+    apk add --no-cache cabal ghc gmp libffi musl-dev ncurses-dev wget \
+    && cabal update \
+    && cabal install --jobs "brittany-${brittany}" \
+    && mv "${HOME}/.cabal/bin/brittany" /usr/local/bin/brittany \
+    ; fi
 
 RUN if [[ -n "${git}" ]]; then \
     apk add --no-cache "git==${git}" \
