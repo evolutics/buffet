@@ -1,6 +1,8 @@
 #!/bin/bash
 
-set -eu -o pipefail
+set -o errexit
+set -o nounset
+set -o pipefail
 
 readonly SCRIPT_FOLDER="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 readonly PROJECT_FOLDER="$(dirname "${SCRIPT_FOLDER}")"
