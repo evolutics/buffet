@@ -18,16 +18,16 @@ RUN if [[ -n "${brittany}" ]]; then \
     && cabal update \
     && cabal install --jobs "brittany-${brittany}" \
     && mv "${HOME}/.cabal/bin/brittany" /usr/local/bin/brittany \
-    ; fi
+  ; fi
 
 RUN if [[ -n "${git}" ]]; then \
     apk add --no-cache "git==${git}" \
-    ; fi
+  ; fi
 
 RUN if [[ -n "${gitlint}" ]]; then \
     apk add --no-cache git python3 \
     && pip3 install "gitlint==${gitlint}" \
-    ; fi
+  ; fi
 
 RUN if [[ -n "${hindent}" ]]; then \
     apk add --no-cache autoconf automake binutils-gold curl g++ gcc ghc \
@@ -49,7 +49,7 @@ RUN if [[ -n "${hindent}" ]]; then \
     \
     && stack --jobs "$(nproc)" install "hindent-${hindent}" \
     && mv "${HOME}/.local/bin/hindent" /usr/local/bin/hindent \
-    ; fi
+  ; fi
 
 RUN if [[ -n "${hlint}" ]]; then \
     apk add --no-cache cabal ghc gmp libffi musl-dev wget \
@@ -57,13 +57,13 @@ RUN if [[ -n "${hlint}" ]]; then \
     && cabal install --jobs alex happy \
     && cabal install --jobs "hlint-${hlint}" \
     && mv "${HOME}/.cabal/bin/hlint" /usr/local/bin/hlint \
-    ; fi
+  ; fi
 
 RUN if [[ -n "${hunspell}" ]]; then \
     apk add --no-cache "hunspell==${hunspell}" hunspell-en \
-    ; fi
+  ; fi
 
 RUN if [[ -n "${prettier}" ]]; then \
     apk add --no-cache yarn \
     && yarn global add "prettier@${prettier}" \
-    ; fi
+  ; fi
