@@ -18,14 +18,11 @@ docker build --cache-from "${CODE_CHECKERS}" \
   --tag "${CODE_CHECKERS}" $(< ci/code_checkers_build_arguments)
 docker push "${CODE_CHECKERS}" || true
 
-readonly COMMITS_TO_CHECK=origin/master..HEAD
-
-docker run --volume "$(pwd)":/workdir "${CODE_CHECKERS}" sh -c \
-  "git rev-list --reverse ${COMMITS_TO_CHECK} \
-  | xargs -n 1 -I {} git diff --check {}^ {}"
+docker run --volume "$(pwd)":/workdir "${CODE_CHECKERS}" \
+  git diff --check HEAD^
 
 docker run --volume "$(pwd)":/workdir "${CODE_CHECKERS}" \
-  gitlint --config ci/.gitlint --commits "${COMMITS_TO_CHECK}"
+  gitlint --config ci/.gitlint
 
 docker run --volume "$(pwd)":/workdir "${CODE_CHECKERS}" sh -c \
   "git ls-files -z '*.hs' | xargs -0 hindent --sort-imports --validate"
@@ -34,9 +31,8 @@ docker run --volume "$(pwd)":/workdir "${CODE_CHECKERS}" \
   hlint --git --hint ci/.hlint.yaml .
 
 docker run --volume "$(pwd)":/workdir "${CODE_CHECKERS}" sh -c \
-  "git log --format=%B ${COMMITS_TO_CHECK} \
-  | hunspell -l -d en_US -p ci/personal_words.dic | sort | uniq \
-  | tr '\n' '\0' | xargs -0 -r -n 1 sh -c \
+  "git log -1 --format=%B | hunspell -l -d en_US -p ci/personal_words.dic \
+  | sort | uniq | tr '\n' '\0' | xargs -0 -r -n 1 sh -c \
   'echo "'"Misspelling: $@"'"; exit 1' --"
 
 docker run --volume "$(pwd)":/workdir "${CODE_CHECKERS}" \
