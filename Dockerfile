@@ -1,5 +1,3 @@
-FROM alpine:3.9.4
-
 ARG brittany=''
 ARG git=''
 ARG gitlint=''
@@ -11,8 +9,8 @@ ARG prettier=''
 ARG _ghc_version='8.6.5'
 ARG _ghcup_version='master'
 
-WORKDIR /workdir
-
+FROM alpine:3.9.4 AS brittany
+ARG brittany
 RUN if [[ -n "${brittany}" ]]; then \
     apk add --no-cache cabal ghc gmp libffi musl-dev ncurses-dev wget \
     && cabal update \
@@ -20,15 +18,23 @@ RUN if [[ -n "${brittany}" ]]; then \
     && mv "${HOME}/.cabal/bin/brittany" /usr/local/bin/brittany \
   ; fi
 
+FROM alpine:3.9.4 AS git
+ARG git
 RUN if [[ -n "${git}" ]]; then \
     apk add --no-cache "git==${git}" \
   ; fi
 
+FROM alpine:3.9.4 AS gitlint
+ARG gitlint
 RUN if [[ -n "${gitlint}" ]]; then \
     apk add --no-cache git python3 \
     && pip3 install "gitlint==${gitlint}" \
   ; fi
 
+FROM alpine:3.9.4 AS hindent
+ARG hindent
+ARG _ghc_version
+ARG _ghcup_version
 RUN if [[ -n "${hindent}" ]]; then \
     apk add --no-cache autoconf automake binutils-gold curl g++ gcc ghc \
       gmp make ncurses-dev perl python3 xz \
@@ -51,6 +57,8 @@ RUN if [[ -n "${hindent}" ]]; then \
     && mv "${HOME}/.local/bin/hindent" /usr/local/bin/hindent \
   ; fi
 
+FROM alpine:3.9.4 AS hlint
+ARG hlint
 RUN if [[ -n "${hlint}" ]]; then \
     apk add --no-cache cabal ghc gmp libffi musl-dev wget \
     && cabal update \
@@ -59,11 +67,27 @@ RUN if [[ -n "${hlint}" ]]; then \
     && mv "${HOME}/.cabal/bin/hlint" /usr/local/bin/hlint \
   ; fi
 
+FROM alpine:3.9.4 AS hunspell
+ARG hunspell
 RUN if [[ -n "${hunspell}" ]]; then \
     apk add --no-cache "hunspell==${hunspell}" hunspell-en \
   ; fi
 
+FROM alpine:3.9.4 AS prettier
+ARG prettier
 RUN if [[ -n "${prettier}" ]]; then \
     apk add --no-cache yarn \
     && yarn global add "prettier@${prettier}" \
   ; fi
+
+FROM alpine:3.9.4
+
+WORKDIR /workdir
+
+COPY --from=brittany / /
+COPY --from=git / /
+COPY --from=gitlint / /
+COPY --from=hindent / /
+COPY --from=hlint / /
+COPY --from=hunspell / /
+COPY --from=prettier / /
