@@ -9,6 +9,29 @@ ARG prettier=''
 ARG _ghc_version='8.6.5'
 ARG _ghcup_version='master'
 
+FROM alpine:3.9.4 AS stack_
+ARG hindent
+ARG _ghc_version
+ARG _ghcup_version
+RUN if [[ -n "${hindent}" ]]; then \
+    apk add --no-cache autoconf automake binutils-gold curl g++ gcc ghc \
+      gmp make ncurses-dev perl python3 xz \
+    && curl --fail --show-error --silent \
+      "https://gitlab.haskell.org/haskell/ghcup/raw/${_ghcup_version}/ghcup" \
+      > ghcup \
+    && chmod +x ghcup \
+    && printf 'BuildFlavour = quick\n' > build.mk \
+    && LD=ld.gold ./ghcup --verbose compile --build-config build.mk --force \
+      --jobs "$(nproc)" "${_ghc_version}" ghc \
+    && apk del ghc \
+    && ./ghcup set "${_ghc_version}" \
+    && rm build.mk ghcup \
+    && export PATH="${HOME}/.ghcup/bin:${PATH}" \
+    \
+    && curl --fail --show-error --silent https://get.haskellstack.org | sh \
+    && stack config set system-ghc --global true \
+  ; fi
+
 FROM alpine:3.9.4 AS brittany
 ARG brittany
 RUN if [[ -n "${brittany}" ]]; then \
@@ -31,29 +54,12 @@ RUN if [[ -n "${gitlint}" ]]; then \
     && pip3 install "gitlint==${gitlint}" \
   ; fi
 
-FROM alpine:3.9.4 AS hindent
+FROM stack_ AS hindent
 ARG hindent
 ARG _ghc_version
 ARG _ghcup_version
 RUN if [[ -n "${hindent}" ]]; then \
-    apk add --no-cache autoconf automake binutils-gold curl g++ gcc ghc \
-      gmp make ncurses-dev perl python3 xz \
-    && curl --fail --show-error --silent \
-      "https://gitlab.haskell.org/haskell/ghcup/raw/${_ghcup_version}/ghcup" \
-      > ghcup \
-    && chmod +x ghcup \
-    && printf 'BuildFlavour = quick\n' > build.mk \
-    && LD=ld.gold ./ghcup --verbose compile --build-config build.mk --force \
-      --jobs "$(nproc)" "${_ghc_version}" ghc \
-    && apk del ghc \
-    && ./ghcup set "${_ghc_version}" \
-    && rm build.mk ghcup \
-    && export PATH="${HOME}/.ghcup/bin:${PATH}" \
-    \
-    && curl --fail --show-error --silent https://get.haskellstack.org | sh \
-    && stack config set system-ghc --global true \
-    \
-    && stack --jobs "$(nproc)" install "hindent-${hindent}" \
+    stack --jobs "$(nproc)" install "hindent-${hindent}" \
     && mv "${HOME}/.local/bin/hindent" /usr/local/bin/hindent \
   ; fi
 
