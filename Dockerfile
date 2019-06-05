@@ -26,7 +26,6 @@ RUN if [[ -n "${hindent}" ]]; then \
     && apk del ghc \
     && ./ghcup set "${_ghc_version}" \
     && rm build.mk ghcup \
-    && export PATH="${HOME}/.ghcup/bin:${PATH}" \
     \
     && curl --fail --show-error --silent https://get.haskellstack.org | sh \
     && stack config set system-ghc --global true \
@@ -59,7 +58,8 @@ ARG hindent
 ARG _ghc_version
 ARG _ghcup_version
 RUN if [[ -n "${hindent}" ]]; then \
-    stack --jobs "$(nproc)" install "hindent-${hindent}" \
+    export PATH="${HOME}/.ghcup/bin:${PATH}" \
+    && stack --jobs "$(nproc)" install "hindent-${hindent}" \
     && mv "${HOME}/.local/bin/hindent" /usr/local/bin/hindent \
   ; fi
 
