@@ -16,7 +16,7 @@ ARG _ghc_version
 ARG _ghcup_version
 RUN if [[ -n "${hindent}" ]]; then \
     apk add --no-cache autoconf automake binutils-gold curl g++ gcc ghc \
-      gmp make ncurses-dev perl python3 xz \
+      gmp-dev make ncurses-dev perl python3 xz \
     && curl --fail --show-error --silent \
       "https://gitlab.haskell.org/haskell/ghcup/raw/${_ghcup_version}/ghcup" \
       > ghcup \
