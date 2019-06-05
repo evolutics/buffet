@@ -31,7 +31,7 @@ RUN if [[ -n "${hindent}" ]]; then \
       "https://gitlab.haskell.org/haskell/ghcup/raw/${_ghcup_version}/ghcup" \
       > ghcup \
     && chmod +x ghcup \
-    && printf 'BuildFlavour = quick\n' > build.mk \
+    && echo 'BuildFlavour = quick' > build.mk \
     && LD=ld.gold ./ghcup --verbose compile --build-config build.mk --force \
       --jobs "$(nproc)" "${_ghc_version}" ghc \
     && apk del ghc \
