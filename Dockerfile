@@ -43,6 +43,9 @@ RUN if [[ -n "${hindent}" ]]; then \
     \
     && echo 'export PATH="${HOME}/.ghcup/bin:${PATH}"' \
       >> "$(which enter_context)" \
+    && echo 'rm -r "${HOME}/.ghcup" "${HOME}/.stack" /usr/local/bin/stack' \
+      >> "$(which exit_context)" \
+    && echo 'apk del ghc' >> "$(which exit_context)" \
   ; fi
 
 FROM alpine:"${_alpine_version}" AS brittany
