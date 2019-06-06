@@ -20,7 +20,7 @@ RUN if [[ -n "${hindent}" ]]; then \
     && chmod +x enter_context exit_context \
   ; fi
 
-FROM alpine:"${_alpine_version}" AS stack_
+FROM context_manager_ AS stack_
 ARG hindent
 ARG _ghc_version
 ARG _ghcup_version
@@ -40,6 +40,9 @@ RUN if [[ -n "${hindent}" ]]; then \
     \
     && curl --fail --show-error --silent https://get.haskellstack.org | sh \
     && stack config set system-ghc --global true \
+    \
+    && echo 'export PATH="${HOME}/.ghcup/bin:${PATH}"' \
+      >> "$(which enter_context)" \
   ; fi
 
 FROM alpine:"${_alpine_version}" AS brittany
@@ -69,9 +72,10 @@ ARG hindent
 ARG _ghc_version
 ARG _ghcup_version
 RUN if [[ -n "${hindent}" ]]; then \
-    export PATH="${HOME}/.ghcup/bin:${PATH}" \
+    source enter_context \
     && stack --jobs "$(nproc)" install "hindent-${hindent}" \
     && mv "${HOME}/.local/bin/hindent" /usr/local/bin/hindent \
+    && source exit_context \
   ; fi
 
 FROM alpine:"${_alpine_version}" AS hlint
