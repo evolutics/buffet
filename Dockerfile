@@ -11,8 +11,9 @@ ARG _ghc_version='8.6.5'
 ARG _ghcup_version='master'
 
 FROM alpine:"${_alpine_version}" AS context_manager_
+ARG brittany
 ARG hindent
-RUN if [[ -n "${hindent}" ]]; then \
+RUN if [[ -n "${brittany}" || -n "${hindent}" ]]; then \
     cd /usr/local/bin \
     && > enter_context \
     && echo 'rm "$(which enter_context)" "$(which exit_context)"' \
@@ -56,13 +57,13 @@ RUN if [[ -n "${hindent}" ]]; then \
     && echo 'apk del ghc' >> "$(which exit_context)" \
   ; fi
 
-FROM alpine:"${_alpine_version}" AS brittany
+FROM cabal_ AS brittany
 ARG brittany
 RUN if [[ -n "${brittany}" ]]; then \
-    apk add --no-cache cabal ghc gmp libffi musl-dev ncurses-dev wget \
-    && cabal update \
+    source enter_context \
     && cabal install --jobs "brittany-${brittany}" \
     && mv "${HOME}/.cabal/bin/brittany" /usr/local/bin/brittany \
+    && source exit_context \
   ; fi
 
 FROM alpine:"${_alpine_version}" AS git
