@@ -28,6 +28,8 @@ ARG hlint
 RUN if [[ -n "${brittany}" || -n "${hlint}" ]]; then \
     apk add --no-cache cabal ghc gmp libffi musl-dev ncurses-dev wget \
     && cabal update \
+    \
+    && echo 'apk del cabal ghc' >> "$(which exit_context)" \
   ; fi
 
 FROM context_manager_ AS stack_
@@ -64,6 +66,7 @@ RUN if [[ -n "${brittany}" ]]; then \
     source enter_context \
     && cabal install --jobs "brittany-${brittany}" \
     && mv "${HOME}/.cabal/bin/brittany" /usr/local/bin/brittany \
+    && rm -r "${HOME}/.cabal" \
     && source exit_context \
   ; fi
 
@@ -98,6 +101,7 @@ RUN if [[ -n "${hlint}" ]]; then \
     && cabal install --jobs alex happy \
     && cabal install --jobs "hlint-${hlint}" \
     && mv "${HOME}/.cabal/bin/hlint" /usr/local/bin/hlint \
+    && find "${HOME}/.cabal" ! -name hlint.yaml -delete \
     && source exit_context \
   ; fi
 
