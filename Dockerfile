@@ -20,6 +20,14 @@ RUN if [[ -n "${hindent}" ]]; then \
     && chmod +x enter_context exit_context \
   ; fi
 
+FROM context_manager_ AS cabal_
+ARG brittany
+ARG hlint
+RUN if [[ -n "${brittany}" || -n "${hlint}" ]]; then \
+    apk add --no-cache cabal ghc gmp libffi musl-dev ncurses-dev wget \
+    && cabal update \
+  ; fi
+
 FROM context_manager_ AS stack_
 ARG hindent
 ARG _ghc_version
