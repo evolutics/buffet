@@ -10,6 +10,16 @@ ARG _alpine_version='3.9.4'
 ARG _ghc_version='8.6.5'
 ARG _ghcup_version='master'
 
+FROM alpine:"${_alpine_version}" AS context_manager_
+ARG hindent
+RUN if [[ -n "${hindent}" ]]; then \
+    cd /usr/local/bin \
+    && > enter_context \
+    && echo 'rm "$(which enter_context)" "$(which exit_context)"' \
+      > exit_context \
+    && chmod +x enter_context exit_context \
+  ; fi
+
 FROM alpine:"${_alpine_version}" AS stack_
 ARG hindent
 ARG _ghc_version
