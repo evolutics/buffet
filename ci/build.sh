@@ -14,9 +14,9 @@ readonly CODE_CHECKERS_TAG="$(sha256sum \
   | sha256sum | cut --characters -16)"
 readonly CODE_CHECKERS="evolutics/freezer_code_checkers:${CODE_CHECKERS_TAG}"
 docker pull "${CODE_CHECKERS}" \
-  || docker build --rm=false --tag "${CODE_CHECKERS}" \
+  || (docker build --rm=false --tag "${CODE_CHECKERS}" \
   $(< ci/code_checkers_build_arguments) \
-  && docker push "${CODE_CHECKERS}"
+  && docker push "${CODE_CHECKERS}")
 
 docker run --volume "$(pwd)":/workdir "${CODE_CHECKERS}" \
   git diff --check HEAD^
