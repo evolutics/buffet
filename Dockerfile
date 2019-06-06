@@ -13,7 +13,8 @@ ARG _ghcup_version='master'
 FROM alpine:"${_alpine_version}" AS context_manager_
 ARG brittany
 ARG hindent
-RUN if [[ -n "${brittany}" || -n "${hindent}" ]]; then \
+ARG hlint
+RUN if [[ -n "${brittany}" || -n "${hindent}" || -n "${hlint}" ]]; then \
     cd /usr/local/bin \
     && > enter_context \
     && echo 'rm "$(which enter_context)" "$(which exit_context)"' \
@@ -90,14 +91,14 @@ RUN if [[ -n "${hindent}" ]]; then \
     && source exit_context \
   ; fi
 
-FROM alpine:"${_alpine_version}" AS hlint
+FROM cabal_ AS hlint
 ARG hlint
 RUN if [[ -n "${hlint}" ]]; then \
-    apk add --no-cache cabal ghc gmp libffi musl-dev wget \
-    && cabal update \
+    source enter_context \
     && cabal install --jobs alex happy \
     && cabal install --jobs "hlint-${hlint}" \
     && mv "${HOME}/.cabal/bin/hlint" /usr/local/bin/hlint \
+    && source exit_context \
   ; fi
 
 FROM alpine:"${_alpine_version}" AS hunspell
