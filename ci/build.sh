@@ -5,7 +5,8 @@ set -o nounset
 set -o pipefail
 
 check_code() {
-  local -r code_checkers="$(build_code_checkers | tail --lines 1)"
+  local -r code_checkers="$(code_checkers_name)"
+  build_code_checkers "${code_checkers}"
 
   check_with_git "${code_checkers}"
   check_with_gitlint "${code_checkers}"
@@ -15,16 +16,18 @@ check_code() {
   check_with_prettier "${code_checkers}"
 }
 
-build_code_checkers() {
+code_checkers_name() {
   local -r code_checkers_tag="$(sha256sum \
     ci/code_checkers_build_arguments Dockerfile \
     | sha256sum | cut --characters -16)"
-  local -r code_checkers="evolutics/freezer_code_checkers:${code_checkers_tag}"
-  docker pull "${code_checkers}" \
-    || (docker build --rm=false --tag "${code_checkers}" \
+  echo "evolutics/freezer_code_checkers:${code_checkers_tag}"
+}
+
+build_code_checkers() {
+  docker pull "$1" \
+    || (docker build --rm=false --tag "$1" \
     $(< ci/code_checkers_build_arguments) \
-    && docker push "${code_checkers}")
-  echo "${code_checkers}"
+    && docker push "$1")
 }
 
 check_with_git() {
