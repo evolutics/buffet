@@ -47,7 +47,7 @@ check_with_hindent() {
 
 check_with_hlint() {
   docker run --volume "$(pwd)":/workdir "$1" \
-    hlint --git --hint ci/.hlint.yaml .
+    hlint --git --hint ci/.hlint.yaml
 }
 
 check_with_hunspell() {
