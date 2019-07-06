@@ -23,13 +23,20 @@ intercalateBlankLines :: [[T.Text]] -> [T.Text]
 intercalateBlankLines = List.intercalate [T.pack ""]
 
 argInstructions :: Utilities.Box -> [T.Text]
-argInstructions box = orderedArgInstructions options
+argInstructions box =
+  intercalateBlankLines $
+  fmap orderedArgInstructions [publicOptions, privateOptions]
   where
     orderedArgInstructions = fmap argInstruction . Map.toAscList
     argInstruction (key, value) =
       T.concat [T.pack "ARG ", key, T.pack "=", value]
-    options = fmap (const $ T.pack "''") optionToUtility
+    (privateOptions, publicOptions) =
+      Map.partitionWithKey (\key _ -> T.isPrefixOf (T.pack "_") key) options
+    options = Map.unions [mainOptions, baseImageOptions]
+    mainOptions = fmap (const $ T.pack "''") optionToUtility
     optionToUtility = Utilities.optionToUtility box
+    baseImageOptions =
+      Map.singleton (T.pack "_alpine_version") $ T.pack "'3.9.4'"
 
 utilityBuildStages :: Utilities.Box -> [T.Text]
 utilityBuildStages box =
@@ -47,7 +54,7 @@ utilityBuildStage option utility =
     ]
 
 baseImage :: T.Text
-baseImage = T.pack "alpine:3.9.4"
+baseImage = T.pack "alpine:\"${_alpine_version}\""
 
 runInstruction :: T.Text -> Utilities.Utility -> [T.Text]
 runInstruction option utility =
