@@ -16,8 +16,6 @@ extra-source-files:
 description: Please see the README on GitHub at <https://github.com/evolutics/freezer#readme>
 dependencies:
   - base >= 4.7 && < 5
-library:
-  source-dirs: src
 _ghc-options: &ghc-options
   - -threaded
   - -rtsopts
@@ -25,6 +23,9 @@ _ghc-options: &ghc-options
   - -Werror
   - -Weverything
   - -Wno-safe
+library:
+  source-dirs: src
+  ghc-options: *ghc-options
 executables:
   freezer-exe:
     main: Main.hs
