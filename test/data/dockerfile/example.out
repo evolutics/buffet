@@ -1,0 +1,13 @@
+ARG example=''
+
+FROM alpine:3.9.4 AS example
+ARG example
+RUN if [[ -n "${example}" ]]; then \
+    ls \
+  ; fi
+
+FROM alpine:3.9.4
+
+WORKDIR /workdir
+
+COPY --from=example / /
