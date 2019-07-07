@@ -4,6 +4,7 @@ import qualified Data.Text as T
 import qualified Data.Text.Lazy as LazyT
 import qualified Data.Text.Lazy.Encoding as Encoding
 import qualified Dockerfile
+import qualified Lib
 import Prelude (FilePath, IO, ($), return)
 import qualified Test.Tasty as Tasty
 import qualified Test.Tasty.Golden as Golden
@@ -14,8 +15,12 @@ main = Tasty.defaultMain tests
 
 tests :: Tasty.TestTree
 tests =
-  assertFileEqualsText "Example" "test/data/dockerfile/example.out" $
-  Dockerfile.get example
+  Tasty.testGroup
+    "Tests"
+    [ assertFileEqualsText "Example" "test/data/dockerfile/example.out" $
+      Dockerfile.get example
+    , assertFileEqualsText "Main" "Dockerfile" Lib.dockerfile
+    ]
 
 assertFileEqualsText :: Tasty.TestName -> FilePath -> T.Text -> Tasty.TestTree
 assertFileEqualsText name expected actual =
