@@ -2,10 +2,24 @@ module Dockerfile
   ( get
   ) where
 
+import qualified Data.Function as Function
 import qualified Data.List as List
 import qualified Data.Map.Strict as Map
+import qualified Data.Set as Set
 import qualified Data.Text as T
-import Prelude (($), (.), (<>), concat, const, fmap, uncurry)
+import Prelude
+  ( Bool
+  , Ordering
+  , ($)
+  , (.)
+  , (<>)
+  , compare
+  , concat
+  , const
+  , fmap
+  , fst
+  , uncurry
+  )
 import qualified Utilities
 
 get :: Utilities.Box -> T.Text
@@ -27,21 +41,32 @@ argInstructions box =
   intercalateBlankLines $
   fmap orderedArgInstructions [publicOptions, privateOptions]
   where
-    orderedArgInstructions = fmap argInstruction . Map.toAscList
+    orderedArgInstructions = fmap argInstruction . orderOptionMap
     argInstruction (key, value) =
       T.concat [T.pack "ARG ", key, T.pack "=", value]
     (privateOptions, publicOptions) =
-      Map.partitionWithKey (\key _ -> T.isPrefixOf (T.pack "_") key) options
+      Map.partitionWithKey (\key _ -> isPrivateOption key) options
     options = Map.unions [mainOptions, baseImageOptions]
     mainOptions = fmap (const $ T.pack "''") optionToUtility
     optionToUtility = Utilities.optionToUtility box
     baseImageOptions =
       Map.singleton (T.pack "_alpine_version") $ T.pack "'3.9.4'"
 
+orderOptionMap :: Map.Map T.Text a -> [(T.Text, a)]
+orderOptionMap = List.sortBy (Function.on compareOptions fst) . Map.toList
+
+compareOptions :: T.Text -> T.Text -> Ordering
+compareOptions = Function.on compare key
+  where
+    key option = (isPrivateOption option, option)
+
+isPrivateOption :: T.Text -> Bool
+isPrivateOption = T.isPrefixOf $ T.pack "_"
+
 utilityBuildStages :: Utilities.Box -> [T.Text]
 utilityBuildStages box =
   intercalateBlankLines . fmap (uncurry utilityBuildStage) $
-  Map.toAscList optionToUtility
+  orderOptionMap optionToUtility
   where
     optionToUtility = Utilities.optionToUtility box
 
@@ -77,4 +102,7 @@ copyInstructions box = fmap copyInstruction options
   where
     copyInstruction option =
       T.concat [T.pack "COPY --from=", option, T.pack " / /"]
-    options = Map.keys $ Utilities.optionToUtility box
+    options = orderOptionSet . Map.keysSet $ Utilities.optionToUtility box
+
+orderOptionSet :: Set.Set T.Text -> [T.Text]
+orderOptionSet = List.sortBy compareOptions . Set.toList
