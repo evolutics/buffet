@@ -34,6 +34,12 @@ example =
           Utilities.Utility
             { Utilities.installation =
                 Utilities.Command {Utilities.indentableLines = [T.pack "ls \\"]}
+            , Utilities.extraOptionsWithDefaults =
+                Map.fromList
+                  [ (T.pack "example_foo", T.pack "'a'")
+                  , (T.pack "_bar", T.pack "'b'")
+                  , (T.pack "_baz", T.pack "'c'")
+                  ]
             , Utilities.documentation =
                 Utilities.Documentation
                   { Utilities.displayName = T.pack "Example"

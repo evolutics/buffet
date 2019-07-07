@@ -46,11 +46,14 @@ argInstructions box =
       T.concat [T.pack "ARG ", key, T.pack "=", value]
     (privateOptions, publicOptions) =
       Map.partitionWithKey (\key _ -> isPrivateOption key) options
-    options = Map.unions [mainOptions, baseImageOptions]
+    options = Map.unions [mainOptions, baseImageOptions, extraOptions]
     mainOptions = fmap (const $ T.pack "''") optionToUtility
     optionToUtility = Utilities.optionToUtility box
     baseImageOptions =
       Map.singleton (T.pack "_alpine_version") $ T.pack "'3.9.4'"
+    extraOptions =
+      Map.unions $ fmap Utilities.extraOptionsWithDefaults utilities
+    utilities = Map.elems optionToUtility
 
 orderOptionMap :: Map.Map T.Text a -> [(T.Text, a)]
 orderOptionMap = List.sortBy (Function.on compareOptions fst) . Map.toList
@@ -74,12 +77,19 @@ utilityBuildStage :: T.Text -> Utilities.Utility -> [T.Text]
 utilityBuildStage option utility =
   concat
     [ [T.concat [T.pack "FROM ", baseImage, T.pack " AS ", option]]
-    , [T.pack "ARG " <> option]
+    , fmap (T.pack "ARG " <>) orderedOptions
     , runInstruction option utility
     ]
+  where
+    orderedOptions = orderOptionSet options
+    options = Set.insert option extraOptions
+    extraOptions = Map.keysSet $ Utilities.extraOptionsWithDefaults utility
 
 baseImage :: T.Text
 baseImage = T.pack "alpine:\"${_alpine_version}\""
+
+orderOptionSet :: Set.Set T.Text -> [T.Text]
+orderOptionSet = List.sortBy compareOptions . Set.toList
 
 runInstruction :: T.Text -> Utilities.Utility -> [T.Text]
 runInstruction option utility =
@@ -103,6 +113,3 @@ copyInstructions box = fmap copyInstruction options
     copyInstruction option =
       T.concat [T.pack "COPY --from=", option, T.pack " / /"]
     options = orderOptionSet . Map.keysSet $ Utilities.optionToUtility box
-
-orderOptionSet :: Set.Set T.Text -> [T.Text]
-orderOptionSet = List.sortBy compareOptions . Set.toList

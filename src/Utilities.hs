@@ -20,6 +20,7 @@ newtype Box =
 data Utility =
   Utility
     { installation :: Command
+    , extraOptionsWithDefaults :: Map.Map T.Text T.Text
     , documentation :: Documentation
     }
   deriving (Eq, Ord, Show)
