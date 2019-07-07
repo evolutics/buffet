@@ -2,6 +2,7 @@ module Utilities
   ( Box(..)
   , Command(..)
   , Documentation(..)
+  , Entry(..)
   , Tag(..)
   , Utility(..)
   ) where
@@ -44,5 +45,12 @@ data Tag =
   Tag
     { key :: T.Text
     , value :: T.Text
+    }
+  deriving (Eq, Ord, Show)
+
+data Entry =
+  Entry
+    { option :: T.Text
+    , utility :: Utility
     }
   deriving (Eq, Ord, Show)

@@ -2,8 +2,9 @@ module Main
   ( main
   ) where
 
-import Lib (someFunc)
+import qualified Data.Text.IO as T.IO
+import qualified Lib (dockerfile)
 import Prelude (IO)
 
 main :: IO ()
-main = someFunc
+main = T.IO.putStrLn Lib.dockerfile
