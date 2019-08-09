@@ -1,6 +1,6 @@
 --build-arg git=2.20.1-r0
 --build-arg gitlint=0.11.0
---build-arg hindent=5.3.0
+--build-arg hindent=5.3.1
 --build-arg hlint=2.1.21
 --build-arg hunspell=1.6.2-r1
 --build-arg prettier=1.17.0
