@@ -38,7 +38,7 @@ example =
         Map.singleton
           (T.pack "example")
           Utilities.Utility
-            { Utilities.dockerfile = T.pack "ls \\"
+            { Utilities.dockerfile = T.pack "RUN ls"
             , Utilities.extraOptionsWithDefaults =
                 Map.fromList
                   [ (T.pack "example_foo", T.pack "'a'")

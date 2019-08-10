@@ -18,35 +18,35 @@ get =
           { Utilities.dockerfile =
               T.unlines
                 [ T.pack
-                    "apk add --no-cache autoconf automake binutils-gold curl g++ gcc ghc \\"
-                , T.pack "  gmp-dev make ncurses-dev perl python3 xz \\"
-                , T.pack "&& curl --fail --show-error --silent \\"
+                    "RUN apk add --no-cache autoconf automake binutils-gold curl g++ gcc ghc \\"
+                , T.pack "    gmp-dev make ncurses-dev perl python3 xz \\"
+                , T.pack "  && curl --fail --show-error --silent \\"
                 , T.pack
-                    "  \"https://gitlab.haskell.org/haskell/ghcup/raw/${_ghcup_version}/ghcup\" \\"
-                , T.pack "  > ghcup \\"
-                , T.pack "&& chmod +x ghcup \\"
-                , T.pack "&& echo 'BuildFlavour = quick' > build.mk \\"
+                    "    \"https://gitlab.haskell.org/haskell/ghcup/raw/${_ghcup_version}/ghcup\" \\"
+                , T.pack "    > ghcup \\"
+                , T.pack "  && chmod +x ghcup \\"
+                , T.pack "  && echo 'BuildFlavour = quick' > build.mk \\"
                 , T.pack
-                    "&& LD=ld.gold ./ghcup --verbose compile --build-config build.mk --force \\"
-                , T.pack "  --jobs \"$(nproc)\" \"${_ghc_version}\" ghc \\"
-                , T.pack "&& apk del ghc \\"
-                , T.pack "&& ./ghcup set \"${_ghc_version}\" \\"
-                , T.pack "&& rm build.mk ghcup \\"
-                , T.pack "\\"
+                    "  && LD=ld.gold ./ghcup --verbose compile --build-config build.mk --force \\"
+                , T.pack "    --jobs \"$(nproc)\" \"${_ghc_version}\" ghc \\"
+                , T.pack "  && apk del ghc \\"
+                , T.pack "  && ./ghcup set \"${_ghc_version}\" \\"
+                , T.pack "  && rm build.mk ghcup \\"
+                , T.pack "  \\"
                 , T.pack
-                    "&& curl --fail --show-error --silent https://get.haskellstack.org | sh \\"
-                , T.pack "&& stack config set system-ghc --global true \\"
-                , T.pack "\\"
-                , T.pack "&& export PATH=\"${HOME}/.ghcup/bin:${PATH}\" \\"
-                , T.pack "\\"
+                    "  && curl --fail --show-error --silent https://get.haskellstack.org | sh \\"
+                , T.pack "  && stack config set system-ghc --global true \\"
+                , T.pack "  \\"
+                , T.pack "  && export PATH=\"${HOME}/.ghcup/bin:${PATH}\" \\"
+                , T.pack "  \\"
                 , T.pack
-                    "&& stack --jobs \"$(nproc)\" install \"hindent-${hindent}\" \\"
+                    "  && stack --jobs \"$(nproc)\" install \"hindent-${hindent}\" \\"
                 , T.pack
-                    "&& mv \"${HOME}/.local/bin/hindent\" /usr/local/bin/hindent \\"
-                , T.pack "\\"
+                    "  && mv \"${HOME}/.local/bin/hindent\" /usr/local/bin/hindent \\"
+                , T.pack "  \\"
                 , T.pack
-                    "&& rm -r \"${HOME}/.ghcup\" \"${HOME}/.stack\" /usr/local/bin/stack \\"
-                , T.pack "&& apk del ghc \\"
+                    "  && rm -r \"${HOME}/.ghcup\" \"${HOME}/.stack\" /usr/local/bin/stack \\"
+                , T.pack "  && apk del ghc"
                 ]
           , Utilities.extraOptionsWithDefaults =
               Map.fromList

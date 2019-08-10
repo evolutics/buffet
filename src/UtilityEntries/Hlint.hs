@@ -18,17 +18,17 @@ get =
           { Utilities.dockerfile =
               T.unlines
                 [ T.pack
-                    "apk add --no-cache cabal ghc gmp libffi musl-dev ncurses-dev wget \\"
-                , T.pack "&& cabal update \\"
-                , T.pack "\\"
-                , T.pack "&& cabal install --jobs alex happy \\"
-                , T.pack "&& cabal install --jobs \"hlint-${hlint}\" \\"
+                    "RUN apk add --no-cache cabal ghc gmp libffi musl-dev ncurses-dev wget \\"
+                , T.pack "  && cabal update \\"
+                , T.pack "  \\"
+                , T.pack "  && cabal install --jobs alex happy \\"
+                , T.pack "  && cabal install --jobs \"hlint-${hlint}\" \\"
                 , T.pack
-                    "&& mv \"${HOME}/.cabal/bin/hlint\" /usr/local/bin/hlint \\"
+                    "  && mv \"${HOME}/.cabal/bin/hlint\" /usr/local/bin/hlint \\"
                 , T.pack
-                    "&& find \"${HOME}/.cabal\" ! -name hlint.yaml -delete \\"
-                , T.pack "\\"
-                , T.pack "&& apk del cabal ghc \\"
+                    "  && find \"${HOME}/.cabal\" ! -name hlint.yaml -delete \\"
+                , T.pack "  \\"
+                , T.pack "  && apk del cabal ghc"
                 ]
           , Utilities.extraOptionsWithDefaults = Map.empty
           , Utilities.documentation =

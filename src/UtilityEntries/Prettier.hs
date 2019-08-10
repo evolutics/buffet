@@ -17,8 +17,8 @@ get =
         Utilities.Utility
           { Utilities.dockerfile =
               T.unlines
-                [ T.pack "apk add --no-cache yarn \\"
-                , T.pack "&& yarn global add \"prettier@${prettier}\" \\"
+                [ T.pack "RUN apk add --no-cache yarn \\"
+                , T.pack "  && yarn global add \"prettier@${prettier}\""
                 ]
           , Utilities.extraOptionsWithDefaults = Map.empty
           , Utilities.documentation =

@@ -7,8 +7,11 @@ import qualified Data.List as List
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
 import qualified Data.Text as T
+import qualified Language.Docker.Parser as Parser
+import qualified Language.Docker.Syntax as Syntax
 import Prelude
   ( Bool
+  , Either(Right)
   , Ordering
   , ($)
   , (.)
@@ -16,6 +19,7 @@ import Prelude
   , compare
   , concat
   , const
+  , error
   , fmap
   , fst
   , uncurry
@@ -92,17 +96,34 @@ orderOptionSet :: Set.Set T.Text -> [T.Text]
 orderOptionSet = List.sortBy compareOptions . Set.toList
 
 runInstruction :: T.Text -> Utilities.Utility -> [T.Text]
-runInstruction option utility =
+runInstruction option utility = conditionalRunInstruction condition command
+  where
+    condition = T.concat [T.pack "[[ -n \"${", option, T.pack "}\" ]]"]
+    command =
+      case Parser.parseText $ Utilities.dockerfile utility of
+        Right [Syntax.InstructionPos (Syntax.Run (Syntax.ArgumentsText argument)) _ _] ->
+          patchRunArgument argument
+        _ -> error "One simple `RUN` instruction expected."
+
+conditionalRunInstruction :: T.Text -> T.Text -> [T.Text]
+conditionalRunInstruction condition command =
   concat
-    [ [T.concat [T.pack "RUN if [[ -n \"${", option, T.pack "}\" ]]; then \\"]]
-    , indentLines . indentLines $ T.lines dockerfile
+    [ [T.concat [T.pack "RUN if ", condition, T.pack "; then \\"]]
+    , indentLines . indentLines . T.lines $ T.concat [command, T.pack " \\"]
     , [indentLine $ T.pack "; fi"]
     ]
+
+indentLines :: [T.Text] -> [T.Text]
+indentLines = fmap indentLine
+
+indentLine :: T.Text -> T.Text
+indentLine = T.append $ T.pack "  "
+
+patchRunArgument :: T.Text -> T.Text
+patchRunArgument = reviveSimpleLineBreak . reviveBlankLine
   where
-    indentLines :: [T.Text] -> [T.Text]
-    indentLines = fmap indentLine
-    indentLine = T.append $ T.pack "  "
-    dockerfile = Utilities.dockerfile utility
+    reviveSimpleLineBreak = T.replace (T.pack "   ") $ T.pack " \\\n"
+    reviveBlankLine = T.replace (T.pack "     && ") $ T.pack " \\\n\\\n&& "
 
 workdirInstruction :: [T.Text]
 workdirInstruction = [T.pack "WORKDIR /workdir"]

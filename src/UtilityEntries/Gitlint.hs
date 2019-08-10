@@ -17,8 +17,8 @@ get =
         Utilities.Utility
           { Utilities.dockerfile =
               T.unlines
-                [ T.pack "apk add --no-cache git python3 \\"
-                , T.pack "&& pip3 install \"gitlint==${gitlint}\" \\"
+                [ T.pack "RUN apk add --no-cache git python3 \\"
+                , T.pack "  && pip3 install \"gitlint==${gitlint}\""
                 ]
           , Utilities.extraOptionsWithDefaults = Map.empty
           , Utilities.documentation =

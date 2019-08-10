@@ -18,7 +18,7 @@ get =
           { Utilities.dockerfile =
               T.unlines
                 [ T.pack
-                    "apk add --no-cache \"hunspell==${hunspell}\" hunspell-en \\"
+                    "RUN apk add --no-cache \"hunspell==${hunspell}\" hunspell-en"
                 ]
           , Utilities.extraOptionsWithDefaults = Map.empty
           , Utilities.documentation =
