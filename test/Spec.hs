@@ -5,7 +5,8 @@ import qualified Data.Text.Lazy as LazyT
 import qualified Data.Text.Lazy.Encoding as Encoding
 import qualified Dockerfile
 import qualified Lib
-import Prelude (FilePath, IO, ($), return)
+import Prelude (FilePath, IO, ($), (.), return)
+import qualified Tags.Help as Help
 import qualified Test.Tasty as Tasty
 import qualified Test.Tasty.Golden as Golden
 import qualified Utilities
@@ -49,10 +50,8 @@ example =
                 Utilities.Documentation
                   { Utilities.displayName = T.pack "Example"
                   , Utilities.link = T.pack "https://example.com"
-                  , Utilities.tags = Set.empty
-                  , Utilities.help =
-                      Utilities.Command
-                        {Utilities.indentableLines = [T.pack "example --help"]}
+                  , Utilities.tags =
+                      Set.singleton . Help.tag $ T.pack "example --help"
                   }
             }
     }

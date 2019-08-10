@@ -5,7 +5,8 @@ module UtilityEntries.Hlint
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
 import qualified Data.Text as T
-import Prelude ()
+import Prelude (($), (.))
+import qualified Tags.Help as Help
 import qualified Utilities
 
 get :: Utilities.Entry
@@ -36,10 +37,8 @@ get =
               Utilities.Documentation
                 { Utilities.displayName = T.pack "HLint"
                 , Utilities.link = T.pack "https://github.com/ndmitchell/hlint"
-                , Utilities.tags = Set.empty
-                , Utilities.help =
-                    Utilities.Command
-                      {Utilities.indentableLines = [T.pack "hlint --help"]}
+                , Utilities.tags =
+                    Set.singleton . Help.tag $ T.pack "hlint --help"
                 }
           }
     }

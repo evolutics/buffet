@@ -5,7 +5,8 @@ module UtilityEntries.Gitlint
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
 import qualified Data.Text as T
-import Prelude ()
+import Prelude (($), (.))
+import qualified Tags.Help as Help
 import qualified Utilities
 
 get :: Utilities.Entry
@@ -27,10 +28,8 @@ get =
                 { Utilities.displayName = T.pack "Gitlint"
                 , Utilities.link =
                     T.pack "http://jorisroovers.github.io/gitlint"
-                , Utilities.tags = Set.empty
-                , Utilities.help =
-                    Utilities.Command
-                      {Utilities.indentableLines = [T.pack "gitlint --help"]}
+                , Utilities.tags =
+                    Set.singleton . Help.tag $ T.pack "gitlint --help"
                 }
           }
     }

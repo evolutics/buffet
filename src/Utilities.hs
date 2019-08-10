@@ -37,7 +37,6 @@ data Documentation =
     { displayName :: T.Text
     , link :: T.Text
     , tags :: Set.Set Tag
-    , help :: Command
     }
   deriving (Eq, Ord, Show)
 

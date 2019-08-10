@@ -5,7 +5,8 @@ module UtilityEntries.Hindent
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
 import qualified Data.Text as T
-import Prelude ()
+import Prelude (($), (.))
+import qualified Tags.Help as Help
 import qualified Utilities
 
 get :: Utilities.Entry
@@ -58,10 +59,8 @@ get =
               Utilities.Documentation
                 { Utilities.displayName = T.pack "hindent"
                 , Utilities.link = T.pack "https://github.com/chrisdone/hindent"
-                , Utilities.tags = Set.empty
-                , Utilities.help =
-                    Utilities.Command
-                      {Utilities.indentableLines = [T.pack "hindent --help"]}
+                , Utilities.tags =
+                    Set.singleton . Help.tag $ T.pack "hindent --help"
                 }
           }
     }

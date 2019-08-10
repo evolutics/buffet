@@ -5,7 +5,8 @@ module UtilityEntries.Git
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
 import qualified Data.Text as T
-import Prelude ()
+import Prelude (($), (.))
+import qualified Tags.Help as Help
 import qualified Utilities
 
 get :: Utilities.Entry
@@ -24,10 +25,8 @@ get =
               Utilities.Documentation
                 { Utilities.displayName = T.pack "Git"
                 , Utilities.link = T.pack "https://git-scm.com"
-                , Utilities.tags = Set.empty
-                , Utilities.help =
-                    Utilities.Command
-                      {Utilities.indentableLines = [T.pack "git --help"]}
+                , Utilities.tags =
+                    Set.singleton . Help.tag $ T.pack "git --help"
                 }
           }
     }
