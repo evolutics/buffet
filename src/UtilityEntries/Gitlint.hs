@@ -15,13 +15,11 @@ get =
     { Utilities.option = T.pack "gitlint"
     , Utilities.utility =
         Utilities.Utility
-          { Utilities.installation =
-              Utilities.Command
-                { Utilities.indentableLines =
-                    [ T.pack "apk add --no-cache git python3 \\"
-                    , T.pack "&& pip3 install \"gitlint==${gitlint}\" \\"
-                    ]
-                }
+          { Utilities.dockerfile =
+              T.unlines
+                [ T.pack "apk add --no-cache git python3 \\"
+                , T.pack "&& pip3 install \"gitlint==${gitlint}\" \\"
+                ]
           , Utilities.extraOptionsWithDefaults = Map.empty
           , Utilities.documentation =
               Utilities.Documentation

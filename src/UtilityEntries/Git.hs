@@ -15,11 +15,8 @@ get =
     { Utilities.option = T.pack "git"
     , Utilities.utility =
         Utilities.Utility
-          { Utilities.installation =
-              Utilities.Command
-                { Utilities.indentableLines =
-                    [T.pack "apk add --no-cache \"git==${git}\" \\"]
-                }
+          { Utilities.dockerfile =
+              T.unlines [T.pack "apk add --no-cache \"git==${git}\" \\"]
           , Utilities.extraOptionsWithDefaults = Map.empty
           , Utilities.documentation =
               Utilities.Documentation

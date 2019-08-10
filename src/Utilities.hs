@@ -1,6 +1,5 @@
 module Utilities
   ( Box(..)
-  , Command(..)
   , Documentation(..)
   , Entry(..)
   , Tag(..)
@@ -20,15 +19,9 @@ newtype Box =
 
 data Utility =
   Utility
-    { installation :: Command
+    { dockerfile :: T.Text
     , extraOptionsWithDefaults :: Map.Map T.Text T.Text
     , documentation :: Documentation
-    }
-  deriving (Eq, Ord, Show)
-
-newtype Command =
-  Command
-    { indentableLines :: [T.Text]
     }
   deriving (Eq, Ord, Show)
 

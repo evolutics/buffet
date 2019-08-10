@@ -15,13 +15,11 @@ get =
     { Utilities.option = T.pack "prettier"
     , Utilities.utility =
         Utilities.Utility
-          { Utilities.installation =
-              Utilities.Command
-                { Utilities.indentableLines =
-                    [ T.pack "apk add --no-cache yarn \\"
-                    , T.pack "&& yarn global add \"prettier@${prettier}\" \\"
-                    ]
-                }
+          { Utilities.dockerfile =
+              T.unlines
+                [ T.pack "apk add --no-cache yarn \\"
+                , T.pack "&& yarn global add \"prettier@${prettier}\" \\"
+                ]
           , Utilities.extraOptionsWithDefaults = Map.empty
           , Utilities.documentation =
               Utilities.Documentation

@@ -95,14 +95,14 @@ runInstruction :: T.Text -> Utilities.Utility -> [T.Text]
 runInstruction option utility =
   concat
     [ [T.concat [T.pack "RUN if [[ -n \"${", option, T.pack "}\" ]]; then \\"]]
-    , indentLines $ indentLines indentableLines
+    , indentLines . indentLines $ T.lines dockerfile
     , [indentLine $ T.pack "; fi"]
     ]
   where
     indentLines :: [T.Text] -> [T.Text]
     indentLines = fmap indentLine
     indentLine = T.append $ T.pack "  "
-    indentableLines = Utilities.indentableLines $ Utilities.installation utility
+    dockerfile = Utilities.dockerfile utility
 
 workdirInstruction :: [T.Text]
 workdirInstruction = [T.pack "WORKDIR /workdir"]

@@ -38,8 +38,7 @@ example =
         Map.singleton
           (T.pack "example")
           Utilities.Utility
-            { Utilities.installation =
-                Utilities.Command {Utilities.indentableLines = [T.pack "ls \\"]}
+            { Utilities.dockerfile = T.pack "ls \\"
             , Utilities.extraOptionsWithDefaults =
                 Map.fromList
                   [ (T.pack "example_foo", T.pack "'a'")

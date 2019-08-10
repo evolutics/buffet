@@ -15,13 +15,11 @@ get =
     { Utilities.option = T.pack "hunspell"
     , Utilities.utility =
         Utilities.Utility
-          { Utilities.installation =
-              Utilities.Command
-                { Utilities.indentableLines =
-                    [ T.pack
-                        "apk add --no-cache \"hunspell==${hunspell}\" hunspell-en \\"
-                    ]
-                }
+          { Utilities.dockerfile =
+              T.unlines
+                [ T.pack
+                    "apk add --no-cache \"hunspell==${hunspell}\" hunspell-en \\"
+                ]
           , Utilities.extraOptionsWithDefaults = Map.empty
           , Utilities.documentation =
               Utilities.Documentation
