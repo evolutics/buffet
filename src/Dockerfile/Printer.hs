@@ -8,11 +8,8 @@ import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
 import qualified Data.Text as T
 import qualified Dockerfile.Intermediate as Intermediate
-import qualified Language.Docker.Parser as Parser
-import qualified Language.Docker.Syntax as Syntax
 import Prelude
   ( Bool
-  , Either(Right)
   , Ordering
   , ($)
   , (.)
@@ -20,7 +17,6 @@ import Prelude
   , compare
   , concat
   , const
-  , error
   , fmap
   , fst
   , uncurry
@@ -96,34 +92,32 @@ orderOptionSet :: Set.Set T.Text -> [T.Text]
 orderOptionSet = List.sortBy compareOptions . Set.toList
 
 runInstruction :: T.Text -> Intermediate.Utility -> [T.Text]
-runInstruction option utility = conditionalRunInstruction condition command
+runInstruction option utility =
+  conditionalRunInstruction condition $ T.lines command
   where
     condition = T.concat [T.pack "[[ -n \"${", option, T.pack "}\" ]]"]
-    command =
-      case Parser.parseText $ Intermediate.dockerfile utility of
-        Right [Syntax.InstructionPos (Syntax.Run (Syntax.ArgumentsText argument)) _ _] ->
-          patchRunArgument argument
-        _ -> error "One simple `RUN` instruction expected."
+    command = T.drop (T.length $ T.pack "RUN ") dockerfile
+    dockerfile = Intermediate.dockerfile utility
 
-conditionalRunInstruction :: T.Text -> T.Text -> [T.Text]
+conditionalRunInstruction :: T.Text -> [T.Text] -> [T.Text]
 conditionalRunInstruction condition command =
   concat
     [ [T.concat [T.pack "RUN if ", condition, T.pack "; then \\"]]
-    , indentLines . indentLines . T.lines $ T.concat [command, T.pack " \\"]
+    , indentLines . continueLast $ indentFirst command
     , [indentLine $ T.pack "; fi"]
     ]
+  where
+    continueLast [] = []
+    continueLast [line] = [T.concat [line, T.pack " \\"]]
+    continueLast (line:rest) = line : continueLast rest
+    indentFirst [] = []
+    indentFirst (line:rest) = indentLine line : rest
 
 indentLines :: [T.Text] -> [T.Text]
 indentLines = fmap indentLine
 
 indentLine :: T.Text -> T.Text
 indentLine = T.append $ T.pack "  "
-
-patchRunArgument :: T.Text -> T.Text
-patchRunArgument = reviveSimpleLineBreak . reviveBlankLine
-  where
-    reviveSimpleLineBreak = T.replace (T.pack "   ") $ T.pack " \\\n"
-    reviveBlankLine = T.replace (T.pack "     && ") $ T.pack " \\\n\\\n&& "
 
 workdirInstruction :: [T.Text]
 workdirInstruction = [T.pack "WORKDIR /workdir"]
