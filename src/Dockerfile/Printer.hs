@@ -93,11 +93,10 @@ orderOptionSet = List.sortBy compareOptions . Set.toList
 
 runInstruction :: T.Text -> Intermediate.Utility -> [T.Text]
 runInstruction option utility =
-  conditionalRunInstruction condition $ T.lines command
+  List.concatMap (conditionalRunInstruction condition . T.lines) commands
   where
     condition = T.concat [T.pack "[[ -n \"${", option, T.pack "}\" ]]"]
-    command = T.drop (T.length $ T.pack "RUN ") dockerfile
-    dockerfile = Intermediate.dockerfile utility
+    commands = Intermediate.commands utility
 
 conditionalRunInstruction :: T.Text -> [T.Text] -> [T.Text]
 conditionalRunInstruction condition command =
