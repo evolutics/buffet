@@ -49,14 +49,11 @@ argInstructions box =
       T.concat [T.pack "ARG ", key, T.pack "=", value]
     (privateOptions, publicOptions) =
       Map.partitionWithKey (\key _ -> isPrivateOption key) options
-    options = Map.unions [mainOptions, baseImageOptions, extraOptions]
+    options = Map.unions [mainOptions, baseImageOptions]
     mainOptions = fmap (const $ T.pack "''") optionToUtility
     optionToUtility = Intermediate.optionToUtility box
     baseImageOptions =
       Map.singleton (T.pack "_alpine_version") $ T.pack "'3.9.4'"
-    extraOptions =
-      Map.unions $ fmap Intermediate.extraOptionsWithDefaults utilities
-    utilities = Map.elems optionToUtility
 
 intercalateBlankLines :: [[T.Text]] -> [T.Text]
 intercalateBlankLines = List.intercalate [T.pack ""]

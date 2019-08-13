@@ -2,7 +2,6 @@ module UtilityEntries.Hlint
   ( get
   ) where
 
-import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
 import qualified Data.Text as T
 import Prelude (($), (.))
@@ -32,7 +31,6 @@ get =
                 , T.pack "  \\"
                 , T.pack "  && apk del cabal ghc"
                 ]
-          , Utilities.extraOptionsWithDefaults = Map.empty
           , Utilities.documentation =
               Utilities.Documentation
                 { Utilities.displayName = T.pack "HLint"

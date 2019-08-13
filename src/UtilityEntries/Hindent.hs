@@ -2,7 +2,6 @@ module UtilityEntries.Hindent
   ( get
   ) where
 
-import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
 import qualified Data.Text as T
 import Prelude (($), (.))
@@ -29,7 +28,6 @@ get =
                 , T.pack
                     "COPY --from=hindent /root/.local/bin/hindent* /usr/local/bin/"
                 ]
-          , Utilities.extraOptionsWithDefaults = Map.empty
           , Utilities.documentation =
               Utilities.Documentation
                 { Utilities.displayName = T.pack "hindent"

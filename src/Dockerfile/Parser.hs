@@ -30,22 +30,17 @@ get box =
     optionToUtility = Utilities.optionToUtility box
 
 parseUtility :: Utilities.Utility -> Intermediate.Utility
-parseUtility utility =
+parseUtility utility = parseUtilityFromDockerfile dockerfile
+  where
+    dockerfile = patchDockerfile $ parseDockerfile rawDockerfile
+    rawDockerfile = Utilities.dockerfile utility
+
+parseUtilityFromDockerfile :: Docker.Dockerfile -> Intermediate.Utility
+parseUtilityFromDockerfile dockerfile =
   Intermediate.Utility
     { Intermediate.localBuildStages = localStages
     , Intermediate.globalBuildStage = globalStage
-    , Intermediate.extraOptionsWithDefaults = extraOptionsWithDefaults
     }
-  where
-    (localStages, globalStage) = localStagesAndGlobalStage dockerfile
-    dockerfile = patchDockerfile $ parseDockerfile rawDockerfile
-    rawDockerfile = Utilities.dockerfile utility
-    extraOptionsWithDefaults = Utilities.extraOptionsWithDefaults utility
-
-localStagesAndGlobalStage ::
-     Docker.Dockerfile
-  -> ([Intermediate.DockerfilePart], Intermediate.DockerfilePart)
-localStagesAndGlobalStage dockerfile = (localStages, globalStage)
   where
     (localStages, globalStageInstructions) =
       List.splitAt (pred $ List.length stages) stages

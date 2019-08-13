@@ -20,7 +20,6 @@ newtype Box =
 data Utility =
   Utility
     { dockerfile :: T.Text
-    , extraOptionsWithDefaults :: Map.Map T.Text T.Text
     , documentation :: Documentation
     }
   deriving (Eq, Ord, Show)

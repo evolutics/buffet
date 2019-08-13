@@ -19,7 +19,6 @@ data Utility =
   Utility
     { localBuildStages :: [DockerfilePart]
     , globalBuildStage :: DockerfilePart
-    , extraOptionsWithDefaults :: Map.Map T.Text T.Text
     }
   deriving (Eq, Ord, Show)
 

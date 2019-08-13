@@ -48,7 +48,6 @@ example =
                   , T.pack "ARG example"
                   , T.pack "RUN ls"
                   ]
-            , Utilities.extraOptionsWithDefaults = Map.empty
             , Utilities.documentation =
                 Utilities.Documentation
                   { Utilities.displayName = T.pack "Example"
