@@ -5,6 +5,7 @@ module Dockerfile.Intermediate
 
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
+import qualified Language.Docker as Docker
 import Prelude (Eq, Ord, Show)
 
 newtype Box =
@@ -15,7 +16,7 @@ newtype Box =
 
 data Utility =
   Utility
-    { commands :: [T.Text]
+    { runs :: [Docker.Instruction T.Text]
     , extraOptionsWithDefaults :: Map.Map T.Text T.Text
     }
   deriving (Eq, Ord, Show)

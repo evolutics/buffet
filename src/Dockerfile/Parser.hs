@@ -2,12 +2,11 @@ module Dockerfile.Parser
   ( get
   ) where
 
-import qualified Data.Maybe as Maybe
 import qualified Data.Text as T
 import qualified Dockerfile.Intermediate as Intermediate
 import qualified Language.Docker as Docker
 import qualified Language.Docker.Syntax as Syntax
-import Prelude (Maybe(Just, Nothing), ($), (.), either, error, fmap, id)
+import Prelude (Bool(False, True), ($), (.), either, error, filter, fmap, id)
 import qualified Text.Show as Show
 import qualified Utilities
 
@@ -21,19 +20,18 @@ get box =
 parseUtility :: Utilities.Utility -> Intermediate.Utility
 parseUtility utility =
   Intermediate.Utility
-    { Intermediate.commands = commands
+    { Intermediate.runs = fmap Docker.instruction runs
     , Intermediate.extraOptionsWithDefaults = extraOptionsWithDefaults
     }
   where
-    commands = Maybe.mapMaybe command dockerfile
+    runs = filter isRun dockerfile
     dockerfile = patchDockerfile $ parseDockerfile rawDockerfile
     rawDockerfile = Utilities.dockerfile utility
     extraOptionsWithDefaults = Utilities.extraOptionsWithDefaults utility
 
-command :: Docker.InstructionPos a -> Maybe a
-command (Docker.InstructionPos (Docker.Run (Syntax.ArgumentsText argument)) _ _) =
-  Just argument
-command _ = Nothing
+isRun :: Docker.InstructionPos a -> Bool
+isRun (Docker.InstructionPos (Docker.Run (Syntax.ArgumentsText _)) _ _) = True
+isRun _ = False
 
 patchDockerfile :: Docker.Dockerfile -> Docker.Dockerfile
 patchDockerfile = fmap $ fmap reviveLineBreaks

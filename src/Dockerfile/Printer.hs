@@ -7,7 +7,10 @@ import qualified Data.List as List
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
 import qualified Data.Text as T
+import qualified Data.Text.Lazy as LazyT
 import qualified Dockerfile.Intermediate as Intermediate
+import qualified Language.Docker as Docker
+import qualified Language.Docker.Syntax as Syntax
 import Prelude
   ( Bool
   , Ordering
@@ -92,25 +95,40 @@ orderOptionSet :: Set.Set T.Text -> [T.Text]
 orderOptionSet = List.sortBy compareOptions . Set.toList
 
 runInstruction :: T.Text -> Intermediate.Utility -> [T.Text]
-runInstruction option utility =
-  List.concatMap (conditionalRunInstruction condition . T.lines) commands
+runInstruction option utility = T.lines $ printInstructions instructions
   where
+    instructions = conditionRunInstructions condition runs
     condition = T.concat [T.pack "[[ -n \"${", option, T.pack "}\" ]]"]
-    commands = Intermediate.commands utility
+    runs = Intermediate.runs utility
 
-conditionalRunInstruction :: T.Text -> [T.Text] -> [T.Text]
-conditionalRunInstruction condition command =
-  concat
-    [ [T.concat [T.pack "RUN if ", condition, T.pack "; then \\"]]
-    , indentLines . continueLast $ indentFirst command
-    , [indentLine $ T.pack "; fi"]
-    ]
+printInstructions :: [Docker.Instruction T.Text] -> T.Text
+printInstructions = T.unlines . fmap printInstruction
   where
-    continueLast [] = []
-    continueLast [line] = [T.concat [line, T.pack " \\"]]
-    continueLast (line:rest) = line : continueLast rest
-    indentFirst [] = []
-    indentFirst (line:rest) = indentLine line : rest
+    printInstruction (Docker.Run (Syntax.ArgumentsText command)) =
+      T.concat [T.pack "RUN ", command]
+    printInstruction instruction =
+      LazyT.toStrict $ Docker.prettyPrint [Docker.instructionPos instruction]
+
+conditionRunInstructions ::
+     T.Text -> [Docker.Instruction T.Text] -> [Docker.Instruction T.Text]
+conditionRunInstructions condition = fmap conditionInstruction
+  where
+    conditionInstruction (Docker.Run (Syntax.ArgumentsText command)) =
+      conditionalRunInstruction condition command
+    conditionInstruction instruction = instruction
+
+conditionalRunInstruction :: T.Text -> T.Text -> Docker.Instruction T.Text
+conditionalRunInstruction condition thenPart =
+  Docker.Run $ Syntax.ArgumentsText command
+  where
+    command =
+      T.intercalate newline $
+      concat [[conditionLine], indentLines thenLines, [indentLine endLine]]
+    newline = T.pack "\n"
+    conditionLine = T.concat [T.pack "if ", condition, T.pack "; then \\"]
+    thenLines = T.lines embeddedThen
+    embeddedThen = T.concat [indentLine thenPart, T.pack " \\"]
+    endLine = T.pack "; fi"
 
 indentLines :: [T.Text] -> [T.Text]
 indentLines = fmap indentLine
