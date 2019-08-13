@@ -2,10 +2,10 @@ module Dockerfile.Printer
   ( get
   ) where
 
+import qualified Control.Applicative as Applicative
 import qualified Data.Function as Function
 import qualified Data.List as List
 import qualified Data.Map.Strict as Map
-import qualified Data.Set as Set
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as LazyT
 import qualified Dockerfile.Intermediate as Intermediate
@@ -13,6 +13,7 @@ import qualified Language.Docker as Docker
 import qualified Language.Docker.Syntax as Syntax
 import Prelude
   ( Bool
+  , Maybe(Just, Nothing)
   , Ordering
   , ($)
   , (.)
@@ -27,17 +28,16 @@ import Prelude
 
 get :: Intermediate.Box -> T.Text
 get box =
-  T.unlines $
-  intercalateBlankLines
-    [ argInstructions box
-    , utilityBuildStages box
-    , [T.pack "FROM " <> baseImage]
-    , workdirInstruction
-    , copyInstructions box
+  intercalateNewline
+    [ T.unlines $ argInstructions box
+    , printDockerfileParts $
+      utilitiesLocalBuildStages box <> globalBuildStage box
     ]
 
-intercalateBlankLines :: [[T.Text]] -> [T.Text]
-intercalateBlankLines = List.intercalate [T.pack ""]
+intercalateNewline :: [T.Text] -> T.Text
+intercalateNewline = T.intercalate newline
+  where
+    newline = T.pack "\n"
 
 argInstructions :: Intermediate.Box -> [T.Text]
 argInstructions box =
@@ -58,6 +58,9 @@ argInstructions box =
       Map.unions $ fmap Intermediate.extraOptionsWithDefaults utilities
     utilities = Map.elems optionToUtility
 
+intercalateBlankLines :: [[T.Text]] -> [T.Text]
+intercalateBlankLines = List.intercalate [T.pack ""]
+
 orderOptionMap :: Map.Map T.Text a -> [(T.Text, a)]
 orderOptionMap = List.sortBy (Function.on compareOptions fst) . Map.toList
 
@@ -69,62 +72,54 @@ compareOptions = Function.on compare key
 isPrivateOption :: T.Text -> Bool
 isPrivateOption = T.isPrefixOf $ T.pack "_"
 
-utilityBuildStages :: Intermediate.Box -> [T.Text]
-utilityBuildStages box =
-  intercalateBlankLines . fmap (uncurry utilityBuildStage) $
-  orderOptionMap optionToUtility
-  where
-    optionToUtility = Intermediate.optionToUtility box
+printDockerfileParts :: [Intermediate.DockerfilePart] -> T.Text
+printDockerfileParts = intercalateNewline . fmap printInstructions
 
-utilityBuildStage :: T.Text -> Intermediate.Utility -> [T.Text]
-utilityBuildStage option utility =
-  concat
-    [ [T.concat [T.pack "FROM ", baseImage, T.pack " AS ", option]]
-    , fmap (T.pack "ARG " <>) orderedOptions
-    , runInstruction option utility
-    ]
-  where
-    orderedOptions = orderOptionSet options
-    options = Set.insert option extraOptions
-    extraOptions = Map.keysSet $ Intermediate.extraOptionsWithDefaults utility
-
-baseImage :: T.Text
-baseImage = T.pack "alpine:\"${_alpine_version}\""
-
-orderOptionSet :: Set.Set T.Text -> [T.Text]
-orderOptionSet = List.sortBy compareOptions . Set.toList
-
-runInstruction :: T.Text -> Intermediate.Utility -> [T.Text]
-runInstruction option utility = T.lines $ printInstructions instructions
-  where
-    instructions = conditionRunInstructions condition runs
-    condition = T.concat [T.pack "[[ -n \"${", option, T.pack "}\" ]]"]
-    runs = Intermediate.runs utility
-
-printInstructions :: [Docker.Instruction T.Text] -> T.Text
-printInstructions = T.unlines . fmap printInstruction
+printInstructions :: Intermediate.DockerfilePart -> T.Text
+printInstructions = T.concat . fmap printInstruction
   where
     printInstruction (Docker.Run (Syntax.ArgumentsText command)) =
-      T.concat [T.pack "RUN ", command]
+      T.unlines [T.concat [T.pack "RUN ", command]]
     printInstruction instruction =
       LazyT.toStrict $ Docker.prettyPrint [Docker.instructionPos instruction]
 
+utilitiesLocalBuildStages :: Intermediate.Box -> [Intermediate.DockerfilePart]
+utilitiesLocalBuildStages = concat . mapOrderedEntries utilityLocalBuildStages
+
+mapOrderedEntries ::
+     (T.Text -> Intermediate.Utility -> a) -> Intermediate.Box -> [a]
+mapOrderedEntries function box =
+  uncurry function Applicative.<$> orderOptionMap optionToUtility
+  where
+    optionToUtility = Intermediate.optionToUtility box
+
+utilityLocalBuildStages ::
+     T.Text -> Intermediate.Utility -> [Intermediate.DockerfilePart]
+utilityLocalBuildStages option utility =
+  fmap (conditionRunInstructions option) localBuildStages
+  where
+    localBuildStages = Intermediate.localBuildStages utility
+
 conditionRunInstructions ::
-     T.Text -> [Docker.Instruction T.Text] -> [Docker.Instruction T.Text]
-conditionRunInstructions condition = fmap conditionInstruction
+     T.Text -> Intermediate.DockerfilePart -> Intermediate.DockerfilePart
+conditionRunInstructions option = fmap conditionInstruction
   where
     conditionInstruction (Docker.Run (Syntax.ArgumentsText command)) =
-      conditionalRunInstruction condition command
+      optionConditionalRunInstruction option command
     conditionInstruction instruction = instruction
+
+optionConditionalRunInstruction :: T.Text -> T.Text -> Docker.Instruction T.Text
+optionConditionalRunInstruction option = conditionalRunInstruction condition
+  where
+    condition = T.concat [T.pack "[[ -n \"${", option, T.pack "}\" ]]"]
 
 conditionalRunInstruction :: T.Text -> T.Text -> Docker.Instruction T.Text
 conditionalRunInstruction condition thenPart =
   Docker.Run $ Syntax.ArgumentsText command
   where
     command =
-      T.intercalate newline $
+      intercalateNewline $
       concat [[conditionLine], indentLines thenLines, [indentLine endLine]]
-    newline = T.pack "\n"
     conditionLine = T.concat [T.pack "if ", condition, T.pack "; then \\"]
     thenLines = T.lines embeddedThen
     embeddedThen = T.concat [indentLine thenPart, T.pack " \\"]
@@ -136,12 +131,36 @@ indentLines = fmap indentLine
 indentLine :: T.Text -> T.Text
 indentLine = T.append $ T.pack "  "
 
-workdirInstruction :: [T.Text]
-workdirInstruction = [T.pack "WORKDIR /workdir"]
+globalBuildStage :: Intermediate.Box -> [Intermediate.DockerfilePart]
+globalBuildStage box =
+  concat
+    [ [[globalFromInstruction]]
+    , globalUtilitiesInstructions box
+    , [[globalWorkdirInstruction]]
+    ]
 
-copyInstructions :: Intermediate.Box -> [T.Text]
-copyInstructions box = fmap copyInstruction options
+globalFromInstruction :: Docker.Instruction T.Text
+globalFromInstruction =
+  Docker.From
+    Docker.BaseImage
+      { Docker.image =
+          Docker.Image
+            {Docker.registryName = Nothing, Docker.imageName = T.pack "alpine"}
+      , Docker.tag = Just . Docker.Tag $ T.pack "\"${_alpine_version}\""
+      , Docker.digest = Nothing
+      , Docker.alias = Nothing
+      , Docker.platform = Nothing
+      }
+
+globalUtilitiesInstructions :: Intermediate.Box -> [Intermediate.DockerfilePart]
+globalUtilitiesInstructions = mapOrderedEntries globalUtilityInstructions
+
+globalUtilityInstructions ::
+     T.Text -> Intermediate.Utility -> Intermediate.DockerfilePart
+globalUtilityInstructions option utility =
+  conditionRunInstructions option utilityGlobalBuildStage
   where
-    copyInstruction option =
-      T.concat [T.pack "COPY --from=", option, T.pack " / /"]
-    options = orderOptionSet . Map.keysSet $ Intermediate.optionToUtility box
+    utilityGlobalBuildStage = Intermediate.globalBuildStage utility
+
+globalWorkdirInstruction :: Docker.Instruction T.Text
+globalWorkdirInstruction = Docker.Workdir $ T.pack "/workdir"

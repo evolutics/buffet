@@ -17,7 +17,9 @@ get =
         Utilities.Utility
           { Utilities.dockerfile =
               T.unlines
-                [ T.pack
+                [ T.pack "FROM alpine"
+                , T.pack "ARG hunspell"
+                , T.pack
                     "RUN apk add --no-cache \"hunspell==${hunspell}\" hunspell-en"
                 ]
           , Utilities.extraOptionsWithDefaults = Map.empty

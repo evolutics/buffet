@@ -17,7 +17,9 @@ get =
         Utilities.Utility
           { Utilities.dockerfile =
               T.unlines
-                [ T.pack
+                [ T.pack "FROM alpine"
+                , T.pack "ARG hlint"
+                , T.pack
                     "RUN apk add --no-cache cabal ghc gmp libffi musl-dev ncurses-dev wget \\"
                 , T.pack "  && cabal update \\"
                 , T.pack "  \\"

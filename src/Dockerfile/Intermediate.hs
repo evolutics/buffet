@@ -1,5 +1,6 @@
 module Dockerfile.Intermediate
   ( Box(..)
+  , DockerfilePart
   , Utility(..)
   ) where
 
@@ -16,7 +17,10 @@ newtype Box =
 
 data Utility =
   Utility
-    { runs :: [Docker.Instruction T.Text]
+    { localBuildStages :: [DockerfilePart]
+    , globalBuildStage :: DockerfilePart
     , extraOptionsWithDefaults :: Map.Map T.Text T.Text
     }
   deriving (Eq, Ord, Show)
+
+type DockerfilePart = [Docker.Instruction T.Text]

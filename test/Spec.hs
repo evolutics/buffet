@@ -38,13 +38,17 @@ example =
         Map.singleton
           (T.pack "example")
           Utilities.Utility
-            { Utilities.dockerfile = T.pack "RUN ls"
-            , Utilities.extraOptionsWithDefaults =
-                Map.fromList
-                  [ (T.pack "example_foo", T.pack "'a'")
-                  , (T.pack "_bar", T.pack "'b'")
-                  , (T.pack "_baz", T.pack "'c'")
+            { Utilities.dockerfile =
+                T.unlines
+                  [ T.pack "FROM alpine AS example"
+                  , T.pack "ARG example"
+                  , T.pack "RUN echo \"${example}\""
+                  , T.pack ""
+                  , T.pack "FROM alpine"
+                  , T.pack "ARG example"
+                  , T.pack "RUN ls"
                   ]
+            , Utilities.extraOptionsWithDefaults = Map.empty
             , Utilities.documentation =
                 Utilities.Documentation
                   { Utilities.displayName = T.pack "Example"

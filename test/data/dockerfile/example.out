@@ -1,21 +1,18 @@
 ARG example=''
-ARG example_foo='a'
 
 ARG _alpine_version='3.9.4'
-ARG _bar='b'
-ARG _baz='c'
 
-FROM alpine:"${_alpine_version}" AS example
+FROM alpine AS example
 ARG example
-ARG example_foo
-ARG _bar
-ARG _baz
 RUN if [[ -n "${example}" ]]; then \
-    ls \
+    echo "${example}" \
   ; fi
 
 FROM alpine:"${_alpine_version}"
 
-WORKDIR /workdir
+ARG example
+RUN if [[ -n "${example}" ]]; then \
+    ls \
+  ; fi
 
-COPY --from=example / /
+WORKDIR /workdir

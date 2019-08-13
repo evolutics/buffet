@@ -16,7 +16,11 @@ get =
     , Utilities.utility =
         Utilities.Utility
           { Utilities.dockerfile =
-              T.unlines [T.pack "RUN apk add --no-cache \"git==${git}\""]
+              T.unlines
+                [ T.pack "FROM alpine"
+                , T.pack "ARG git"
+                , T.pack "RUN apk add --no-cache \"git==${git}\""
+                ]
           , Utilities.extraOptionsWithDefaults = Map.empty
           , Utilities.documentation =
               Utilities.Documentation
