@@ -4,22 +4,10 @@ module Dockerfile.Parser
 
 import qualified Data.List as List
 import qualified Data.List.Split as Split
-import qualified Data.Text as T
 import qualified Dockerfile.Intermediate as Intermediate
+import qualified Dockerfile.Tools as Tools
 import qualified Language.Docker as Docker
-import Prelude
-  ( Bool(False, True)
-  , ($)
-  , (.)
-  , either
-  , error
-  , filter
-  , fmap
-  , id
-  , not
-  , pred
-  )
-import qualified Text.Show as Show
+import Prelude (($), (.), filter, fmap, not, pred)
 import qualified Utilities
 
 get :: Utilities.Box -> Intermediate.Box
@@ -32,7 +20,7 @@ get box =
 parseUtility :: Utilities.Utility -> Intermediate.Utility
 parseUtility utility = parseUtilityFromDockerfile dockerfile
   where
-    dockerfile = patchDockerfile $ parseDockerfile rawDockerfile
+    dockerfile = Tools.patchDockerfile $ Tools.parseDockerfile rawDockerfile
     rawDockerfile = Utilities.dockerfile utility
 
 parseUtilityFromDockerfile :: Docker.Dockerfile -> Intermediate.Utility
@@ -46,20 +34,8 @@ parseUtilityFromDockerfile dockerfile =
       List.splitAt (pred $ List.length stages) stages
     stages = Split.split splitter instructions
     splitter :: Split.Splitter (Docker.Instruction a)
-    splitter = Split.dropInitBlank . Split.keepDelimsL $ Split.whenElt isFrom
+    splitter =
+      Split.dropInitBlank . Split.keepDelimsL $ Split.whenElt Tools.isFrom
     instructions = fmap Docker.instruction dockerfile
-    globalStage = filter (not . isFrom) $ List.concat globalStageInstructions
-
-isFrom :: Docker.Instruction a -> Bool
-isFrom (Docker.From _) = True
-isFrom _ = False
-
-patchDockerfile :: Docker.Dockerfile -> Docker.Dockerfile
-patchDockerfile = fmap $ fmap reviveLineBreaks
-  where
-    reviveLineBreaks = reviveSimpleLineBreak . reviveBlankLine
-    reviveSimpleLineBreak = T.replace (T.pack "   ") $ T.pack " \\\n  "
-    reviveBlankLine = T.replace (T.pack "     && ") $ T.pack " \\\n  \\\n  && "
-
-parseDockerfile :: T.Text -> Docker.Dockerfile
-parseDockerfile = either (error . Show.show) id . Docker.parseText
+    globalStage =
+      filter (not . Tools.isFrom) $ List.concat globalStageInstructions

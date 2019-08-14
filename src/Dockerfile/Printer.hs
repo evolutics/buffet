@@ -7,8 +7,8 @@ import qualified Data.Function as Function
 import qualified Data.List as List
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
-import qualified Data.Text.Lazy as LazyT
 import qualified Dockerfile.Intermediate as Intermediate
+import qualified Dockerfile.Tools as Tools
 import qualified Language.Docker as Docker
 import qualified Language.Docker.Syntax as Syntax
 import Prelude
@@ -28,20 +28,15 @@ import Prelude
 
 get :: Intermediate.Box -> T.Text
 get box =
-  intercalateNewline
+  Tools.intercalateNewline
     [ T.unlines $ argInstructions box
-    , printDockerfileParts $
+    , Tools.printDockerfileParts $
       utilitiesLocalBuildStages box <> globalBuildStage box
     ]
 
-intercalateNewline :: [T.Text] -> T.Text
-intercalateNewline = T.intercalate newline
-  where
-    newline = T.pack "\n"
-
 argInstructions :: Intermediate.Box -> [T.Text]
 argInstructions box =
-  intercalateBlankLines $
+  Tools.intercalateBlankLines $
   fmap orderedArgInstructions [publicOptions, privateOptions]
   where
     orderedArgInstructions = fmap argInstruction . orderOptionMap
@@ -55,9 +50,6 @@ argInstructions box =
     baseImageOptions =
       Map.singleton (T.pack "_alpine_version") $ T.pack "'3.9.4'"
 
-intercalateBlankLines :: [[T.Text]] -> [T.Text]
-intercalateBlankLines = List.intercalate [T.pack ""]
-
 orderOptionMap :: Map.Map T.Text a -> [(T.Text, a)]
 orderOptionMap = List.sortBy (Function.on compareOptions fst) . Map.toList
 
@@ -68,17 +60,6 @@ compareOptions = Function.on compare key
 
 isPrivateOption :: T.Text -> Bool
 isPrivateOption = T.isPrefixOf $ T.pack "_"
-
-printDockerfileParts :: [Intermediate.DockerfilePart] -> T.Text
-printDockerfileParts = intercalateNewline . fmap printInstructions
-
-printInstructions :: Intermediate.DockerfilePart -> T.Text
-printInstructions = T.concat . fmap printInstruction
-  where
-    printInstruction (Docker.Run (Syntax.ArgumentsText command)) =
-      T.unlines [T.concat [T.pack "RUN ", command]]
-    printInstruction instruction =
-      LazyT.toStrict $ Docker.prettyPrint [Docker.instructionPos instruction]
 
 utilitiesLocalBuildStages :: Intermediate.Box -> [Intermediate.DockerfilePart]
 utilitiesLocalBuildStages = concat . mapOrderedEntries utilityLocalBuildStages
@@ -106,27 +87,10 @@ conditionRunInstructions option = fmap conditionInstruction
     conditionInstruction instruction = instruction
 
 optionConditionalRunInstruction :: T.Text -> T.Text -> Docker.Instruction T.Text
-optionConditionalRunInstruction option = conditionalRunInstruction condition
+optionConditionalRunInstruction option =
+  Tools.conditionalRunInstruction condition
   where
     condition = T.concat [T.pack "[[ -n \"${", option, T.pack "}\" ]]"]
-
-conditionalRunInstruction :: T.Text -> T.Text -> Docker.Instruction T.Text
-conditionalRunInstruction condition thenPart =
-  Docker.Run $ Syntax.ArgumentsText command
-  where
-    command =
-      intercalateNewline $
-      concat [[conditionLine], indentLines thenLines, [indentLine endLine]]
-    conditionLine = T.concat [T.pack "if ", condition, T.pack "; then \\"]
-    thenLines = T.lines embeddedThen
-    embeddedThen = T.concat [indentLine thenPart, T.pack " \\"]
-    endLine = T.pack "; fi"
-
-indentLines :: [T.Text] -> [T.Text]
-indentLines = fmap indentLine
-
-indentLine :: T.Text -> T.Text
-indentLine = T.append $ T.pack "  "
 
 globalBuildStage :: Intermediate.Box -> [Intermediate.DockerfilePart]
 globalBuildStage box =
