@@ -17,7 +17,6 @@ import Prelude
   , Ordering
   , ($)
   , (.)
-  , (<>)
   , compare
   , concat
   , const
@@ -28,20 +27,17 @@ import Prelude
 
 get :: Intermediate.Box -> T.Text
 get box =
-  Tools.intercalateNewline
-    [ T.unlines $ argInstructions box
-    , Tools.printDockerfileParts $
-      utilitiesLocalBuildStages box <> globalBuildStage box
-    ]
+  Tools.printDockerfileParts $
+  concat
+    [argInstructions box, utilitiesLocalBuildStages box, globalBuildStage box]
 
-argInstructions :: Intermediate.Box -> [T.Text]
+argInstructions :: Intermediate.Box -> [Intermediate.DockerfilePart]
 argInstructions box =
-  Tools.intercalateBlankLines $
   fmap orderedArgInstructions [publicOptions, privateOptions]
   where
     orderedArgInstructions = fmap argInstruction . orderOptionMap
-    argInstruction (key, value) =
-      T.concat [T.pack "ARG ", key, T.pack "=", value]
+    argInstruction :: (T.Text, T.Text) -> Docker.Instruction T.Text
+    argInstruction (key, value) = Docker.Arg key $ Just value
     (privateOptions, publicOptions) =
       Map.partitionWithKey (\key _ -> isPrivateOption key) options
     options = Map.unions [mainOptions, baseImageOptions]

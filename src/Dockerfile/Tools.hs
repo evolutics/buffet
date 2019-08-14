@@ -1,14 +1,11 @@
 module Dockerfile.Tools
   ( conditionalRunInstruction
-  , intercalateBlankLines
-  , intercalateNewline
   , isFrom
   , parseDockerfile
   , patchDockerfile
   , printDockerfileParts
   ) where
 
-import qualified Data.List as List
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as LazyT
 import qualified Dockerfile.Intermediate as Intermediate
@@ -46,9 +43,6 @@ indentLine = T.append $ T.pack "  "
 
 indentLines :: [T.Text] -> [T.Text]
 indentLines = fmap indentLine
-
-intercalateBlankLines :: [[T.Text]] -> [T.Text]
-intercalateBlankLines = List.intercalate [T.pack ""]
 
 intercalateNewline :: [T.Text] -> T.Text
 intercalateNewline = T.intercalate newline
