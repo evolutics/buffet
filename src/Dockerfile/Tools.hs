@@ -1,5 +1,6 @@
 module Dockerfile.Tools
   ( conditionalRunInstruction
+  , isArg
   , isFrom
   , parseDockerfile
   , patchDockerfile
@@ -48,6 +49,10 @@ intercalateNewline :: [T.Text] -> T.Text
 intercalateNewline = T.intercalate newline
   where
     newline = T.pack "\n"
+
+isArg :: Docker.Instruction a -> Bool
+isArg (Docker.Arg _ _) = True
+isArg _ = False
 
 isFrom :: Docker.Instruction a -> Bool
 isFrom (Docker.From _) = True
