@@ -1,9 +1,11 @@
 ARG example=''
+ARG example_foo='a'
 
 ARG _alpine_version='3.9.4'
 
 FROM alpine AS example
 ARG example
+ARG example_bar='b'
 RUN if [[ -n "${example}" ]]; then \
     echo "${example}" \
   ; fi
@@ -11,6 +13,7 @@ RUN if [[ -n "${example}" ]]; then \
 FROM alpine:"${_alpine_version}"
 
 ARG example
+ARG example_baz='c'
 RUN if [[ -n "${example}" ]]; then \
     ls \
   ; fi

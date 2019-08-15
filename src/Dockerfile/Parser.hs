@@ -26,16 +26,20 @@ parseUtility utility = parseUtilityFromDockerfile dockerfile
 parseUtilityFromDockerfile :: Docker.Dockerfile -> Intermediate.Utility
 parseUtilityFromDockerfile dockerfile =
   Intermediate.Utility
-    { Intermediate.localBuildStages = localStages
+    { Intermediate.beforeFirstBuildStage = beforeFirstStage
+    , Intermediate.localBuildStages = localStages
     , Intermediate.globalBuildStage = globalStage
     }
   where
+    (beforeFirstStage, stages) =
+      case parts of
+        [] -> ([], [])
+        (first:rest) -> (first, rest)
+    parts = Split.split splitter instructions
+    splitter :: Split.Splitter (Docker.Instruction a)
+    splitter = Split.keepDelimsL $ Split.whenElt Tools.isFrom
+    instructions = fmap Docker.instruction dockerfile
     (localStages, globalStageInstructions) =
       List.splitAt (pred $ List.length stages) stages
-    stages = Split.split splitter instructions
-    splitter :: Split.Splitter (Docker.Instruction a)
-    splitter =
-      Split.dropInitBlank . Split.keepDelimsL $ Split.whenElt Tools.isFrom
-    instructions = fmap Docker.instruction dockerfile
     globalStage =
       filter (not . Tools.isFrom) $ List.concat globalStageInstructions

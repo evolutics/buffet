@@ -3,7 +3,6 @@ module Dockerfile.Printer
   ) where
 
 import qualified Control.Applicative as Applicative
-import qualified Data.Function as Function
 import qualified Data.List as List
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
@@ -12,14 +11,14 @@ import qualified Dockerfile.Tools as Tools
 import qualified Language.Docker as Docker
 import qualified Language.Docker.Syntax as Syntax
 import Prelude
-  ( Bool
+  ( Bool(False)
   , Maybe(Just, Nothing)
-  , Ordering
   , ($)
   , (.)
-  , compare
+  , (/=)
+  , (<>)
   , concat
-  , const
+  , filter
   , fmap
   , fst
   , uncurry
@@ -32,40 +31,44 @@ get box =
     [argInstructions box, utilitiesLocalBuildStages box, globalBuildStage box]
 
 argInstructions :: Intermediate.Box -> [Intermediate.DockerfilePart]
-argInstructions box =
-  fmap orderedArgInstructions [publicOptions, privateOptions]
+argInstructions box = [publicOptions, privateOptions]
   where
-    orderedArgInstructions = fmap argInstruction . orderOptionMap
-    argInstruction :: (T.Text, T.Text) -> Docker.Instruction T.Text
-    argInstruction (key, value) = Docker.Arg key $ Just value
     (privateOptions, publicOptions) =
-      Map.partitionWithKey (\key _ -> isPrivateOption key) options
-    options = Map.unions [mainOptions, baseImageOptions]
-    mainOptions = fmap (const $ T.pack "''") optionToUtility
-    optionToUtility = Intermediate.optionToUtility box
-    baseImageOptions =
-      Map.singleton (T.pack "_alpine_version") $ T.pack "'3.9.4'"
+      List.partition isPrivate $ flatArgInstructions box
+    isPrivate :: Syntax.Instruction a -> Bool
+    isPrivate (Docker.Arg key _) = T.isPrefixOf (T.pack "_") key
+    isPrivate _ = False
 
-orderOptionMap :: Map.Map T.Text a -> [(T.Text, a)]
-orderOptionMap = List.sortBy (Function.on compareOptions fst) . Map.toList
-
-compareOptions :: T.Text -> T.Text -> Ordering
-compareOptions = Function.on compare key
+flatArgInstructions :: Intermediate.Box -> Intermediate.DockerfilePart
+flatArgInstructions box = mainOptions <> baseImageOptions
   where
-    key option = (isPrivateOption option, option)
-
-isPrivateOption :: T.Text -> Bool
-isPrivateOption = T.isPrefixOf $ T.pack "_"
-
-utilitiesLocalBuildStages :: Intermediate.Box -> [Intermediate.DockerfilePart]
-utilitiesLocalBuildStages = concat . mapOrderedEntries utilityLocalBuildStages
+    mainOptions = concat $ mapOrderedEntries utilityArgInstructions box
+    baseImageOptions :: [Syntax.Instruction a]
+    baseImageOptions =
+      [Docker.Arg (T.pack "_alpine_version") . Just $ T.pack "'3.9.4'"]
 
 mapOrderedEntries ::
      (T.Text -> Intermediate.Utility -> a) -> Intermediate.Box -> [a]
 mapOrderedEntries function box =
   uncurry function Applicative.<$> orderOptionMap optionToUtility
   where
+    orderOptionMap :: Map.Map T.Text a -> [(T.Text, a)]
+    orderOptionMap = List.sortOn fst . Map.toList
     optionToUtility = Intermediate.optionToUtility box
+
+utilityArgInstructions ::
+     T.Text -> Intermediate.Utility -> Intermediate.DockerfilePart
+utilityArgInstructions option utility =
+  Docker.Arg option (Just $ T.pack "''") : extraOptions
+  where
+    extraOptions =
+      filter isExtraOption $ Intermediate.beforeFirstBuildStage utility
+    isExtraOption :: Syntax.Instruction a -> Bool
+    isExtraOption (Docker.Arg key _) = key /= option
+    isExtraOption _ = False
+
+utilitiesLocalBuildStages :: Intermediate.Box -> [Intermediate.DockerfilePart]
+utilitiesLocalBuildStages = concat . mapOrderedEntries utilityLocalBuildStages
 
 utilityLocalBuildStages ::
      T.Text -> Intermediate.Utility -> [Intermediate.DockerfilePart]

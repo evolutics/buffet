@@ -17,7 +17,8 @@ newtype Box =
 
 data Utility =
   Utility
-    { localBuildStages :: [DockerfilePart]
+    { beforeFirstBuildStage :: DockerfilePart
+    , localBuildStages :: [DockerfilePart]
     , globalBuildStage :: DockerfilePart
     }
   deriving (Eq, Ord, Show)

@@ -40,12 +40,16 @@ example =
           Utilities.Utility
             { Utilities.dockerfile =
                 T.unlines
-                  [ T.pack "FROM alpine AS example"
+                  [ T.pack "ARG example_foo='a'"
+                  , T.pack ""
+                  , T.pack "FROM alpine AS example"
                   , T.pack "ARG example"
+                  , T.pack "ARG example_bar='b'"
                   , T.pack "RUN echo \"${example}\""
                   , T.pack ""
                   , T.pack "FROM alpine"
                   , T.pack "ARG example"
+                  , T.pack "ARG example_baz='c'"
                   , T.pack "RUN ls"
                   ]
             , Utilities.documentation =
