@@ -2,9 +2,7 @@ module Dockerfile.Printer
   ( get
   ) where
 
-import qualified Control.Applicative as Applicative
 import qualified Data.List as List
-import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import qualified Dockerfile.Intermediate as Intermediate
 import qualified Dockerfile.Tools as Tools
@@ -20,7 +18,6 @@ import Prelude
   , concat
   , filter
   , fmap
-  , uncurry
   )
 
 get :: Intermediate.Box -> T.Text
@@ -41,17 +38,11 @@ argInstructions box = [publicOptions, privateOptions]
 flatArgInstructions :: Intermediate.Box -> Intermediate.DockerfilePart
 flatArgInstructions box = mainOptions <> baseImageOptions
   where
-    mainOptions = concat $ mapOrderedEntries utilityArgInstructions box
+    mainOptions =
+      concat $ Intermediate.mapOrderedEntries utilityArgInstructions box
     baseImageOptions :: [Syntax.Instruction a]
     baseImageOptions =
       [Docker.Arg (T.pack "_alpine_version") . Just $ T.pack "'3.9.4'"]
-
-mapOrderedEntries ::
-     (T.Text -> Intermediate.Utility -> a) -> Intermediate.Box -> [a]
-mapOrderedEntries function box =
-  uncurry function Applicative.<$> Map.toAscList optionToUtility
-  where
-    optionToUtility = Intermediate.optionToUtility box
 
 utilityArgInstructions ::
      T.Text -> Intermediate.Utility -> Intermediate.DockerfilePart
@@ -65,7 +56,8 @@ utilityArgInstructions option utility =
     isExtraOption _ = False
 
 utilitiesLocalBuildStages :: Intermediate.Box -> [Intermediate.DockerfilePart]
-utilitiesLocalBuildStages = concat . mapOrderedEntries utilityLocalBuildStages
+utilitiesLocalBuildStages =
+  concat . Intermediate.mapOrderedEntries utilityLocalBuildStages
 
 utilityLocalBuildStages ::
      T.Text -> Intermediate.Utility -> [Intermediate.DockerfilePart]
@@ -110,7 +102,8 @@ globalFromInstruction =
       }
 
 globalUtilitiesInstructions :: Intermediate.Box -> [Intermediate.DockerfilePart]
-globalUtilitiesInstructions = mapOrderedEntries globalUtilityInstructions
+globalUtilitiesInstructions =
+  Intermediate.mapOrderedEntries globalUtilityInstructions
 
 globalUtilityInstructions ::
      T.Text -> Intermediate.Utility -> Intermediate.DockerfilePart
