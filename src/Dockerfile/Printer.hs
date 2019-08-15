@@ -20,7 +20,6 @@ import Prelude
   , concat
   , filter
   , fmap
-  , fst
   , uncurry
   )
 
@@ -50,10 +49,8 @@ flatArgInstructions box = mainOptions <> baseImageOptions
 mapOrderedEntries ::
      (T.Text -> Intermediate.Utility -> a) -> Intermediate.Box -> [a]
 mapOrderedEntries function box =
-  uncurry function Applicative.<$> orderOptionMap optionToUtility
+  uncurry function Applicative.<$> Map.toAscList optionToUtility
   where
-    orderOptionMap :: Map.Map T.Text a -> [(T.Text, a)]
-    orderOptionMap = List.sortOn fst . Map.toList
     optionToUtility = Intermediate.optionToUtility box
 
 utilityArgInstructions ::
