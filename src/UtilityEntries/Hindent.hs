@@ -26,7 +26,7 @@ get =
                 , T.pack "ARG hindent"
                 , T.pack "RUN apk add --no-cache gmp-dev"
                 , T.pack
-                    "COPY --from=hindent /root/.local/bin/hindent* /usr/local/bin/"
+                    "COPY --from=hindent /root/.local/bin/hindent /usr/local/bin/"
                 ]
           , Utilities.documentation =
               Utilities.Documentation

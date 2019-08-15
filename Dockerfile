@@ -44,7 +44,7 @@ ARG hindent
 RUN if [[ -n "${hindent}" ]]; then \
     apk add --no-cache gmp-dev \
   ; fi
-COPY --from=hindent /root/.local/bin/hindent* /usr/local/bin/
+COPY --from=hindent /root/.local/bin/hindent* /var/empty /usr/local/bin/
 
 ARG hlint
 RUN if [[ -n "${hlint}" ]]; then \

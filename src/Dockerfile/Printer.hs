@@ -6,7 +6,7 @@ import qualified Data.List as List
 import qualified Data.Text as T
 import qualified Dockerfile.Intermediate as Intermediate
 import qualified Dockerfile.Tools as Tools
-import qualified Language.Docker as Docker
+import qualified Language.Docker as Docker hiding (sourcePaths)
 import qualified Language.Docker.Syntax as Syntax
 import Prelude
   ( Bool(False)
@@ -18,6 +18,7 @@ import Prelude
   , concat
   , filter
   , fmap
+  , pure
   )
 
 get :: Intermediate.Box -> T.Text
@@ -62,17 +63,30 @@ utilitiesLocalBuildStages =
 utilityLocalBuildStages ::
      T.Text -> Intermediate.Utility -> [Intermediate.DockerfilePart]
 utilityLocalBuildStages option utility =
-  fmap (conditionRunInstructions option) localBuildStages
+  fmap (conditionInstructions option) localBuildStages
   where
     localBuildStages = Intermediate.localBuildStages utility
 
-conditionRunInstructions ::
+conditionInstructions ::
      T.Text -> Intermediate.DockerfilePart -> Intermediate.DockerfilePart
-conditionRunInstructions option = fmap conditionInstruction
+conditionInstructions option = fmap conditionInstruction
   where
+    conditionInstruction (Docker.Copy arguments) =
+      conditionalCopyInstruction arguments
     conditionInstruction (Docker.Run (Syntax.ArgumentsText command)) =
       optionConditionalRunInstruction option command
     conditionInstruction instruction = instruction
+
+conditionalCopyInstruction :: Docker.CopyArgs -> Docker.Instruction T.Text
+conditionalCopyInstruction arguments =
+  Docker.Copy arguments {Docker.sourcePaths = conditionalSources}
+  where
+    conditionalSources = fmap makePattern originalSources <> pure emptyFolder
+    makePattern path =
+      Docker.SourcePath
+        {Docker.unSourcePath = T.snoc (Docker.unSourcePath path) '*'}
+    originalSources = Docker.sourcePaths arguments
+    emptyFolder = Docker.SourcePath {Docker.unSourcePath = T.pack "/var/empty"}
 
 optionConditionalRunInstruction :: T.Text -> T.Text -> Docker.Instruction T.Text
 optionConditionalRunInstruction option =
@@ -108,7 +122,7 @@ globalUtilitiesInstructions =
 globalUtilityInstructions ::
      T.Text -> Intermediate.Utility -> Intermediate.DockerfilePart
 globalUtilityInstructions option utility =
-  conditionRunInstructions option utilityGlobalBuildStage
+  conditionInstructions option utilityGlobalBuildStage
   where
     utilityGlobalBuildStage = Intermediate.globalBuildStage utility
 

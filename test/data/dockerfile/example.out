@@ -7,13 +7,14 @@ FROM alpine AS example
 ARG example
 ARG example_bar='b'
 RUN if [[ -n "${example}" ]]; then \
-    echo "${example}" \
+    touch /root/example \
   ; fi
 
 FROM alpine:"${_alpine_version}"
 
 ARG example
 ARG example_baz='c'
+COPY --from=example /root/example* /var/empty /usr/local/bin/
 RUN if [[ -n "${example}" ]]; then \
     ls \
   ; fi
