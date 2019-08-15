@@ -2,12 +2,11 @@ module Dockerfile.Parser
   ( get
   ) where
 
-import qualified Data.List as List
 import qualified Data.List.Split as Split
 import qualified Dockerfile.Intermediate as Intermediate
 import qualified Dockerfile.Tools as Tools
 import qualified Language.Docker as Docker
-import Prelude (($), (.), filter, fmap, not, pred)
+import Prelude (($), (.), concat, filter, fmap, length, not, pred, splitAt)
 import qualified Utilities
 
 get :: Utilities.Box -> Intermediate.Box
@@ -40,6 +39,5 @@ parseUtilityFromDockerfile dockerfile =
     splitter = Split.keepDelimsL $ Split.whenElt Tools.isFrom
     instructions = fmap Docker.instruction dockerfile
     (localStages, globalStageInstructions) =
-      List.splitAt (pred $ List.length stages) stages
-    globalStage =
-      filter (not . Tools.isFrom) $ List.concat globalStageInstructions
+      splitAt (pred $ length stages) stages
+    globalStage = filter (not . Tools.isFrom) $ concat globalStageInstructions
