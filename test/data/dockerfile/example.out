@@ -6,6 +6,7 @@ ARG _alpine_version='3.9.4'
 FROM alpine AS example
 ARG example
 ARG example_bar='b'
+LABEL org.opencontainers.image.title="Example"
 RUN if [[ -n "${example}" ]]; then \
     touch /root/example \
   ; fi

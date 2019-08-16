@@ -18,6 +18,7 @@ import Prelude
   , concat
   , filter
   , fmap
+  , not
   , pure
   )
 
@@ -122,7 +123,8 @@ globalUtilitiesInstructions =
 globalUtilityInstructions ::
      T.Text -> Intermediate.Utility -> Intermediate.DockerfilePart
 globalUtilityInstructions option utility =
-  conditionInstructions option utilityGlobalBuildStage
+  conditionInstructions option $
+  filter (not . Tools.isLabel) utilityGlobalBuildStage
   where
     utilityGlobalBuildStage = Intermediate.globalBuildStage utility
 
