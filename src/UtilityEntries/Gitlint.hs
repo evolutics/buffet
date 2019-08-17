@@ -2,10 +2,8 @@ module UtilityEntries.Gitlint
   ( get
   ) where
 
-import qualified Data.Set as Set
 import qualified Data.Text as T
-import Prelude (($), (.))
-import qualified Tags.Help as Help
+import Prelude ()
 import qualified Utilities
 
 get :: Utilities.Entry
@@ -22,14 +20,10 @@ get =
                 , T.pack "LABEL org.opencontainers.image.title=\"Gitlint\""
                 , T.pack
                     "LABEL org.opencontainers.image.url=\"http://jorisroovers.github.io/gitlint\""
+                , T.pack "LABEL info.evolutics.freezer.help=\"gitlint --help\""
                 , T.pack ""
                 , T.pack "RUN apk add --no-cache git python3 \\"
                 , T.pack "  && pip3 install \"gitlint==${gitlint}\""
                 ]
-          , Utilities.documentation =
-              Utilities.Documentation
-                { Utilities.tags =
-                    Set.singleton . Help.tag $ T.pack "gitlint --help"
-                }
           }
     }

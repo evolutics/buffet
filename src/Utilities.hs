@@ -1,13 +1,10 @@
 module Utilities
   ( Box(..)
-  , Documentation(..)
   , Entry(..)
-  , Tag(..)
   , Utility(..)
   ) where
 
 import qualified Data.Map.Strict as Map
-import qualified Data.Set as Set
 import qualified Data.Text as T
 import Prelude (Eq, Ord, Show)
 
@@ -17,23 +14,9 @@ newtype Box =
     }
   deriving (Eq, Ord, Show)
 
-data Utility =
+newtype Utility =
   Utility
     { dockerfile :: T.Text
-    , documentation :: Documentation
-    }
-  deriving (Eq, Ord, Show)
-
-newtype Documentation =
-  Documentation
-    { tags :: Set.Set Tag
-    }
-  deriving (Eq, Ord, Show)
-
-data Tag =
-  Tag
-    { key :: T.Text
-    , value :: T.Text
     }
   deriving (Eq, Ord, Show)
 

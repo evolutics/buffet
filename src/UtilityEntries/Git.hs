@@ -2,10 +2,8 @@ module UtilityEntries.Git
   ( get
   ) where
 
-import qualified Data.Set as Set
 import qualified Data.Text as T
-import Prelude (($), (.))
-import qualified Tags.Help as Help
+import Prelude ()
 import qualified Utilities
 
 get :: Utilities.Entry
@@ -22,13 +20,9 @@ get =
                 , T.pack "LABEL org.opencontainers.image.title=\"Git\""
                 , T.pack
                     "LABEL org.opencontainers.image.url=\"https://git-scm.com\""
+                , T.pack "LABEL info.evolutics.freezer.help=\"git --help\""
                 , T.pack ""
                 , T.pack "RUN apk add --no-cache \"git==${git}\""
                 ]
-          , Utilities.documentation =
-              Utilities.Documentation
-                { Utilities.tags =
-                    Set.singleton . Help.tag $ T.pack "git --help"
-                }
           }
     }

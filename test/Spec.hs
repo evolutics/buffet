@@ -1,12 +1,10 @@
 import qualified Data.Map.Strict as Map
-import qualified Data.Set as Set
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as LazyT
 import qualified Data.Text.Lazy.Encoding as Encoding
 import qualified Dockerfile
 import qualified Lib
-import Prelude (FilePath, IO, ($), (.), return)
-import qualified Tags.Help as Help
+import Prelude (FilePath, IO, ($), return)
 import qualified Test.Tasty as Tasty
 import qualified Test.Tasty.Golden as Golden
 import qualified Utilities
@@ -55,14 +53,11 @@ example =
                   , T.pack "LABEL org.opencontainers.image.title=\"Example\""
                   , T.pack
                       "LABEL org.opencontainers.image.url=\"https://example.com\""
+                  , T.pack
+                      "LABEL info.evolutics.freezer.help=\"example --help\""
                   , T.pack ""
                   , T.pack "COPY --from=example /root/example /usr/local/bin/"
                   , T.pack "RUN ls"
                   ]
-            , Utilities.documentation =
-                Utilities.Documentation
-                  { Utilities.tags =
-                      Set.singleton . Help.tag $ T.pack "example --help"
-                  }
             }
     }
