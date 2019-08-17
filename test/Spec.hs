@@ -61,8 +61,7 @@ example =
                   ]
             , Utilities.documentation =
                 Utilities.Documentation
-                  { Utilities.link = T.pack "https://example.com"
-                  , Utilities.tags =
+                  { Utilities.tags =
                       Set.singleton . Help.tag $ T.pack "example --help"
                   }
             }

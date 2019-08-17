@@ -20,6 +20,8 @@ get =
                 , T.pack "ARG hlint"
                 , T.pack ""
                 , T.pack "LABEL org.opencontainers.image.title=\"HLint\""
+                , T.pack
+                    "LABEL org.opencontainers.image.url=\"https://github.com/ndmitchell/hlint\""
                 , T.pack ""
                 , T.pack
                     "RUN apk add --no-cache cabal ghc gmp libffi musl-dev ncurses-dev wget \\"
@@ -36,8 +38,7 @@ get =
                 ]
           , Utilities.documentation =
               Utilities.Documentation
-                { Utilities.link = T.pack "https://github.com/ndmitchell/hlint"
-                , Utilities.tags =
+                { Utilities.tags =
                     Set.singleton . Help.tag $ T.pack "hlint --help"
                 }
           }

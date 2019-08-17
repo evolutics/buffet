@@ -20,13 +20,14 @@ get =
                 , T.pack "ARG git"
                 , T.pack ""
                 , T.pack "LABEL org.opencontainers.image.title=\"Git\""
+                , T.pack
+                    "LABEL org.opencontainers.image.url=\"https://git-scm.com\""
                 , T.pack ""
                 , T.pack "RUN apk add --no-cache \"git==${git}\""
                 ]
           , Utilities.documentation =
               Utilities.Documentation
-                { Utilities.link = T.pack "https://git-scm.com"
-                , Utilities.tags =
+                { Utilities.tags =
                     Set.singleton . Help.tag $ T.pack "git --help"
                 }
           }

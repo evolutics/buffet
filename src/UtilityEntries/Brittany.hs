@@ -20,6 +20,8 @@ get =
                 , T.pack "ARG brittany"
                 , T.pack ""
                 , T.pack "LABEL org.opencontainers.image.title=\"brittany\""
+                , T.pack
+                    "LABEL org.opencontainers.image.url=\"https://github.com/lspitzner/brittany\""
                 , T.pack ""
                 , T.pack
                     "RUN apk add --no-cache cabal ghc gmp libffi musl-dev ncurses-dev wget \\"
@@ -34,9 +36,7 @@ get =
                 ]
           , Utilities.documentation =
               Utilities.Documentation
-                { Utilities.link =
-                    T.pack "https://github.com/lspitzner/brittany"
-                , Utilities.tags =
+                { Utilities.tags =
                     Set.singleton . Help.tag $ T.pack "brittany --help"
                 }
           }

@@ -24,10 +24,9 @@ data Utility =
     }
   deriving (Eq, Ord, Show)
 
-data Documentation =
+newtype Documentation =
   Documentation
-    { link :: T.Text
-    , tags :: Set.Set Tag
+    { tags :: Set.Set Tag
     }
   deriving (Eq, Ord, Show)
 

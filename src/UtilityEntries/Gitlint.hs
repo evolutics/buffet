@@ -20,15 +20,15 @@ get =
                 , T.pack "ARG gitlint"
                 , T.pack ""
                 , T.pack "LABEL org.opencontainers.image.title=\"Gitlint\""
+                , T.pack
+                    "LABEL org.opencontainers.image.url=\"http://jorisroovers.github.io/gitlint\""
                 , T.pack ""
                 , T.pack "RUN apk add --no-cache git python3 \\"
                 , T.pack "  && pip3 install \"gitlint==${gitlint}\""
                 ]
           , Utilities.documentation =
               Utilities.Documentation
-                { Utilities.link =
-                    T.pack "http://jorisroovers.github.io/gitlint"
-                , Utilities.tags =
+                { Utilities.tags =
                     Set.singleton . Help.tag $ T.pack "gitlint --help"
                 }
           }

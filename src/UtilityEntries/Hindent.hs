@@ -26,6 +26,8 @@ get =
                 , T.pack "ARG hindent"
                 , T.pack ""
                 , T.pack "LABEL org.opencontainers.image.title=\"hindent\""
+                , T.pack
+                    "LABEL org.opencontainers.image.url=\"https://github.com/chrisdone/hindent\""
                 , T.pack ""
                 , T.pack "RUN apk add --no-cache gmp-dev"
                 , T.pack
@@ -33,8 +35,7 @@ get =
                 ]
           , Utilities.documentation =
               Utilities.Documentation
-                { Utilities.link = T.pack "https://github.com/chrisdone/hindent"
-                , Utilities.tags =
+                { Utilities.tags =
                     Set.singleton . Help.tag $ T.pack "hindent --help"
                 }
           }
