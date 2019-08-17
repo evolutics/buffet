@@ -51,15 +51,17 @@ example =
                   , T.pack "FROM alpine"
                   , T.pack "ARG example"
                   , T.pack "ARG example_baz='c'"
+                  , T.pack ""
+                  , T.pack "LABEL org.opencontainers.image.title=\"Example\""
                   , T.pack
                       "LABEL org.opencontainers.image.url=\"https://example.com\""
+                  , T.pack ""
                   , T.pack "COPY --from=example /root/example /usr/local/bin/"
                   , T.pack "RUN ls"
                   ]
             , Utilities.documentation =
                 Utilities.Documentation
-                  { Utilities.displayName = T.pack "Example"
-                  , Utilities.link = T.pack "https://example.com"
+                  { Utilities.link = T.pack "https://example.com"
                   , Utilities.tags =
                       Set.singleton . Help.tag $ T.pack "example --help"
                   }

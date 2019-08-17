@@ -24,14 +24,16 @@ get =
                 , T.pack ""
                 , T.pack "FROM alpine"
                 , T.pack "ARG hindent"
+                , T.pack ""
+                , T.pack "LABEL org.opencontainers.image.title=\"hindent\""
+                , T.pack ""
                 , T.pack "RUN apk add --no-cache gmp-dev"
                 , T.pack
                     "COPY --from=hindent /root/.local/bin/hindent /usr/local/bin/"
                 ]
           , Utilities.documentation =
               Utilities.Documentation
-                { Utilities.displayName = T.pack "hindent"
-                , Utilities.link = T.pack "https://github.com/chrisdone/hindent"
+                { Utilities.link = T.pack "https://github.com/chrisdone/hindent"
                 , Utilities.tags =
                     Set.singleton . Help.tag $ T.pack "hindent --help"
                 }

@@ -18,6 +18,9 @@ get =
               T.unlines
                 [ T.pack "FROM alpine"
                 , T.pack "ARG hlint"
+                , T.pack ""
+                , T.pack "LABEL org.opencontainers.image.title=\"HLint\""
+                , T.pack ""
                 , T.pack
                     "RUN apk add --no-cache cabal ghc gmp libffi musl-dev ncurses-dev wget \\"
                 , T.pack "  && cabal update \\"
@@ -33,8 +36,7 @@ get =
                 ]
           , Utilities.documentation =
               Utilities.Documentation
-                { Utilities.displayName = T.pack "HLint"
-                , Utilities.link = T.pack "https://github.com/ndmitchell/hlint"
+                { Utilities.link = T.pack "https://github.com/ndmitchell/hlint"
                 , Utilities.tags =
                     Set.singleton . Help.tag $ T.pack "hlint --help"
                 }

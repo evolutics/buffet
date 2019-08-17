@@ -18,13 +18,15 @@ get =
               T.unlines
                 [ T.pack "FROM alpine"
                 , T.pack "ARG hunspell"
+                , T.pack ""
+                , T.pack "LABEL org.opencontainers.image.title=\"Hunspell\""
+                , T.pack ""
                 , T.pack
                     "RUN apk add --no-cache \"hunspell==${hunspell}\" hunspell-en"
                 ]
           , Utilities.documentation =
               Utilities.Documentation
-                { Utilities.displayName = T.pack "Hunspell"
-                , Utilities.link = T.pack "https://hunspell.github.io"
+                { Utilities.link = T.pack "https://hunspell.github.io"
                 , Utilities.tags =
                     Set.singleton . Help.tag $ T.pack "hunspell --help"
                 }

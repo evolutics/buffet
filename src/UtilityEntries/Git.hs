@@ -18,12 +18,14 @@ get =
               T.unlines
                 [ T.pack "FROM alpine"
                 , T.pack "ARG git"
+                , T.pack ""
+                , T.pack "LABEL org.opencontainers.image.title=\"Git\""
+                , T.pack ""
                 , T.pack "RUN apk add --no-cache \"git==${git}\""
                 ]
           , Utilities.documentation =
               Utilities.Documentation
-                { Utilities.displayName = T.pack "Git"
-                , Utilities.link = T.pack "https://git-scm.com"
+                { Utilities.link = T.pack "https://git-scm.com"
                 , Utilities.tags =
                     Set.singleton . Help.tag $ T.pack "git --help"
                 }

@@ -26,8 +26,7 @@ data Utility =
 
 data Documentation =
   Documentation
-    { displayName :: T.Text
-    , link :: T.Text
+    { link :: T.Text
     , tags :: Set.Set Tag
     }
   deriving (Eq, Ord, Show)
