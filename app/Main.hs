@@ -4,7 +4,7 @@ module Main
 
 import qualified Data.Text.IO as T.IO
 import qualified Lib (dockerfile)
-import Prelude (IO)
+import Prelude (IO, (>>=))
 
 main :: IO ()
-main = T.IO.putStrLn Lib.dockerfile
+main = Lib.dockerfile >>= T.IO.putStrLn
