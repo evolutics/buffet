@@ -3,18 +3,23 @@ module Lib
   , generateDockerfile
   ) where
 
+import qualified Control.Monad as Monad
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import qualified Data.Text.IO as T.IO
 import qualified Dockerfile
-import Prelude (FilePath, IO, ($), fmap, mapM, return)
+import Prelude (FilePath, IO, ($), (.), fmap, mapM, return)
 import qualified System.Directory as Directory
 import qualified System.FilePath
 import qualified Utilities
 
 dockerfile :: FilePath -> IO T.Text
 dockerfile folder = do
-  subfolders <- Directory.listDirectory folder
+  folderEntries <- Directory.listDirectory folder
+  subfolders <-
+    Monad.filterM
+      (Directory.doesDirectoryExist . System.FilePath.combine folder)
+      folderEntries
   let optionToUtility =
         Map.fromList $
         fmap
