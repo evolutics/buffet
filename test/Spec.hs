@@ -1,6 +1,5 @@
 import qualified Control.Applicative as Applicative
 import qualified Data.List as List
-import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as LazyT
 import qualified Data.Text.Lazy.Encoding as Encoding
@@ -26,18 +25,14 @@ tests = do
 
 generationTests :: FilePath -> IO [Tasty.TestTree]
 generationTests folder = do
-  files <- Directory.listDirectory folder
-  let baseNames = List.sort . List.nub $ fmap System.FilePath.takeBaseName files
-  return $ fmap assert baseNames
+  subfolders <- Directory.listDirectory folder
+  return . fmap assert $ List.sort subfolders
   where
-    assert baseName =
-      assertFileEqualsText baseName (expected baseName) $ actual baseName
-    expected = filename "out"
-    filename extension baseName =
-      System.FilePath.combine folder $
-      System.FilePath.addExtension baseName extension
-    actual =
-      Lib.generateDockerfile . Map.singleton (T.pack "example") . filename "in"
+    assert subfolder =
+      assertFileEqualsText subfolder (expected subfolder) $ actual subfolder
+    expected subfolder =
+      System.FilePath.joinPath [folder, subfolder, "expected.Dockerfile"]
+    actual = Lib.dockerfile . System.FilePath.combine folder
 
 assertFileEqualsText ::
      Tasty.TestName -> FilePath -> IO T.Text -> Tasty.TestTree

@@ -1,6 +1,5 @@
 module Lib
   ( dockerfile
-  , generateDockerfile
   ) where
 
 import qualified Control.Monad as Monad
