@@ -1,6 +1,6 @@
 ARG
 brittany
-Dockerfile
+Dockerfile/file
 GHC
 Gitlint
 GMP

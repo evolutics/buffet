@@ -12,8 +12,8 @@ import qualified System.Directory as Directory
 import qualified System.FilePath
 import qualified Utilities
 
-dockerfile :: IO T.Text
-dockerfile = do
+dockerfile :: FilePath -> IO T.Text
+dockerfile folder = do
   subfolders <- Directory.listDirectory folder
   let optionToUtility =
         Map.fromList $
@@ -23,8 +23,6 @@ dockerfile = do
              , System.FilePath.joinPath [folder, subfolder, "Dockerfile"]))
           subfolders
   generateDockerfile optionToUtility
-  where
-    folder = "dockerfiles"
 
 generateDockerfile :: Map.Map T.Text FilePath -> IO T.Text
 generateDockerfile optionToUtility = do

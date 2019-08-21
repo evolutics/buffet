@@ -19,10 +19,10 @@ tests = do
   generation <-
     Tasty.testGroup "Generation" Applicative.<$>
     generationTests "test/data/dockerfile"
-  return $
-    Tasty.testGroup
-      "Tests"
-      [generation, assertFileEqualsText "Main" "Dockerfile" Lib.dockerfile]
+  return $ Tasty.testGroup "Tests" [generation, mainDockerfileTest]
+  where
+    mainDockerfileTest =
+      assertFileEqualsText "Main" "Dockerfile" $ Lib.dockerfile "dockerfiles"
 
 generationTests :: FilePath -> IO [Tasty.TestTree]
 generationTests folder = do
