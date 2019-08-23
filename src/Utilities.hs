@@ -1,6 +1,5 @@
 module Utilities
   ( Box(..)
-  , Entry(..)
   , Utility(..)
   ) where
 
@@ -17,12 +16,5 @@ newtype Box =
 newtype Utility =
   Utility
     { dockerfile :: T.Text
-    }
-  deriving (Eq, Ord, Show)
-
-data Entry =
-  Entry
-    { option :: T.Text
-    , utility :: Utility
     }
   deriving (Eq, Ord, Show)
