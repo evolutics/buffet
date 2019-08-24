@@ -2,28 +2,54 @@ module Dockerfile.Parser
   ( get
   ) where
 
+import qualified Control.Monad as Monad
 import qualified Data.List.Split as Split
+import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
+import qualified Data.Text.IO as T.IO
 import qualified Dockerfile.Intermediate as Intermediate
 import qualified Dockerfile.Tools as Tools
 import qualified Dockerfile.Validator as Validator
 import qualified Language.Docker as Docker
 import Prelude
   ( Either(Left, Right)
+  , FilePath
+  , IO
   , ($)
   , (.)
   , concat
   , filter
   , fmap
   , length
+  , mapM
   , not
   , pred
   , splitAt
   )
-import qualified Utilities
+import qualified System.Directory as Directory
+import qualified System.FilePath
 
-get :: Utilities.Box -> Either [T.Text] Intermediate.Box
-get rawBox =
+get :: FilePath -> IO (Either [T.Text] Intermediate.Box)
+get folder = do
+  folderEntries <- Directory.listDirectory folder
+  subfolders <-
+    Monad.filterM
+      (Directory.doesDirectoryExist . System.FilePath.combine folder)
+      folderEntries
+  let optionToUtility =
+        Map.fromList $
+        fmap
+          (\subfolder ->
+             ( T.pack subfolder
+             , System.FilePath.joinPath [folder, subfolder, "Dockerfile"]))
+          subfolders
+  getFromMap optionToUtility
+
+getFromMap :: Map.Map T.Text FilePath -> IO (Either [T.Text] Intermediate.Box)
+getFromMap = fmap parseBox . mapM T.IO.readFile
+
+parseBox :: Map.Map T.Text T.Text -> Either [T.Text] Intermediate.Box
+parseBox optionToUtility =
   case Validator.get box of
     [] -> Right box
     errors -> Left errors
@@ -31,13 +57,11 @@ get rawBox =
     box =
       Intermediate.Box
         {Intermediate.optionToUtility = fmap parseUtility optionToUtility}
-    optionToUtility = Utilities.optionToUtility rawBox
 
-parseUtility :: Utilities.Utility -> Intermediate.Utility
+parseUtility :: T.Text -> Intermediate.Utility
 parseUtility utility = parseUtilityFromDockerfile dockerfile
   where
-    dockerfile = Tools.patchDockerfile $ Tools.parseDockerfile rawDockerfile
-    rawDockerfile = Utilities.dockerfile utility
+    dockerfile = Tools.patchDockerfile $ Tools.parseDockerfile utility
 
 parseUtilityFromDockerfile :: Docker.Dockerfile -> Intermediate.Utility
 parseUtilityFromDockerfile dockerfile =
