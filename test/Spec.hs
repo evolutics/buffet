@@ -21,7 +21,7 @@ tests = do
   return $ Tasty.testGroup "Tests" [generation, mainDockerfileTest]
   where
     mainDockerfileTest =
-      assertFileEqualsText "Main" "Dockerfile" $ Lib.dockerfile "dockerfiles"
+      assertFileEqualsText "Main" "Dockerfile" $ Lib.build "dockerfiles"
 
 generationTests :: FilePath -> IO [Tasty.TestTree]
 generationTests folder = do
@@ -32,7 +32,7 @@ generationTests folder = do
       assertFileEqualsText subfolder (expected subfolder) $ actual subfolder
     expected subfolder =
       System.FilePath.joinPath [folder, subfolder, "expected.Dockerfile"]
-    actual = Lib.dockerfile . System.FilePath.combine folder
+    actual = Lib.build . System.FilePath.combine folder
 
 assertFileEqualsText ::
      Tasty.TestName -> FilePath -> IO T.Text -> Tasty.TestTree

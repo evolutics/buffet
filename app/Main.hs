@@ -7,4 +7,4 @@ import qualified Lib
 import Prelude (IO, (>>=))
 
 main :: IO ()
-main = Lib.dockerfile "dockerfiles" >>= T.IO.putStrLn
+main = Lib.build "dockerfiles" >>= T.IO.putStrLn
