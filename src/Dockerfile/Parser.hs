@@ -7,6 +7,7 @@ import qualified Data.List.Split as Split
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import qualified Data.Text.IO as T.IO
+import qualified Data.Yaml as Yaml
 import qualified Dockerfile.Intermediate as Intermediate
 import qualified Dockerfile.Tools as Tools
 import qualified Dockerfile.Validator as Validator
@@ -30,7 +31,14 @@ import qualified System.Directory as Directory
 import qualified System.FilePath
 
 get :: FilePath -> IO (Either [T.Text] Intermediate.Box)
-get folder = do
+get path = do
+  isFolder <- Directory.doesDirectoryExist path
+  if isFolder
+    then getFromFolder path
+    else getFromFile path
+
+getFromFolder :: FilePath -> IO (Either [T.Text] Intermediate.Box)
+getFromFolder folder = do
   folderEntries <- Directory.listDirectory folder
   subfolders <-
     Monad.filterM
@@ -82,3 +90,12 @@ parseUtilityFromDockerfile dockerfile =
     (localStages, globalStageInstructions) =
       splitAt (pred $ length stages) stages
     globalStage = filter (not . Tools.isFrom) $ concat globalStageInstructions
+
+getFromFile :: FilePath -> IO (Either [T.Text] Intermediate.Box)
+getFromFile file = do
+  map <- Yaml.decodeFileThrow file
+  let _ = map :: Map.Map T.Text FilePath
+      mapInContext = fmap (System.FilePath.combine folder) map
+  getFromMap mapInContext
+  where
+    folder = System.FilePath.takeDirectory file

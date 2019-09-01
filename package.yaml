@@ -22,6 +22,7 @@ dependencies:
   - language-docker
   - split
   - text
+  - yaml
 _ghc-options: &ghc-options
   - -threaded
   - -rtsopts
