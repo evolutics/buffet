@@ -1,7 +1,7 @@
 import qualified Control.Applicative as Applicative
 import qualified Data.List as List
 import qualified Data.Text as T
-import qualified Data.Text.Lazy as LazyT
+import qualified Data.Text.Lazy as Lazy
 import qualified Data.Text.Lazy.Encoding as Encoding
 import qualified Lib
 import Prelude (FilePath, IO, ($), (.), (>>=), fmap, return)
@@ -42,4 +42,4 @@ assertFileEqualsText name expected actualAction =
     diff expectedFile actualFile =
       ["diff", "--unified", expectedFile, actualFile]
     actualBinaryAction = fmap textToBinary actualAction
-    textToBinary = Encoding.encodeUtf8 . LazyT.fromStrict
+    textToBinary = Encoding.encodeUtf8 . Lazy.fromStrict

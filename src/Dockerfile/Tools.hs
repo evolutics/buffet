@@ -9,7 +9,7 @@ module Dockerfile.Tools
   ) where
 
 import qualified Data.Text as T
-import qualified Data.Text.Lazy as LazyT
+import qualified Data.Text.Lazy as Lazy
 import qualified Dockerfile.Intermediate as Intermediate
 import qualified Language.Docker as Docker
 import qualified Language.Docker.Syntax as Syntax
@@ -82,4 +82,4 @@ printInstructions = T.concat . fmap printInstruction
     printInstruction (Docker.Run (Syntax.ArgumentsText command)) =
       T.unlines [T.concat [T.pack "RUN ", command]]
     printInstruction instruction =
-      LazyT.toStrict $ Docker.prettyPrint [Docker.instructionPos instruction]
+      Lazy.toStrict $ Docker.prettyPrint [Docker.instructionPos instruction]
