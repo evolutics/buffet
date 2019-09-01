@@ -1,10 +1,9 @@
-import qualified Control.Applicative as Applicative
 import qualified Data.List as List
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as Lazy
 import qualified Data.Text.Lazy.Encoding as Encoding
 import qualified Lib
-import Prelude (FilePath, IO, ($), (.), (>>=), fmap, return)
+import Prelude (FilePath, IO, ($), (.), (<$>), (>>=), fmap, return)
 import qualified System.Directory as Directory
 import qualified System.FilePath
 import qualified Test.Tasty as Tasty
@@ -16,8 +15,7 @@ main = tests >>= Tasty.defaultMain
 tests :: IO Tasty.TestTree
 tests = do
   generation <-
-    Tasty.testGroup "Generation" Applicative.<$>
-    generationTests "test/data/dockerfile"
+    Tasty.testGroup "Generation" <$> generationTests "test/data/dockerfile"
   return $ Tasty.testGroup "Tests" [generation, mainDockerfileTest]
   where
     mainDockerfileTest =
