@@ -40,6 +40,7 @@ executables:
     ghc-options: *ghc-options
     dependencies:
       - freezer
+      - optparse-applicative
 tests:
   freezer-test:
     main: Spec.hs
