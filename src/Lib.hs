@@ -11,5 +11,5 @@ import Prelude (FilePath, IO, (.), fmap, undefined)
 build :: FilePath -> IO T.Text
 build = fmap Printer.get . Parser.get
 
-test :: FilePath -> IO ()
+test :: FilePath -> FilePath -> IO ()
 test = undefined
