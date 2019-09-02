@@ -6,13 +6,10 @@ module Lib
 import qualified Data.Text as T
 import qualified Dockerfile.Parser as Parser
 import qualified Dockerfile.Printer as Printer
-import Prelude (FilePath, IO, (.), either, error, fmap, undefined)
+import Prelude (FilePath, IO, (.), fmap, undefined)
 
 build :: FilePath -> IO T.Text
-build = fmap (either errors Printer.get) . Parser.get
-  where
-    errors :: [T.Text] -> a
-    errors = error . T.unpack . T.unlines
+build = fmap Printer.get . Parser.get
 
 test :: FilePath -> IO ()
 test = undefined

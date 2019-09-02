@@ -19,8 +19,11 @@ import Prelude
   , ($)
   , (.)
   , concat
+  , either
+  , error
   , filter
   , fmap
+  , id
   , length
   , mapM
   , not
@@ -30,14 +33,14 @@ import Prelude
 import qualified System.Directory as Directory
 import qualified System.FilePath
 
-get :: FilePath -> IO (Either [T.Text] Intermediate.Box)
+get :: FilePath -> IO Intermediate.Box
 get path = do
   isFolder <- Directory.doesDirectoryExist path
   if isFolder
     then getFromFolder path
     else getFromFile path
 
-getFromFolder :: FilePath -> IO (Either [T.Text] Intermediate.Box)
+getFromFolder :: FilePath -> IO Intermediate.Box
 getFromFolder folder = do
   folderEntries <- Directory.listDirectory folder
   subfolders <-
@@ -53,8 +56,12 @@ getFromFolder folder = do
           subfolders
   getFromMap optionToUtility
 
-getFromMap :: Map.Map T.Text FilePath -> IO (Either [T.Text] Intermediate.Box)
-getFromMap = fmap parseBox . mapM T.IO.readFile
+getFromMap :: Map.Map T.Text FilePath -> IO Intermediate.Box
+getFromMap = fmap parse . mapM T.IO.readFile
+  where
+    parse = either errors id . parseBox
+    errors :: [T.Text] -> a
+    errors = error . T.unpack . T.unlines
 
 parseBox :: Map.Map T.Text T.Text -> Either [T.Text] Intermediate.Box
 parseBox optionToUtility =
@@ -91,7 +98,7 @@ parseUtilityFromDockerfile dockerfile =
       splitAt (pred $ length stages) stages
     globalStage = filter (not . Tools.isFrom) $ concat globalStageInstructions
 
-getFromFile :: FilePath -> IO (Either [T.Text] Intermediate.Box)
+getFromFile :: FilePath -> IO Intermediate.Box
 getFromFile file = do
   map <- Yaml.decodeFileThrow file
   let _ = map :: Map.Map T.Text FilePath
