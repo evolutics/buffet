@@ -17,10 +17,14 @@ commands =
   mconcat
     [ Options.command
         "build"
-        (Options.info (build <$> Options.argument Options.str mempty) mempty)
+        (Options.info
+           (build <$> Options.argument Options.str (Options.metavar "SOURCE"))
+           mempty)
     , Options.command
         "test"
-        (Options.info (test <$> Options.argument Options.str mempty) mempty)
+        (Options.info
+           (test <$> Options.argument Options.str (Options.metavar "SOURCE"))
+           mempty)
     ]
 
 build :: FilePath -> IO ()
