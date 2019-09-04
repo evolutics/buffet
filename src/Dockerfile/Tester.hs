@@ -4,13 +4,26 @@ module Dockerfile.Tester
 
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
+import qualified Data.Text.IO as T.IO
 import qualified Data.Text.Lazy as Lazy
 import qualified Data.Text.Lazy.Encoding as Encoding
 import qualified Data.Yaml as Yaml
 import qualified Dockerfile.Intermediate as Intermediate
 import qualified Dockerfile.Parser as Parser
 import qualified Dockerfile.Printer as Printer
-import Prelude (FilePath, IO, ($), (.), concatMap, mapM_, mconcat, not, return)
+import Prelude
+  ( FilePath
+  , IO
+  , Maybe(Just, Nothing)
+  , ($)
+  , (.)
+  , concatMap
+  , mconcat
+  , not
+  , return
+  , sequence_
+  )
+import qualified System.IO
 import qualified System.Process.Typed as Process
 
 get :: FilePath -> FilePath -> IO ()
@@ -24,12 +37,18 @@ get source argumentsFile = do
         filterTestedUtilities (Intermediate.optionToUtility box) arguments
       tests =
         Map.mapWithKey
-          (\option _ ->
-             Process.proc
-               "docker"
-               ["run", T.unpack imageId, T.unpack option, "--help"])
+          (\option utility ->
+             case Intermediate.testCommand utility of
+               Nothing ->
+                 putStderrLine $
+                 mconcat [T.pack "No test for utility: ", option]
+               Just testCommand ->
+                 Process.runProcess_ $
+                 Process.proc
+                   "docker"
+                   ["run", T.unpack imageId, "sh", "-c", T.unpack testCommand])
           optionToUtility
-  mapM_ Process.runProcess_ tests
+  sequence_ tests
 
 dockerBuild :: T.Text -> Map.Map T.Text T.Text -> IO T.Text
 dockerBuild dockerfile arguments = do
@@ -57,3 +76,6 @@ filterTestedUtilities optionToUtility arguments =
   Map.restrictKeys optionToUtility relevantArgumentOptions
   where
     relevantArgumentOptions = Map.keysSet $ Map.filter (not . T.null) arguments
+
+putStderrLine :: T.Text -> IO ()
+putStderrLine = T.IO.hPutStrLn System.IO.stderr
