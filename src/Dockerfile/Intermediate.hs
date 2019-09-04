@@ -8,7 +8,7 @@ module Dockerfile.Intermediate
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import qualified Language.Docker as Docker
-import Prelude (Eq, Ord, Show, (<$>), uncurry)
+import Prelude (Eq, Maybe, Ord, Show, (<$>), uncurry)
 
 newtype Box =
   Box
@@ -21,6 +21,7 @@ data Utility =
     { beforeFirstBuildStage :: DockerfilePart
     , localBuildStages :: [DockerfilePart]
     , globalBuildStage :: DockerfilePart
+    , testCommand :: Maybe T.Text
     }
   deriving (Eq, Ord, Show)
 

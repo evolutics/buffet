@@ -16,6 +16,7 @@ import Prelude
   ( Either(Left, Right)
   , FilePath
   , IO
+  , Maybe(Nothing)
   , ($)
   , (.)
   , concat
@@ -84,6 +85,7 @@ parseUtilityFromDockerfile dockerfile =
     { Intermediate.beforeFirstBuildStage = beforeFirstStage
     , Intermediate.localBuildStages = localStages
     , Intermediate.globalBuildStage = globalStage
+    , Intermediate.testCommand = Nothing
     }
   where
     (beforeFirstStage, stages) =
