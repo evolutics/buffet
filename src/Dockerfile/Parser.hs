@@ -15,12 +15,14 @@ import qualified Dockerfile.Validator as Validator
 import qualified Language.Docker as Docker
 import qualified Language.Docker.Syntax as Syntax
 import Prelude
-  ( Either(Left, Right)
+  ( Bool(False, True)
+  , Either(Left, Right)
   , FilePath
   , IO
   , Maybe(Just, Nothing)
   , ($)
   , (.)
+  , (<$>)
   , concat
   , either
   , error
@@ -98,7 +100,7 @@ parseUtilityFromDockerfile dockerfile =
     parts = Split.split splitter instructions
     splitter :: Split.Splitter (Docker.Instruction a)
     splitter = Split.keepDelimsL $ Split.whenElt Tools.isFrom
-    instructions = fmap Docker.instruction dockerfile
+    instructions = Docker.instruction <$> dropHealthchecks dockerfile
     (localStages, globalStageInstructions) =
       splitAt (pred $ length stages) stages
     globalStage = filter (not . Tools.isFrom) $ concat globalStageInstructions
@@ -121,6 +123,13 @@ lastHealthcheck = Maybe.listToMaybe . reverse . Maybe.mapMaybe maybeHealthcheck
 argumentsText :: Docker.Arguments T.Text -> T.Text
 argumentsText (Syntax.ArgumentsText text) = text
 argumentsText (Syntax.ArgumentsList list) = list
+
+dropHealthchecks :: Docker.Dockerfile -> Docker.Dockerfile
+dropHealthchecks = filter (not . isHealthcheck)
+  where
+    isHealthcheck :: Syntax.InstructionPos a -> Bool
+    isHealthcheck (Docker.InstructionPos (Docker.Healthcheck _) _ _) = True
+    isHealthcheck _ = False
 
 getFromFile :: FilePath -> IO Intermediate.Box
 getFromFile file = do
