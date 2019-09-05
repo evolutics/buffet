@@ -3,7 +3,7 @@ ARG hlint
 
 LABEL org.opencontainers.image.title="HLint"
 LABEL org.opencontainers.image.url="https://github.com/ndmitchell/hlint"
-LABEL info.evolutics.freezer.help="hlint --help"
+LABEL info.evolutics.buffet.help="hlint --help"
 
 RUN apk add --no-cache cabal ghc gmp libffi musl-dev ncurses-dev wget \
   && cabal update \

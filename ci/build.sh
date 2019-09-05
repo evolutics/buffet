@@ -14,7 +14,7 @@ code_checkers_name() {
   local -r code_checkers_tag="$(sha256sum \
     ci/code_checkers_build_arguments Dockerfile \
     | sha256sum | cut --characters -16)"
-  echo "evolutics/freezer-code-checkers:${code_checkers_tag}"
+  echo "evolutics/buffet-code-checkers:${code_checkers_tag}"
 }
 
 build_code_checkers() {

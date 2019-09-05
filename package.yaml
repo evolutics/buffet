@@ -1,6 +1,6 @@
-name: freezer
+name: buffet
 version: "0.1.0.0"
-github: "evolutics/freezer"
+github: "evolutics/buffet"
 license: MIT
 author: "Benjamin Fischer"
 maintainer: "benjamin.fischer@evolutics.info"
@@ -13,7 +13,7 @@ extra-source-files:
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description: Please see the README on GitHub at <https://github.com/evolutics/freezer#readme>
+description: Please see the README on GitHub at <https://github.com/evolutics/buffet#readme>
 dependencies:
   - base >= 4.7 && < 5
   - containers
@@ -36,19 +36,19 @@ library:
   source-dirs: src
   ghc-options: *ghc-options
 executables:
-  freezer-exe:
+  buffet-exe:
     main: Main.hs
     source-dirs: app
     ghc-options: *ghc-options
     dependencies:
-      - freezer
+      - buffet
       - optparse-applicative
 tests:
-  freezer-test:
+  buffet-test:
     main: Spec.hs
     source-dirs: test
     ghc-options: *ghc-options
     dependencies:
-      - freezer
+      - buffet
       - tasty
       - tasty-golden
