@@ -5,7 +5,7 @@ import qualified Data.Text.Lazy.Encoding as Encoding
 import qualified Lib
 import Prelude (FilePath, IO, ($), (.), (<$>), (>>=), fmap, return)
 import qualified System.Directory as Directory
-import qualified System.FilePath
+import qualified System.FilePath as FilePath
 import qualified Test.Tasty as Tasty
 import qualified Test.Tasty.Golden as Golden
 
@@ -29,8 +29,8 @@ generationTests folder = do
     assert subfolder =
       assertFileEqualsText subfolder (expected subfolder) $ actual subfolder
     expected subfolder =
-      System.FilePath.joinPath [folder, subfolder, "expected.Dockerfile"]
-    actual = Lib.build . System.FilePath.combine folder
+      FilePath.joinPath [folder, subfolder, "expected.Dockerfile"]
+    actual = Lib.build . FilePath.combine folder
 
 assertFileEqualsText ::
      Tasty.TestName -> FilePath -> IO T.Text -> Tasty.TestTree

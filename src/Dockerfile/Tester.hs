@@ -23,7 +23,7 @@ import Prelude
   , return
   , sequence_
   )
-import qualified System.IO
+import qualified System.IO as IO
 import qualified System.Process.Typed as Process
 
 get :: FilePath -> FilePath -> IO ()
@@ -78,4 +78,4 @@ filterTestedUtilities optionToUtility arguments =
     relevantArgumentOptions = Map.keysSet $ Map.filter (not . T.null) arguments
 
 putStderrLine :: T.Text -> IO ()
-putStderrLine = T.IO.hPutStrLn System.IO.stderr
+putStderrLine = T.IO.hPutStrLn IO.stderr

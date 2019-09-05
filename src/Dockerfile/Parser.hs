@@ -37,7 +37,7 @@ import Prelude
   , splitAt
   )
 import qualified System.Directory as Directory
-import qualified System.FilePath
+import qualified System.FilePath as FilePath
 
 get :: FilePath -> IO Intermediate.Box
 get path = do
@@ -51,14 +51,14 @@ getFromFolder folder = do
   folderEntries <- Directory.listDirectory folder
   subfolders <-
     Monad.filterM
-      (Directory.doesDirectoryExist . System.FilePath.combine folder)
+      (Directory.doesDirectoryExist . FilePath.combine folder)
       folderEntries
   let optionToUtility =
         Map.fromList $
         fmap
           (\subfolder ->
              ( T.pack subfolder
-             , System.FilePath.joinPath [folder, subfolder, "Dockerfile"]))
+             , FilePath.joinPath [folder, subfolder, "Dockerfile"]))
           subfolders
   getFromMap optionToUtility
 
@@ -135,7 +135,7 @@ getFromFile :: FilePath -> IO Intermediate.Box
 getFromFile file = do
   map <- Yaml.decodeFileThrow file
   let _ = map :: Map.Map T.Text FilePath
-      mapInContext = fmap (System.FilePath.combine folder) map
+      mapInContext = fmap (FilePath.combine folder) map
   getFromMap mapInContext
   where
-    folder = System.FilePath.takeDirectory file
+    folder = FilePath.takeDirectory file
