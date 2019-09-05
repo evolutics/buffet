@@ -5,6 +5,7 @@ module Dockerfile.Parser
 import qualified Control.Monad as Monad
 import qualified Data.List.Split as Split
 import qualified Data.Map.Strict as Map
+import qualified Data.Maybe as Maybe
 import qualified Data.Text as T
 import qualified Data.Text.IO as T.IO
 import qualified Data.Yaml as Yaml
@@ -12,11 +13,12 @@ import qualified Dockerfile.Intermediate as Intermediate
 import qualified Dockerfile.Tools as Tools
 import qualified Dockerfile.Validator as Validator
 import qualified Language.Docker as Docker
+import qualified Language.Docker.Syntax as Syntax
 import Prelude
   ( Either(Left, Right)
   , FilePath
   , IO
-  , Maybe(Nothing)
+  , Maybe(Just, Nothing)
   , ($)
   , (.)
   , concat
@@ -29,6 +31,7 @@ import Prelude
   , mapM
   , not
   , pred
+  , reverse
   , splitAt
   )
 import qualified System.Directory as Directory
@@ -85,7 +88,7 @@ parseUtilityFromDockerfile dockerfile =
     { Intermediate.beforeFirstBuildStage = beforeFirstStage
     , Intermediate.localBuildStages = localStages
     , Intermediate.globalBuildStage = globalStage
-    , Intermediate.testCommand = Nothing
+    , Intermediate.testCommand = testCommand dockerfile
     }
   where
     (beforeFirstStage, stages) =
@@ -99,6 +102,25 @@ parseUtilityFromDockerfile dockerfile =
     (localStages, globalStageInstructions) =
       splitAt (pred $ length stages) stages
     globalStage = filter (not . Tools.isFrom) $ concat globalStageInstructions
+
+testCommand :: Docker.Dockerfile -> Maybe T.Text
+testCommand dockerfile =
+  case lastHealthcheck dockerfile of
+    Just (Docker.Check checkArguments) ->
+      Just . argumentsText $ Docker.checkCommand checkArguments
+    _ -> Nothing
+
+lastHealthcheck :: Docker.Dockerfile -> Maybe (Docker.Check T.Text)
+lastHealthcheck = Maybe.listToMaybe . reverse . Maybe.mapMaybe maybeHealthcheck
+  where
+    maybeHealthcheck :: Docker.InstructionPos a -> Maybe (Docker.Check a)
+    maybeHealthcheck (Docker.InstructionPos (Docker.Healthcheck check) _ _) =
+      Just check
+    maybeHealthcheck _ = Nothing
+
+argumentsText :: Docker.Arguments T.Text -> T.Text
+argumentsText (Syntax.ArgumentsText text) = text
+argumentsText (Syntax.ArgumentsList list) = list
 
 getFromFile :: FilePath -> IO Intermediate.Box
 getFromFile file = do
