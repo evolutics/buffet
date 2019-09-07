@@ -14,15 +14,14 @@ main = tests >>= Tasty.defaultMain
 
 tests :: IO Tasty.TestTree
 tests = do
-  generation <-
-    Tasty.testGroup "Generation" <$> generationTests "test/data/dockerfile"
-  return $ Tasty.testGroup "Tests" [generation, mainDockerfileTest]
+  build <- Tasty.testGroup "Build" <$> buildTests "test/data/build"
+  return $ Tasty.testGroup "Tests" [build, mainDockerfileTest]
   where
     mainDockerfileTest =
       assertFileEqualsText "Main" "Dockerfile" $ Buffet.build "dockerfiles"
 
-generationTests :: FilePath -> IO [Tasty.TestTree]
-generationTests folder = do
+buildTests :: FilePath -> IO [Tasty.TestTree]
+buildTests folder = do
   subfolders <- Directory.listDirectory folder
   return . fmap assert $ List.sort subfolders
   where
