@@ -1,11 +1,11 @@
-module Dockerfile.BuildInternal
+module Buffet.Build.BuildInternal
   ( get
   ) where
 
+import qualified Buffet.Build.BuildTools as BuildTools
+import qualified Buffet.Ir.Ir as Ir
 import qualified Data.List as List
 import qualified Data.Text as T
-import qualified Dockerfile.BuildTools as BuildTools
-import qualified Dockerfile.Ir as Ir
 import qualified Language.Docker as Docker hiding (sourcePaths)
 import qualified Language.Docker.Syntax as Syntax
 import Prelude

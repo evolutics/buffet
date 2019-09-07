@@ -1,10 +1,10 @@
-module Dockerfile.Validations.EachStageHasOptionArg
+module Buffet.Parse.Validations.EachStageHasOptionArg
   ( get
   ) where
 
+import qualified Buffet.Ir.Ir as Ir
+import qualified Buffet.Parse.ParseTools as ParseTools
 import qualified Data.Text as T
-import qualified Dockerfile.Ir as Ir
-import qualified Dockerfile.ParseTools as ParseTools
 import qualified Language.Docker as Docker
 import Prelude
   ( Bool(False)

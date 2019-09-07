@@ -1,12 +1,12 @@
-module Dockerfile.BuildTools
+module Buffet.Build.BuildTools
   ( conditionalRunInstruction
   , isLabel
   , printDockerfileParts
   ) where
 
+import qualified Buffet.Ir.Ir as Ir
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as Lazy
-import qualified Dockerfile.Ir as Ir
 import qualified Language.Docker as Docker
 import qualified Language.Docker.Syntax as Syntax
 import Prelude (Bool(False, True), ($), (.), concat, fmap)

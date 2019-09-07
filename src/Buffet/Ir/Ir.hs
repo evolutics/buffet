@@ -1,4 +1,4 @@
-module Dockerfile.Ir
+module Buffet.Ir.Ir
   ( Box(..)
   , DockerfilePart
   , Utility(..)

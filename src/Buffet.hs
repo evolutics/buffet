@@ -3,9 +3,9 @@ module Buffet
   , test
   ) where
 
+import qualified Buffet.Build.Build as Build
+import qualified Buffet.Test.Test as Test
 import qualified Data.Text as T
-import qualified Dockerfile.Build as Build
-import qualified Dockerfile.Test as Test
 import Prelude (FilePath, IO)
 
 build :: FilePath -> IO T.Text

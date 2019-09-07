@@ -1,7 +1,10 @@
-module Dockerfile.Parse
+module Buffet.Parse.Parse
   ( get
   ) where
 
+import qualified Buffet.Ir.Ir as Ir
+import qualified Buffet.Parse.ParseTools as ParseTools
+import qualified Buffet.Parse.Validate as Validate
 import qualified Control.Monad as Monad
 import qualified Data.List.Split as Split
 import qualified Data.Map.Strict as Map
@@ -9,9 +12,6 @@ import qualified Data.Maybe as Maybe
 import qualified Data.Text as T
 import qualified Data.Text.IO as T.IO
 import qualified Data.Yaml as Yaml
-import qualified Dockerfile.Ir as Ir
-import qualified Dockerfile.ParseTools as ParseTools
-import qualified Dockerfile.Validate as Validate
 import qualified Language.Docker as Docker
 import qualified Language.Docker.Syntax as Syntax
 import Prelude

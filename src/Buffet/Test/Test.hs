@@ -1,16 +1,16 @@
-module Dockerfile.Test
+module Buffet.Test.Test
   ( get
   ) where
 
+import qualified Buffet.Build.BuildInternal as BuildInternal
+import qualified Buffet.Ir.Ir as Ir
+import qualified Buffet.Parse.Parse as Parse
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import qualified Data.Text.IO as T.IO
 import qualified Data.Text.Lazy as Lazy
 import qualified Data.Text.Lazy.Encoding as Encoding
 import qualified Data.Yaml as Yaml
-import qualified Dockerfile.BuildInternal as BuildInternal
-import qualified Dockerfile.Ir as Ir
-import qualified Dockerfile.Parse as Parse
 import Prelude
   ( FilePath
   , IO

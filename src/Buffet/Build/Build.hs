@@ -1,10 +1,10 @@
-module Dockerfile.Build
+module Buffet.Build.Build
   ( get
   ) where
 
+import qualified Buffet.Build.BuildInternal as BuildInternal
+import qualified Buffet.Parse.Parse as Parse
 import qualified Data.Text as T
-import qualified Dockerfile.BuildInternal as BuildInternal
-import qualified Dockerfile.Parse as Parse
 import Prelude (FilePath, IO, (.), fmap)
 
 get :: FilePath -> IO T.Text

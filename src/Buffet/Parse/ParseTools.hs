@@ -1,4 +1,4 @@
-module Dockerfile.ParseTools
+module Buffet.Parse.ParseTools
   ( isArg
   , isFrom
   , parseDockerfile
