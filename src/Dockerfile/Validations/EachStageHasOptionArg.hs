@@ -1,4 +1,4 @@
-module Dockerfile.Validators.EachStageHasOptionArg
+module Dockerfile.Validations.EachStageHasOptionArg
   ( get
   ) where
 
