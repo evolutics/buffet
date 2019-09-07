@@ -1,7 +1,7 @@
 module Buffet.Ir.Ir
-  ( Box(..)
+  ( Buffet(..)
   , DockerfilePart
-  , Utility(..)
+  , Dish(..)
   ) where
 
 import qualified Data.Map.Strict as Map
@@ -9,14 +9,14 @@ import qualified Data.Text as T
 import qualified Language.Docker as Docker
 import Prelude (Eq, Maybe, Ord, Show)
 
-newtype Box =
-  Box
-    { optionToUtility :: Map.Map T.Text Utility
+newtype Buffet =
+  Buffet
+    { optionToDish :: Map.Map T.Text Dish
     }
   deriving (Eq, Ord, Show)
 
-data Utility =
-  Utility
+data Dish =
+  Dish
     { beforeFirstBuildStage :: DockerfilePart
     , localBuildStages :: [DockerfilePart]
     , globalBuildStage :: DockerfilePart

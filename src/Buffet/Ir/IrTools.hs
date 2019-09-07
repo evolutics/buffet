@@ -7,7 +7,7 @@ import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import Prelude ((<$>), uncurry)
 
-mapOrderedEntries :: (T.Text -> Ir.Utility -> a) -> Ir.Box -> [a]
-mapOrderedEntries function box = uncurry function <$> Map.toAscList map
+mapOrderedEntries :: (T.Text -> Ir.Dish -> a) -> Ir.Buffet -> [a]
+mapOrderedEntries function buffet = uncurry function <$> Map.toAscList map
   where
-    map = Ir.optionToUtility box
+    map = Ir.optionToDish buffet

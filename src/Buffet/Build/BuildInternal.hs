@@ -23,38 +23,40 @@ import Prelude
   , pure
   )
 
-get :: Ir.Box -> T.Text
-get box =
+get :: Ir.Buffet -> T.Text
+get buffet =
   BuildTools.printDockerfileParts $
   concat
-    [argInstructions box, utilitiesLocalBuildStages box, globalBuildStage box]
+    [ argInstructions buffet
+    , dishesLocalBuildStages buffet
+    , globalBuildStage buffet
+    ]
 
-argInstructions :: Ir.Box -> [Ir.DockerfilePart]
-argInstructions box = [List.sort $ mainOptions <> baseImageOptions]
+argInstructions :: Ir.Buffet -> [Ir.DockerfilePart]
+argInstructions buffet = [List.sort $ mainOptions <> baseImageOptions]
   where
-    mainOptions = concat $ IrTools.mapOrderedEntries utilityArgInstructions box
+    mainOptions = concat $ IrTools.mapOrderedEntries dishArgInstructions buffet
     baseImageOptions :: [Syntax.Instruction a]
     baseImageOptions =
       [Docker.Arg (T.pack "alpine_version") . Just $ T.pack "'3.9.4'"]
 
-utilityArgInstructions :: T.Text -> Ir.Utility -> Ir.DockerfilePart
-utilityArgInstructions option utility =
+dishArgInstructions :: T.Text -> Ir.Dish -> Ir.DockerfilePart
+dishArgInstructions option dish =
   Docker.Arg option (Just $ T.pack "''") : extraOptions
   where
-    extraOptions = filter isExtraOption $ Ir.beforeFirstBuildStage utility
+    extraOptions = filter isExtraOption $ Ir.beforeFirstBuildStage dish
     isExtraOption :: Syntax.Instruction a -> Bool
     isExtraOption (Docker.Arg key _) = key /= option
     isExtraOption _ = False
 
-utilitiesLocalBuildStages :: Ir.Box -> [Ir.DockerfilePart]
-utilitiesLocalBuildStages =
-  concat . IrTools.mapOrderedEntries utilityLocalBuildStages
+dishesLocalBuildStages :: Ir.Buffet -> [Ir.DockerfilePart]
+dishesLocalBuildStages = concat . IrTools.mapOrderedEntries dishLocalBuildStages
 
-utilityLocalBuildStages :: T.Text -> Ir.Utility -> [Ir.DockerfilePart]
-utilityLocalBuildStages option utility =
+dishLocalBuildStages :: T.Text -> Ir.Dish -> [Ir.DockerfilePart]
+dishLocalBuildStages option dish =
   fmap (conditionInstructions option) localBuildStages
   where
-    localBuildStages = Ir.localBuildStages utility
+    localBuildStages = Ir.localBuildStages dish
 
 conditionInstructions :: T.Text -> Ir.DockerfilePart -> Ir.DockerfilePart
 conditionInstructions option = fmap conditionInstruction
@@ -82,11 +84,11 @@ optionConditionalRunInstruction option =
   where
     condition = T.concat [T.pack "[[ -n \"${", option, T.pack "}\" ]]"]
 
-globalBuildStage :: Ir.Box -> [Ir.DockerfilePart]
-globalBuildStage box =
+globalBuildStage :: Ir.Buffet -> [Ir.DockerfilePart]
+globalBuildStage buffet =
   concat
     [ [[globalFromInstruction]]
-    , globalUtilitiesInstructions box
+    , globalDishesInstructions buffet
     , [[globalWorkdirInstruction]]
     ]
 
@@ -103,16 +105,15 @@ globalFromInstruction =
       , Docker.platform = Nothing
       }
 
-globalUtilitiesInstructions :: Ir.Box -> [Ir.DockerfilePart]
-globalUtilitiesInstructions =
-  IrTools.mapOrderedEntries globalUtilityInstructions
+globalDishesInstructions :: Ir.Buffet -> [Ir.DockerfilePart]
+globalDishesInstructions = IrTools.mapOrderedEntries globalDishInstructions
 
-globalUtilityInstructions :: T.Text -> Ir.Utility -> Ir.DockerfilePart
-globalUtilityInstructions option utility =
+globalDishInstructions :: T.Text -> Ir.Dish -> Ir.DockerfilePart
+globalDishInstructions option dish =
   conditionInstructions option $
-  filter (not . BuildTools.isLabel) utilityGlobalBuildStage
+  filter (not . BuildTools.isLabel) dishGlobalBuildStage
   where
-    utilityGlobalBuildStage = Ir.globalBuildStage utility
+    dishGlobalBuildStage = Ir.globalBuildStage dish
 
 globalWorkdirInstruction :: Docker.Instruction T.Text
 globalWorkdirInstruction = Docker.Workdir $ T.pack "/workdir"

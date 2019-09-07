@@ -7,5 +7,5 @@ import qualified Buffet.Parse.Validations.EachStageHasOptionArg as EachStageHasO
 import qualified Data.Text as T
 import Prelude ()
 
-get :: Ir.Box -> [T.Text]
+get :: Ir.Buffet -> [T.Text]
 get = EachStageHasOptionArg.get

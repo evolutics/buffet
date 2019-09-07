@@ -28,25 +28,24 @@ import qualified System.Process.Typed as Process
 
 get :: FilePath -> FilePath -> IO ()
 get source argumentsFile = do
-  box <- Parse.get source
-  let dockerfile = BuildInternal.get box
+  buffet <- Parse.get source
+  let dockerfile = BuildInternal.get buffet
   arguments <- Yaml.decodeFileThrow argumentsFile
   let _ = arguments :: Map.Map T.Text T.Text
   imageId <- dockerBuild dockerfile arguments
-  let optionToUtility = filterTestedUtilities (Ir.optionToUtility box) arguments
+  let optionToDish = filterTestedDishes (Ir.optionToDish buffet) arguments
       tests =
         Map.mapWithKey
-          (\option utility ->
-             case Ir.testCommand utility of
+          (\option dish ->
+             case Ir.testCommand dish of
                Nothing ->
-                 putStderrLine $
-                 mconcat [T.pack "No test for utility: ", option]
+                 putStderrLine $ mconcat [T.pack "No test for dish: ", option]
                Just testCommand ->
                  Process.runProcess_ $
                  Process.proc
                    "docker"
                    ["run", T.unpack imageId, "sh", "-c", T.unpack testCommand])
-          optionToUtility
+          optionToDish
   sequence_ tests
 
 dockerBuild :: T.Text -> Map.Map T.Text T.Text -> IO T.Text
@@ -67,12 +66,10 @@ dockerBuild dockerfile arguments = do
            ["--build-arg", mconcat [T.unpack key, "=", T.unpack value]]) $
       Map.toAscList arguments
 
-filterTestedUtilities ::
-     Map.Map T.Text Ir.Utility
-  -> Map.Map T.Text T.Text
-  -> Map.Map T.Text Ir.Utility
-filterTestedUtilities optionToUtility arguments =
-  Map.restrictKeys optionToUtility relevantArgumentOptions
+filterTestedDishes ::
+     Map.Map T.Text Ir.Dish -> Map.Map T.Text T.Text -> Map.Map T.Text Ir.Dish
+filterTestedDishes optionToDish arguments =
+  Map.restrictKeys optionToDish relevantArgumentOptions
   where
     relevantArgumentOptions = Map.keysSet $ Map.filter (not . T.null) arguments
 

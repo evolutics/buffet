@@ -21,13 +21,13 @@ import Prelude
   , takeWhile
   )
 
-get :: Ir.Box -> [T.Text]
-get = concat . IrTools.mapOrderedEntries validateUtility
+get :: Ir.Buffet -> [T.Text]
+get = concat . IrTools.mapOrderedEntries validateDish
 
-validateUtility :: T.Text -> Ir.Utility -> [T.Text]
-validateUtility option utility = concatMap (validateStage option) stages
+validateDish :: T.Text -> Ir.Dish -> [T.Text]
+validateDish option dish = concatMap (validateStage option) stages
   where
-    stages = Ir.localBuildStages utility <> [Ir.globalBuildStage utility]
+    stages = Ir.localBuildStages dish <> [Ir.globalBuildStage dish]
 
 validateStage :: T.Text -> Ir.DockerfilePart -> [T.Text]
 validateStage option stage =

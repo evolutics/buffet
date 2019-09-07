@@ -39,52 +39,52 @@ import Prelude
 import qualified System.Directory as Directory
 import qualified System.FilePath as FilePath
 
-get :: FilePath -> IO Ir.Box
+get :: FilePath -> IO Ir.Buffet
 get path = do
   isFolder <- Directory.doesDirectoryExist path
   if isFolder
     then getFromFolder path
     else getFromFile path
 
-getFromFolder :: FilePath -> IO Ir.Box
+getFromFolder :: FilePath -> IO Ir.Buffet
 getFromFolder folder = do
   folderEntries <- Directory.listDirectory folder
   subfolders <-
     Monad.filterM
       (Directory.doesDirectoryExist . FilePath.combine folder)
       folderEntries
-  let optionToUtility =
+  let optionToDish =
         Map.fromList $
         fmap
           (\subfolder ->
              ( T.pack subfolder
              , FilePath.joinPath [folder, subfolder, "Dockerfile"]))
           subfolders
-  getFromMap optionToUtility
+  getFromMap optionToDish
 
-getFromMap :: Map.Map T.Text FilePath -> IO Ir.Box
+getFromMap :: Map.Map T.Text FilePath -> IO Ir.Buffet
 getFromMap = fmap parse . mapM T.IO.readFile
   where
-    parse = either errors id . parseBox
+    parse = either errors id . parseBuffet
     errors :: [T.Text] -> a
     errors = error . T.unpack . T.unlines
 
-parseBox :: Map.Map T.Text T.Text -> Either [T.Text] Ir.Box
-parseBox optionToUtility =
-  case Validate.get box of
-    [] -> Right box
+parseBuffet :: Map.Map T.Text T.Text -> Either [T.Text] Ir.Buffet
+parseBuffet optionToDish =
+  case Validate.get buffet of
+    [] -> Right buffet
     errors -> Left errors
   where
-    box = Ir.Box {Ir.optionToUtility = fmap parseUtility optionToUtility}
+    buffet = Ir.Buffet {Ir.optionToDish = fmap parseDish optionToDish}
 
-parseUtility :: T.Text -> Ir.Utility
-parseUtility utility = parseUtilityFromDockerfile dockerfile
+parseDish :: T.Text -> Ir.Dish
+parseDish dish = parseDishFromDockerfile dockerfile
   where
-    dockerfile = ParseTools.patchDockerfile $ ParseTools.parseDockerfile utility
+    dockerfile = ParseTools.patchDockerfile $ ParseTools.parseDockerfile dish
 
-parseUtilityFromDockerfile :: Docker.Dockerfile -> Ir.Utility
-parseUtilityFromDockerfile dockerfile =
-  Ir.Utility
+parseDishFromDockerfile :: Docker.Dockerfile -> Ir.Dish
+parseDishFromDockerfile dockerfile =
+  Ir.Dish
     { Ir.beforeFirstBuildStage = beforeFirstStage
     , Ir.localBuildStages = localStages
     , Ir.globalBuildStage = globalStage
@@ -130,7 +130,7 @@ dropHealthchecks = filter (not . isHealthcheck)
     isHealthcheck (Docker.InstructionPos (Docker.Healthcheck _) _ _) = True
     isHealthcheck _ = False
 
-getFromFile :: FilePath -> IO Ir.Box
+getFromFile :: FilePath -> IO Ir.Buffet
 getFromFile file = do
   map <- Yaml.decodeFileThrow file
   let _ = map :: Map.Map T.Text FilePath
