@@ -13,19 +13,7 @@ import qualified Data.Text.Lazy as Lazy
 import qualified Dockerfile.Intermediate as Intermediate
 import qualified Language.Docker as Docker
 import qualified Language.Docker.Syntax as Syntax
-import Prelude
-  ( Bool(False, True)
-  , ($)
-  , ($)
-  , (.)
-  , (.)
-  , concat
-  , either
-  , error
-  , fmap
-  , fmap
-  , id
-  )
+import Prelude (Bool(False, True), ($), (.), concat, either, error, fmap, id)
 import qualified Text.Show as Show
 
 conditionalRunInstruction :: T.Text -> T.Text -> Docker.Instruction T.Text
