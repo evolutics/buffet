@@ -4,7 +4,7 @@ module Buffet.Parse.Validations.EachStageHasOptionArg
 
 import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Ir.IrTools as IrTools
-import qualified Buffet.Parse.ParseTools as ParseTools
+import qualified Buffet.Toolbox.DockerTools as DockerTools
 import qualified Data.Text as T
 import qualified Language.Docker as Docker
 import Prelude
@@ -38,4 +38,4 @@ validateStage option stage =
     isOptionArg :: Docker.Instruction a -> Bool
     isOptionArg (Docker.Arg key Nothing) = key == option
     isOptionArg _ = False
-    firstArgs = takeWhile ParseTools.isArg $ dropWhile ParseTools.isFrom stage
+    firstArgs = takeWhile DockerTools.isArg $ dropWhile DockerTools.isFrom stage

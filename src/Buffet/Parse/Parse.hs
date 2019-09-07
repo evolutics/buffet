@@ -5,6 +5,7 @@ module Buffet.Parse.Parse
 import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Parse.ParseTools as ParseTools
 import qualified Buffet.Parse.Validate as Validate
+import qualified Buffet.Toolbox.DockerTools as DockerTools
 import qualified Control.Monad as Monad
 import qualified Data.List.Split as Split
 import qualified Data.Map.Strict as Map
@@ -97,12 +98,12 @@ parseDishFromDockerfile dockerfile =
         (first:rest) -> (first, rest)
     parts = Split.split splitter instructions
     splitter :: Split.Splitter (Docker.Instruction a)
-    splitter = Split.keepDelimsL $ Split.whenElt ParseTools.isFrom
+    splitter = Split.keepDelimsL $ Split.whenElt DockerTools.isFrom
     instructions = Docker.instruction <$> dropHealthchecks dockerfile
     (localStages, globalStageInstructions) =
       splitAt (pred $ length stages) stages
     globalStage =
-      filter (not . ParseTools.isFrom) $ concat globalStageInstructions
+      filter (not . DockerTools.isFrom) $ concat globalStageInstructions
 
 testCommand :: Docker.Dockerfile -> Maybe T.Text
 testCommand dockerfile =
