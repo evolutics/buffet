@@ -5,7 +5,7 @@ module Dockerfile.BuildInternal
 import qualified Data.List as List
 import qualified Data.Text as T
 import qualified Dockerfile.BuildTools as BuildTools
-import qualified Dockerfile.Intermediate as Intermediate
+import qualified Dockerfile.Ir as Ir
 import qualified Language.Docker as Docker hiding (sourcePaths)
 import qualified Language.Docker.Syntax as Syntax
 import Prelude
@@ -22,13 +22,13 @@ import Prelude
   , pure
   )
 
-get :: Intermediate.Box -> T.Text
+get :: Ir.Box -> T.Text
 get box =
   BuildTools.printDockerfileParts $
   concat
     [argInstructions box, utilitiesLocalBuildStages box, globalBuildStage box]
 
-argInstructions :: Intermediate.Box -> [Intermediate.DockerfilePart]
+argInstructions :: Ir.Box -> [Ir.DockerfilePart]
 argInstructions box = [publicOptions, privateOptions]
   where
     (privateOptions, publicOptions) =
@@ -37,39 +37,34 @@ argInstructions box = [publicOptions, privateOptions]
     isPrivate (Docker.Arg key _) = T.isPrefixOf (T.pack "_") key
     isPrivate _ = False
 
-flatArgInstructions :: Intermediate.Box -> Intermediate.DockerfilePart
+flatArgInstructions :: Ir.Box -> Ir.DockerfilePart
 flatArgInstructions box = mainOptions <> baseImageOptions
   where
-    mainOptions =
-      concat $ Intermediate.mapOrderedEntries utilityArgInstructions box
+    mainOptions = concat $ Ir.mapOrderedEntries utilityArgInstructions box
     baseImageOptions :: [Syntax.Instruction a]
     baseImageOptions =
       [Docker.Arg (T.pack "_alpine_version") . Just $ T.pack "'3.9.4'"]
 
-utilityArgInstructions ::
-     T.Text -> Intermediate.Utility -> Intermediate.DockerfilePart
+utilityArgInstructions :: T.Text -> Ir.Utility -> Ir.DockerfilePart
 utilityArgInstructions option utility =
   Docker.Arg option (Just $ T.pack "''") : extraOptions
   where
-    extraOptions =
-      filter isExtraOption $ Intermediate.beforeFirstBuildStage utility
+    extraOptions = filter isExtraOption $ Ir.beforeFirstBuildStage utility
     isExtraOption :: Syntax.Instruction a -> Bool
     isExtraOption (Docker.Arg key _) = key /= option
     isExtraOption _ = False
 
-utilitiesLocalBuildStages :: Intermediate.Box -> [Intermediate.DockerfilePart]
+utilitiesLocalBuildStages :: Ir.Box -> [Ir.DockerfilePart]
 utilitiesLocalBuildStages =
-  concat . Intermediate.mapOrderedEntries utilityLocalBuildStages
+  concat . Ir.mapOrderedEntries utilityLocalBuildStages
 
-utilityLocalBuildStages ::
-     T.Text -> Intermediate.Utility -> [Intermediate.DockerfilePart]
+utilityLocalBuildStages :: T.Text -> Ir.Utility -> [Ir.DockerfilePart]
 utilityLocalBuildStages option utility =
   fmap (conditionInstructions option) localBuildStages
   where
-    localBuildStages = Intermediate.localBuildStages utility
+    localBuildStages = Ir.localBuildStages utility
 
-conditionInstructions ::
-     T.Text -> Intermediate.DockerfilePart -> Intermediate.DockerfilePart
+conditionInstructions :: T.Text -> Ir.DockerfilePart -> Ir.DockerfilePart
 conditionInstructions option = fmap conditionInstruction
   where
     conditionInstruction (Docker.Copy arguments) =
@@ -95,7 +90,7 @@ optionConditionalRunInstruction option =
   where
     condition = T.concat [T.pack "[[ -n \"${", option, T.pack "}\" ]]"]
 
-globalBuildStage :: Intermediate.Box -> [Intermediate.DockerfilePart]
+globalBuildStage :: Ir.Box -> [Ir.DockerfilePart]
 globalBuildStage box =
   concat
     [ [[globalFromInstruction]]
@@ -116,17 +111,15 @@ globalFromInstruction =
       , Docker.platform = Nothing
       }
 
-globalUtilitiesInstructions :: Intermediate.Box -> [Intermediate.DockerfilePart]
-globalUtilitiesInstructions =
-  Intermediate.mapOrderedEntries globalUtilityInstructions
+globalUtilitiesInstructions :: Ir.Box -> [Ir.DockerfilePart]
+globalUtilitiesInstructions = Ir.mapOrderedEntries globalUtilityInstructions
 
-globalUtilityInstructions ::
-     T.Text -> Intermediate.Utility -> Intermediate.DockerfilePart
+globalUtilityInstructions :: T.Text -> Ir.Utility -> Ir.DockerfilePart
 globalUtilityInstructions option utility =
   conditionInstructions option $
   filter (not . BuildTools.isLabel) utilityGlobalBuildStage
   where
-    utilityGlobalBuildStage = Intermediate.globalBuildStage utility
+    utilityGlobalBuildStage = Ir.globalBuildStage utility
 
 globalWorkdirInstruction :: Docker.Instruction T.Text
 globalWorkdirInstruction = Docker.Workdir $ T.pack "/workdir"

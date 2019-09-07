@@ -3,7 +3,7 @@ module Dockerfile.Validations.EachStageHasOptionArg
   ) where
 
 import qualified Data.Text as T
-import qualified Dockerfile.Intermediate as Intermediate
+import qualified Dockerfile.Ir as Ir
 import qualified Dockerfile.ParseTools as ParseTools
 import qualified Language.Docker as Docker
 import Prelude
@@ -20,17 +20,15 @@ import Prelude
   , takeWhile
   )
 
-get :: Intermediate.Box -> [T.Text]
-get = concat . Intermediate.mapOrderedEntries validateUtility
+get :: Ir.Box -> [T.Text]
+get = concat . Ir.mapOrderedEntries validateUtility
 
-validateUtility :: T.Text -> Intermediate.Utility -> [T.Text]
+validateUtility :: T.Text -> Ir.Utility -> [T.Text]
 validateUtility option utility = concatMap (validateStage option) stages
   where
-    stages =
-      Intermediate.localBuildStages utility <>
-      [Intermediate.globalBuildStage utility]
+    stages = Ir.localBuildStages utility <> [Ir.globalBuildStage utility]
 
-validateStage :: T.Text -> Intermediate.DockerfilePart -> [T.Text]
+validateStage :: T.Text -> Ir.DockerfilePart -> [T.Text]
 validateStage option stage =
   if any isOptionArg firstArgs
     then []

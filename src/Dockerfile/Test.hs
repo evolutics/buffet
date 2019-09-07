@@ -9,7 +9,7 @@ import qualified Data.Text.Lazy as Lazy
 import qualified Data.Text.Lazy.Encoding as Encoding
 import qualified Data.Yaml as Yaml
 import qualified Dockerfile.BuildInternal as BuildInternal
-import qualified Dockerfile.Intermediate as Intermediate
+import qualified Dockerfile.Ir as Ir
 import qualified Dockerfile.Parse as Parse
 import Prelude
   ( FilePath
@@ -33,12 +33,11 @@ get source argumentsFile = do
   arguments <- Yaml.decodeFileThrow argumentsFile
   let _ = arguments :: Map.Map T.Text T.Text
   imageId <- dockerBuild dockerfile arguments
-  let optionToUtility =
-        filterTestedUtilities (Intermediate.optionToUtility box) arguments
+  let optionToUtility = filterTestedUtilities (Ir.optionToUtility box) arguments
       tests =
         Map.mapWithKey
           (\option utility ->
-             case Intermediate.testCommand utility of
+             case Ir.testCommand utility of
                Nothing ->
                  putStderrLine $
                  mconcat [T.pack "No test for utility: ", option]
@@ -69,9 +68,9 @@ dockerBuild dockerfile arguments = do
       Map.toAscList arguments
 
 filterTestedUtilities ::
-     Map.Map T.Text Intermediate.Utility
+     Map.Map T.Text Ir.Utility
   -> Map.Map T.Text T.Text
-  -> Map.Map T.Text Intermediate.Utility
+  -> Map.Map T.Text Ir.Utility
 filterTestedUtilities optionToUtility arguments =
   Map.restrictKeys optionToUtility relevantArgumentOptions
   where

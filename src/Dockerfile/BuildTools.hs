@@ -6,7 +6,7 @@ module Dockerfile.BuildTools
 
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as Lazy
-import qualified Dockerfile.Intermediate as Intermediate
+import qualified Dockerfile.Ir as Ir
 import qualified Language.Docker as Docker
 import qualified Language.Docker.Syntax as Syntax
 import Prelude (Bool(False, True), ($), (.), concat, fmap)
@@ -38,10 +38,10 @@ isLabel :: Docker.Instruction a -> Bool
 isLabel (Docker.Label _) = True
 isLabel _ = False
 
-printDockerfileParts :: [Intermediate.DockerfilePart] -> T.Text
+printDockerfileParts :: [Ir.DockerfilePart] -> T.Text
 printDockerfileParts = intercalateNewline . fmap printInstructions
 
-printInstructions :: Intermediate.DockerfilePart -> T.Text
+printInstructions :: Ir.DockerfilePart -> T.Text
 printInstructions = T.concat . fmap printInstruction
   where
     printInstruction (Docker.Run (Syntax.ArgumentsText command)) =

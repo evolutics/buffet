@@ -9,7 +9,7 @@ import qualified Data.Maybe as Maybe
 import qualified Data.Text as T
 import qualified Data.Text.IO as T.IO
 import qualified Data.Yaml as Yaml
-import qualified Dockerfile.Intermediate as Intermediate
+import qualified Dockerfile.Ir as Ir
 import qualified Dockerfile.ParseTools as ParseTools
 import qualified Dockerfile.Validate as Validate
 import qualified Language.Docker as Docker
@@ -39,14 +39,14 @@ import Prelude
 import qualified System.Directory as Directory
 import qualified System.FilePath as FilePath
 
-get :: FilePath -> IO Intermediate.Box
+get :: FilePath -> IO Ir.Box
 get path = do
   isFolder <- Directory.doesDirectoryExist path
   if isFolder
     then getFromFolder path
     else getFromFile path
 
-getFromFolder :: FilePath -> IO Intermediate.Box
+getFromFolder :: FilePath -> IO Ir.Box
 getFromFolder folder = do
   folderEntries <- Directory.listDirectory folder
   subfolders <-
@@ -62,35 +62,33 @@ getFromFolder folder = do
           subfolders
   getFromMap optionToUtility
 
-getFromMap :: Map.Map T.Text FilePath -> IO Intermediate.Box
+getFromMap :: Map.Map T.Text FilePath -> IO Ir.Box
 getFromMap = fmap parse . mapM T.IO.readFile
   where
     parse = either errors id . parseBox
     errors :: [T.Text] -> a
     errors = error . T.unpack . T.unlines
 
-parseBox :: Map.Map T.Text T.Text -> Either [T.Text] Intermediate.Box
+parseBox :: Map.Map T.Text T.Text -> Either [T.Text] Ir.Box
 parseBox optionToUtility =
   case Validate.get box of
     [] -> Right box
     errors -> Left errors
   where
-    box =
-      Intermediate.Box
-        {Intermediate.optionToUtility = fmap parseUtility optionToUtility}
+    box = Ir.Box {Ir.optionToUtility = fmap parseUtility optionToUtility}
 
-parseUtility :: T.Text -> Intermediate.Utility
+parseUtility :: T.Text -> Ir.Utility
 parseUtility utility = parseUtilityFromDockerfile dockerfile
   where
     dockerfile = ParseTools.patchDockerfile $ ParseTools.parseDockerfile utility
 
-parseUtilityFromDockerfile :: Docker.Dockerfile -> Intermediate.Utility
+parseUtilityFromDockerfile :: Docker.Dockerfile -> Ir.Utility
 parseUtilityFromDockerfile dockerfile =
-  Intermediate.Utility
-    { Intermediate.beforeFirstBuildStage = beforeFirstStage
-    , Intermediate.localBuildStages = localStages
-    , Intermediate.globalBuildStage = globalStage
-    , Intermediate.testCommand = testCommand dockerfile
+  Ir.Utility
+    { Ir.beforeFirstBuildStage = beforeFirstStage
+    , Ir.localBuildStages = localStages
+    , Ir.globalBuildStage = globalStage
+    , Ir.testCommand = testCommand dockerfile
     }
   where
     (beforeFirstStage, stages) =
@@ -132,7 +130,7 @@ dropHealthchecks = filter (not . isHealthcheck)
     isHealthcheck (Docker.InstructionPos (Docker.Healthcheck _) _ _) = True
     isHealthcheck _ = False
 
-getFromFile :: FilePath -> IO Intermediate.Box
+getFromFile :: FilePath -> IO Ir.Box
 getFromFile file = do
   map <- Yaml.decodeFileThrow file
   let _ = map :: Map.Map T.Text FilePath

@@ -1,4 +1,4 @@
-module Dockerfile.Intermediate
+module Dockerfile.Ir
   ( Box(..)
   , DockerfilePart
   , Utility(..)

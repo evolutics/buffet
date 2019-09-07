@@ -3,9 +3,9 @@ module Dockerfile.Validate
   ) where
 
 import qualified Data.Text as T
-import qualified Dockerfile.Intermediate as Intermediate
+import qualified Dockerfile.Ir as Ir
 import qualified Dockerfile.Validations.EachStageHasOptionArg as EachStageHasOptionArg
 import Prelude ()
 
-get :: Intermediate.Box -> [T.Text]
+get :: Ir.Box -> [T.Text]
 get = EachStageHasOptionArg.get
