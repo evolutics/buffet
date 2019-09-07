@@ -2,8 +2,8 @@ module Buffet.Build.ConditionInstructions
   ( get
   ) where
 
-import qualified Buffet.Build.BuildTools as BuildTools
 import qualified Buffet.Ir.Ir as Ir
+import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Data.Text as T
 import qualified Language.Docker as Docker hiding (sourcePaths)
 import qualified Language.Docker.Syntax as Syntax
@@ -39,7 +39,7 @@ conditionalRunInstruction condition thenPart =
   Docker.Run $ Syntax.ArgumentsText command
   where
     command =
-      BuildTools.intercalateNewline $
+      TextTools.intercalateNewline $
       concat [[conditionLine], indentLines thenLines, [indentLine endLine]]
     conditionLine = T.concat [T.pack "if ", condition, T.pack "; then \\"]
     thenLines = T.lines embeddedThen
