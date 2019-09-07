@@ -4,7 +4,7 @@ module Dockerfile.Validations.EachStageHasOptionArg
 
 import qualified Data.Text as T
 import qualified Dockerfile.Intermediate as Intermediate
-import qualified Dockerfile.Tools as Tools
+import qualified Dockerfile.ParseTools as ParseTools
 import qualified Language.Docker as Docker
 import Prelude
   ( Bool(False)
@@ -39,4 +39,4 @@ validateStage option stage =
     isOptionArg :: Docker.Instruction a -> Bool
     isOptionArg (Docker.Arg key Nothing) = key == option
     isOptionArg _ = False
-    firstArgs = takeWhile Tools.isArg $ dropWhile Tools.isFrom stage
+    firstArgs = takeWhile ParseTools.isArg $ dropWhile ParseTools.isFrom stage

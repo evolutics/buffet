@@ -10,7 +10,7 @@ import qualified Data.Text as T
 import qualified Data.Text.IO as T.IO
 import qualified Data.Yaml as Yaml
 import qualified Dockerfile.Intermediate as Intermediate
-import qualified Dockerfile.Tools as Tools
+import qualified Dockerfile.ParseTools as ParseTools
 import qualified Dockerfile.Validate as Validate
 import qualified Language.Docker as Docker
 import qualified Language.Docker.Syntax as Syntax
@@ -82,7 +82,7 @@ parseBox optionToUtility =
 parseUtility :: T.Text -> Intermediate.Utility
 parseUtility utility = parseUtilityFromDockerfile dockerfile
   where
-    dockerfile = Tools.patchDockerfile $ Tools.parseDockerfile utility
+    dockerfile = ParseTools.patchDockerfile $ ParseTools.parseDockerfile utility
 
 parseUtilityFromDockerfile :: Docker.Dockerfile -> Intermediate.Utility
 parseUtilityFromDockerfile dockerfile =
@@ -99,11 +99,12 @@ parseUtilityFromDockerfile dockerfile =
         (first:rest) -> (first, rest)
     parts = Split.split splitter instructions
     splitter :: Split.Splitter (Docker.Instruction a)
-    splitter = Split.keepDelimsL $ Split.whenElt Tools.isFrom
+    splitter = Split.keepDelimsL $ Split.whenElt ParseTools.isFrom
     instructions = Docker.instruction <$> dropHealthchecks dockerfile
     (localStages, globalStageInstructions) =
       splitAt (pred $ length stages) stages
-    globalStage = filter (not . Tools.isFrom) $ concat globalStageInstructions
+    globalStage =
+      filter (not . ParseTools.isFrom) $ concat globalStageInstructions
 
 testCommand :: Docker.Dockerfile -> Maybe T.Text
 testCommand dockerfile =

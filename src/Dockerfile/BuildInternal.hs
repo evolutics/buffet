@@ -4,8 +4,8 @@ module Dockerfile.BuildInternal
 
 import qualified Data.List as List
 import qualified Data.Text as T
+import qualified Dockerfile.BuildTools as BuildTools
 import qualified Dockerfile.Intermediate as Intermediate
-import qualified Dockerfile.Tools as Tools
 import qualified Language.Docker as Docker hiding (sourcePaths)
 import qualified Language.Docker.Syntax as Syntax
 import Prelude
@@ -24,7 +24,7 @@ import Prelude
 
 get :: Intermediate.Box -> T.Text
 get box =
-  Tools.printDockerfileParts $
+  BuildTools.printDockerfileParts $
   concat
     [argInstructions box, utilitiesLocalBuildStages box, globalBuildStage box]
 
@@ -91,7 +91,7 @@ conditionalCopyInstruction arguments =
 
 optionConditionalRunInstruction :: T.Text -> T.Text -> Docker.Instruction T.Text
 optionConditionalRunInstruction option =
-  Tools.conditionalRunInstruction condition
+  BuildTools.conditionalRunInstruction condition
   where
     condition = T.concat [T.pack "[[ -n \"${", option, T.pack "}\" ]]"]
 
@@ -124,7 +124,7 @@ globalUtilityInstructions ::
      T.Text -> Intermediate.Utility -> Intermediate.DockerfilePart
 globalUtilityInstructions option utility =
   conditionInstructions option $
-  filter (not . Tools.isLabel) utilityGlobalBuildStage
+  filter (not . BuildTools.isLabel) utilityGlobalBuildStage
   where
     utilityGlobalBuildStage = Intermediate.globalBuildStage utility
 

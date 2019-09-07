@@ -1,10 +1,6 @@
-module Dockerfile.Tools
+module Dockerfile.BuildTools
   ( conditionalRunInstruction
-  , isArg
-  , isFrom
   , isLabel
-  , parseDockerfile
-  , patchDockerfile
   , printDockerfileParts
   ) where
 
@@ -13,8 +9,7 @@ import qualified Data.Text.Lazy as Lazy
 import qualified Dockerfile.Intermediate as Intermediate
 import qualified Language.Docker as Docker
 import qualified Language.Docker.Syntax as Syntax
-import Prelude (Bool(False, True), ($), (.), concat, either, error, fmap, id)
-import qualified Text.Show as Show
+import Prelude (Bool(False, True), ($), (.), concat, fmap)
 
 conditionalRunInstruction :: T.Text -> T.Text -> Docker.Instruction T.Text
 conditionalRunInstruction condition thenPart =
@@ -39,27 +34,9 @@ intercalateNewline = T.intercalate newline
   where
     newline = T.pack "\n"
 
-isArg :: Docker.Instruction a -> Bool
-isArg (Docker.Arg _ _) = True
-isArg _ = False
-
-isFrom :: Docker.Instruction a -> Bool
-isFrom (Docker.From _) = True
-isFrom _ = False
-
 isLabel :: Docker.Instruction a -> Bool
 isLabel (Docker.Label _) = True
 isLabel _ = False
-
-parseDockerfile :: T.Text -> Docker.Dockerfile
-parseDockerfile = either (error . Show.show) id . Docker.parseText
-
-patchDockerfile :: Docker.Dockerfile -> Docker.Dockerfile
-patchDockerfile = fmap $ fmap reviveLineBreaks
-  where
-    reviveLineBreaks = reviveSimpleLineBreak . reviveBlankLine
-    reviveSimpleLineBreak = T.replace (T.pack "   ") $ T.pack " \\\n  "
-    reviveBlankLine = T.replace (T.pack "     && ") $ T.pack " \\\n  \\\n  && "
 
 printDockerfileParts :: [Intermediate.DockerfilePart] -> T.Text
 printDockerfileParts = intercalateNewline . fmap printInstructions
