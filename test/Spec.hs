@@ -1,8 +1,8 @@
+import qualified Buffet
 import qualified Data.List as List
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as Lazy
 import qualified Data.Text.Lazy.Encoding as Encoding
-import qualified Lib
 import Prelude (FilePath, IO, ($), (.), (<$>), (>>=), fmap, return)
 import qualified System.Directory as Directory
 import qualified System.FilePath as FilePath
@@ -19,7 +19,7 @@ tests = do
   return $ Tasty.testGroup "Tests" [generation, mainDockerfileTest]
   where
     mainDockerfileTest =
-      assertFileEqualsText "Main" "Dockerfile" $ Lib.build "dockerfiles"
+      assertFileEqualsText "Main" "Dockerfile" $ Buffet.build "dockerfiles"
 
 generationTests :: FilePath -> IO [Tasty.TestTree]
 generationTests folder = do
@@ -30,7 +30,7 @@ generationTests folder = do
       assertFileEqualsText subfolder (expected subfolder) $ actual subfolder
     expected subfolder =
       FilePath.joinPath [folder, subfolder, "expected.Dockerfile"]
-    actual = Lib.build . FilePath.combine folder
+    actual = Buffet.build . FilePath.combine folder
 
 assertFileEqualsText ::
      Tasty.TestName -> FilePath -> IO T.Text -> Tasty.TestTree

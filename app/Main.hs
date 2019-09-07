@@ -2,9 +2,9 @@ module Main
   ( main
   ) where
 
+import qualified Buffet
 import qualified Control.Monad as Monad
 import qualified Data.Text.IO as T.IO
-import qualified Lib
 import qualified Options.Applicative as Options
 import Prelude (FilePath, IO, ($), (<$>), (<*>), mconcat, mempty)
 
@@ -29,7 +29,7 @@ commands =
     ]
 
 build :: FilePath -> IO ()
-build = Lib.build Monad.>=> T.IO.putStrLn
+build = Buffet.build Monad.>=> T.IO.putStrLn
 
 test :: FilePath -> FilePath -> IO ()
-test = Lib.test
+test = Buffet.test

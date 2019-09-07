@@ -1,4 +1,4 @@
-module Lib
+module Buffet
   ( build
   , test
   ) where
