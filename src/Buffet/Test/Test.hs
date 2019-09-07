@@ -27,13 +27,13 @@ import qualified System.IO as IO
 import qualified System.Process.Typed as Process
 
 get :: FilePath -> FilePath -> IO ()
-get source argumentsFile = do
-  buffet <- Parse.get source
-  let dockerfile = BuildInternal.get buffet
+get buffetSource argumentsFile = do
+  buffetIr <- Parse.get buffetSource
+  let buffet = BuildInternal.get buffetIr
   arguments <- Yaml.decodeFileThrow argumentsFile
   let _ = arguments :: Map.Map T.Text T.Text
-  imageId <- dockerBuild dockerfile arguments
-  let optionToDish = filterTestedDishes (Ir.optionToDish buffet) arguments
+  imageId <- dockerBuild buffet arguments
+  let optionToDish = filterTestedDishes (Ir.optionToDish buffetIr) arguments
       tests =
         Map.mapWithKey
           (\option dish ->
