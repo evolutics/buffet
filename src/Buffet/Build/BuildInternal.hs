@@ -4,6 +4,7 @@ module Buffet.Build.BuildInternal
 
 import qualified Buffet.Build.BuildTools as BuildTools
 import qualified Buffet.Ir.Ir as Ir
+import qualified Buffet.Ir.IrTools as IrTools
 import qualified Data.List as List
 import qualified Data.Text as T
 import qualified Language.Docker as Docker hiding (sourcePaths)
@@ -40,7 +41,7 @@ argInstructions box = [publicOptions, privateOptions]
 flatArgInstructions :: Ir.Box -> Ir.DockerfilePart
 flatArgInstructions box = mainOptions <> baseImageOptions
   where
-    mainOptions = concat $ Ir.mapOrderedEntries utilityArgInstructions box
+    mainOptions = concat $ IrTools.mapOrderedEntries utilityArgInstructions box
     baseImageOptions :: [Syntax.Instruction a]
     baseImageOptions =
       [Docker.Arg (T.pack "_alpine_version") . Just $ T.pack "'3.9.4'"]
@@ -56,7 +57,7 @@ utilityArgInstructions option utility =
 
 utilitiesLocalBuildStages :: Ir.Box -> [Ir.DockerfilePart]
 utilitiesLocalBuildStages =
-  concat . Ir.mapOrderedEntries utilityLocalBuildStages
+  concat . IrTools.mapOrderedEntries utilityLocalBuildStages
 
 utilityLocalBuildStages :: T.Text -> Ir.Utility -> [Ir.DockerfilePart]
 utilityLocalBuildStages option utility =
@@ -112,7 +113,8 @@ globalFromInstruction =
       }
 
 globalUtilitiesInstructions :: Ir.Box -> [Ir.DockerfilePart]
-globalUtilitiesInstructions = Ir.mapOrderedEntries globalUtilityInstructions
+globalUtilitiesInstructions =
+  IrTools.mapOrderedEntries globalUtilityInstructions
 
 globalUtilityInstructions :: T.Text -> Ir.Utility -> Ir.DockerfilePart
 globalUtilityInstructions option utility =

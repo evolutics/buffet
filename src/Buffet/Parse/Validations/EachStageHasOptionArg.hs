@@ -3,6 +3,7 @@ module Buffet.Parse.Validations.EachStageHasOptionArg
   ) where
 
 import qualified Buffet.Ir.Ir as Ir
+import qualified Buffet.Ir.IrTools as IrTools
 import qualified Buffet.Parse.ParseTools as ParseTools
 import qualified Data.Text as T
 import qualified Language.Docker as Docker
@@ -21,7 +22,7 @@ import Prelude
   )
 
 get :: Ir.Box -> [T.Text]
-get = concat . Ir.mapOrderedEntries validateUtility
+get = concat . IrTools.mapOrderedEntries validateUtility
 
 validateUtility :: T.Text -> Ir.Utility -> [T.Text]
 validateUtility option utility = concatMap (validateStage option) stages
