@@ -32,11 +32,9 @@ dishesInstructions :: Ir.Buffet -> [Ir.DockerfilePart]
 dishesInstructions = IrTools.mapOrderedEntries dishInstructions
 
 dishInstructions :: T.Text -> Ir.Dish -> Ir.DockerfilePart
-dishInstructions option dish =
-  ConditionInstructions.get option $
-  filter (not . BuildTools.isLabel) buildStage
-  where
-    buildStage = Ir.globalBuildStage dish
+dishInstructions option =
+  ConditionInstructions.get option .
+  filter (not . BuildTools.isLabel) . Ir.globalBuildStage
 
 workdirInstruction :: Docker.Instruction T.Text
 workdirInstruction = Docker.Workdir $ T.pack "/workdir"
