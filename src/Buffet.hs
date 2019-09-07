@@ -4,13 +4,13 @@ module Buffet
   ) where
 
 import qualified Data.Text as T
-import qualified Dockerfile.Parser as Parser
-import qualified Dockerfile.Printer as Printer
-import qualified Dockerfile.Tester as Tester
+import qualified Dockerfile.Parse as Parse
+import qualified Dockerfile.Print as Print
+import qualified Dockerfile.Test as Test
 import Prelude (FilePath, IO, (.), fmap)
 
 build :: FilePath -> IO T.Text
-build = fmap Printer.get . Parser.get
+build = fmap Print.get . Parse.get
 
 test :: FilePath -> FilePath -> IO ()
-test = Tester.get
+test = Test.get

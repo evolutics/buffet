@@ -1,4 +1,4 @@
-module Dockerfile.Tester
+module Dockerfile.Test
   ( get
   ) where
 
@@ -9,8 +9,8 @@ import qualified Data.Text.Lazy as Lazy
 import qualified Data.Text.Lazy.Encoding as Encoding
 import qualified Data.Yaml as Yaml
 import qualified Dockerfile.Intermediate as Intermediate
-import qualified Dockerfile.Parser as Parser
-import qualified Dockerfile.Printer as Printer
+import qualified Dockerfile.Parse as Parse
+import qualified Dockerfile.Print as Print
 import Prelude
   ( FilePath
   , IO
@@ -28,8 +28,8 @@ import qualified System.Process.Typed as Process
 
 get :: FilePath -> FilePath -> IO ()
 get source argumentsFile = do
-  box <- Parser.get source
-  let dockerfile = Printer.get box
+  box <- Parse.get source
+  let dockerfile = Print.get box
   arguments <- Yaml.decodeFileThrow argumentsFile
   let _ = arguments :: Map.Map T.Text T.Text
   imageId <- dockerBuild dockerfile arguments

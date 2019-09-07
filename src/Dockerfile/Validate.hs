@@ -1,4 +1,4 @@
-module Dockerfile.Validator
+module Dockerfile.Validate
   ( get
   ) where
 

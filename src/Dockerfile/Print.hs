@@ -1,4 +1,4 @@
-module Dockerfile.Printer
+module Dockerfile.Print
   ( get
   ) where
 

@@ -1,4 +1,4 @@
-module Dockerfile.Parser
+module Dockerfile.Parse
   ( get
   ) where
 
@@ -11,7 +11,7 @@ import qualified Data.Text.IO as T.IO
 import qualified Data.Yaml as Yaml
 import qualified Dockerfile.Intermediate as Intermediate
 import qualified Dockerfile.Tools as Tools
-import qualified Dockerfile.Validator as Validator
+import qualified Dockerfile.Validate as Validate
 import qualified Language.Docker as Docker
 import qualified Language.Docker.Syntax as Syntax
 import Prelude
@@ -71,7 +71,7 @@ getFromMap = fmap parse . mapM T.IO.readFile
 
 parseBox :: Map.Map T.Text T.Text -> Either [T.Text] Intermediate.Box
 parseBox optionToUtility =
-  case Validator.get box of
+  case Validate.get box of
     [] -> Right box
     errors -> Left errors
   where
