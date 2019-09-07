@@ -71,7 +71,7 @@ parseDishFromDockerfile dockerfile =
     parts = Split.split splitter instructions
     splitter :: Split.Splitter (Docker.Instruction a)
     splitter = Split.keepDelimsL $ Split.whenElt DockerTools.isFrom
-    instructions = Docker.instruction <$> dropHealthchecks dockerfile
+    instructions = Docker.instruction <$> takeActualInstructions dockerfile
     (localStages, globalStageInstructions) =
       splitAt (pred $ length stages) stages
     globalStage =
@@ -96,9 +96,10 @@ argumentsText :: Docker.Arguments T.Text -> T.Text
 argumentsText (Syntax.ArgumentsText text) = text
 argumentsText (Syntax.ArgumentsList list) = list
 
-dropHealthchecks :: Docker.Dockerfile -> Docker.Dockerfile
-dropHealthchecks = filter (not . isHealthcheck)
+takeActualInstructions :: Docker.Dockerfile -> Docker.Dockerfile
+takeActualInstructions = filter isTaken
   where
-    isHealthcheck :: Docker.InstructionPos a -> Bool
-    isHealthcheck (Docker.InstructionPos (Docker.Healthcheck _) _ _) = True
-    isHealthcheck _ = False
+    isTaken :: Docker.InstructionPos a -> Bool
+    isTaken (Docker.InstructionPos (Docker.Healthcheck _) _ _) = False
+    isTaken (Docker.InstructionPos (Docker.Label _) _ _) = False
+    isTaken _ = True

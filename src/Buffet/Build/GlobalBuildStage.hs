@@ -5,10 +5,9 @@ module Buffet.Build.GlobalBuildStage
 import qualified Buffet.Build.ConditionInstructions as ConditionInstructions
 import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Ir.IrTools as IrTools
-import qualified Buffet.Toolbox.DockerTools as DockerTools
 import qualified Data.Text as T
 import qualified Language.Docker as Docker hiding (sourcePaths)
-import Prelude (Maybe(Just, Nothing), ($), (.), concat, filter, not)
+import Prelude (Maybe(Just, Nothing), ($), (.), concat)
 
 get :: Ir.Buffet -> [Ir.DockerfilePart]
 get buffet =
@@ -32,9 +31,7 @@ dishesInstructions :: Ir.Buffet -> [Ir.DockerfilePart]
 dishesInstructions = IrTools.mapOrderedEntries dishInstructions
 
 dishInstructions :: T.Text -> Ir.Dish -> Ir.DockerfilePart
-dishInstructions option =
-  ConditionInstructions.get option .
-  filter (not . DockerTools.isLabel) . Ir.globalBuildStage
+dishInstructions option = ConditionInstructions.get option . Ir.globalBuildStage
 
 workdirInstruction :: Docker.Instruction T.Text
 workdirInstruction = Docker.Workdir $ T.pack "/workdir"
