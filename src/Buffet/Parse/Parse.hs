@@ -3,16 +3,14 @@ module Buffet.Parse.Parse
   ) where
 
 import qualified Buffet.Ir.Ir as Ir
+import qualified Buffet.Parse.GetRawSource as GetRawSource
 import qualified Buffet.Parse.ParseTools as ParseTools
 import qualified Buffet.Parse.Validate as Validate
 import qualified Buffet.Toolbox.DockerTools as DockerTools
-import qualified Control.Monad as Monad
 import qualified Data.List.Split as Split
 import qualified Data.Map.Strict as Map
 import qualified Data.Maybe as Maybe
 import qualified Data.Text as T
-import qualified Data.Text.IO as T.IO
-import qualified Data.Yaml as Yaml
 import qualified Language.Docker as Docker
 import qualified Language.Docker.Syntax as Syntax
 import Prelude
@@ -31,40 +29,14 @@ import Prelude
   , fmap
   , id
   , length
-  , mapM
   , not
   , pred
   , reverse
   , splitAt
   )
-import qualified System.Directory as Directory
-import qualified System.FilePath as FilePath
 
 get :: FilePath -> IO Ir.Buffet
-get path = do
-  isFolder <- Directory.doesDirectoryExist path
-  if isFolder
-    then getFromFolder path
-    else getFromFile path
-
-getFromFolder :: FilePath -> IO Ir.Buffet
-getFromFolder folder = do
-  folderEntries <- Directory.listDirectory folder
-  subfolders <-
-    Monad.filterM
-      (Directory.doesDirectoryExist . FilePath.combine folder)
-      folderEntries
-  let optionToDish =
-        Map.fromList $
-        fmap
-          (\subfolder ->
-             ( T.pack subfolder
-             , FilePath.joinPath [folder, subfolder, "Dockerfile"]))
-          subfolders
-  getFromMap optionToDish
-
-getFromMap :: Map.Map T.Text FilePath -> IO Ir.Buffet
-getFromMap = fmap parse . mapM T.IO.readFile
+get = fmap parse . GetRawSource.get
   where
     parse = either errors id . parseBuffet
     errors :: [T.Text] -> a
@@ -130,12 +102,3 @@ dropHealthchecks = filter (not . isHealthcheck)
     isHealthcheck :: Docker.InstructionPos a -> Bool
     isHealthcheck (Docker.InstructionPos (Docker.Healthcheck _) _ _) = True
     isHealthcheck _ = False
-
-getFromFile :: FilePath -> IO Ir.Buffet
-getFromFile file = do
-  map <- Yaml.decodeFileThrow file
-  let _ = map :: Map.Map T.Text FilePath
-      mapInContext = fmap (FilePath.combine folder) map
-  getFromMap mapInContext
-  where
-    folder = FilePath.takeDirectory file
