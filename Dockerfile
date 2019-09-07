@@ -1,3 +1,4 @@
+ARG alpine_version='3.9.4'
 ARG brittany=''
 ARG git=''
 ARG gitlint=''
@@ -6,8 +7,6 @@ ARG hlint=''
 ARG hunspell=''
 ARG prettier=''
 
-ARG _alpine_version='3.9.4'
-
 FROM evolutics/haskell-stack AS hindent
 ARG hindent
 RUN if [[ -n "${hindent}" ]]; then \
@@ -15,7 +14,7 @@ RUN if [[ -n "${hindent}" ]]; then \
       "hindent-${hindent}" \
   ; fi
 
-FROM alpine:"${_alpine_version}"
+FROM alpine:"${alpine_version}"
 
 ARG brittany
 RUN if [[ -n "${brittany}" ]]; then \

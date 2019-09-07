@@ -30,21 +30,12 @@ get box =
     [argInstructions box, utilitiesLocalBuildStages box, globalBuildStage box]
 
 argInstructions :: Ir.Box -> [Ir.DockerfilePart]
-argInstructions box = [publicOptions, privateOptions]
-  where
-    (privateOptions, publicOptions) =
-      List.partition isPrivate $ flatArgInstructions box
-    isPrivate :: Syntax.Instruction a -> Bool
-    isPrivate (Docker.Arg key _) = T.isPrefixOf (T.pack "_") key
-    isPrivate _ = False
-
-flatArgInstructions :: Ir.Box -> Ir.DockerfilePart
-flatArgInstructions box = mainOptions <> baseImageOptions
+argInstructions box = [List.sort $ mainOptions <> baseImageOptions]
   where
     mainOptions = concat $ IrTools.mapOrderedEntries utilityArgInstructions box
     baseImageOptions :: [Syntax.Instruction a]
     baseImageOptions =
-      [Docker.Arg (T.pack "_alpine_version") . Just $ T.pack "'3.9.4'"]
+      [Docker.Arg (T.pack "alpine_version") . Just $ T.pack "'3.9.4'"]
 
 utilityArgInstructions :: T.Text -> Ir.Utility -> Ir.DockerfilePart
 utilityArgInstructions option utility =
@@ -106,7 +97,7 @@ globalFromInstruction =
       { Docker.image =
           Docker.Image
             {Docker.registryName = Nothing, Docker.imageName = T.pack "alpine"}
-      , Docker.tag = Just . Docker.Tag $ T.pack "\"${_alpine_version}\""
+      , Docker.tag = Just . Docker.Tag $ T.pack "\"${alpine_version}\""
       , Docker.digest = Nothing
       , Docker.alias = Nothing
       , Docker.platform = Nothing
