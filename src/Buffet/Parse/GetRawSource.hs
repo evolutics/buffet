@@ -12,36 +12,36 @@ import qualified System.Directory as Directory
 import qualified System.FilePath as FilePath
 
 get :: FilePath -> IO (Map.Map T.Text T.Text)
-get path = do
-  isFolder <- Directory.doesDirectoryExist path
+get buffetPath = do
+  isFolder <- Directory.doesDirectoryExist buffetPath
   if isFolder
-    then getFromFolder path
-    else getFromFile path
+    then getFromFolder buffetPath
+    else getFromFile buffetPath
 
 getFromFolder :: FilePath -> IO (Map.Map T.Text T.Text)
-getFromFolder folder = do
-  folderEntries <- Directory.listDirectory folder
-  subfolders <-
+getFromFolder buffetFolder = do
+  folderEntries <- Directory.listDirectory buffetFolder
+  options <-
     Monad.filterM
-      (Directory.doesDirectoryExist . FilePath.combine folder)
+      (Directory.doesDirectoryExist . FilePath.combine buffetFolder)
       folderEntries
   let optionToDish =
         Map.fromList $
         fmap
-          (\subfolder ->
-             ( T.pack subfolder
-             , FilePath.joinPath [folder, subfolder, "Dockerfile"]))
-          subfolders
+          (\option ->
+             ( T.pack option
+             , FilePath.joinPath [buffetFolder, option, "Dockerfile"]))
+          options
   getFromMap optionToDish
 
 getFromMap :: Map.Map T.Text FilePath -> IO (Map.Map T.Text T.Text)
 getFromMap = mapM T.IO.readFile
 
 getFromFile :: FilePath -> IO (Map.Map T.Text T.Text)
-getFromFile file = do
-  map <- Yaml.decodeFileThrow file
-  let _ = map :: Map.Map T.Text FilePath
-      mapInContext = fmap (FilePath.combine folder) map
-  getFromMap mapInContext
+getFromFile buffetFile = do
+  unresolvedOptionToDish <- Yaml.decodeFileThrow buffetFile
+  let _ = unresolvedOptionToDish :: Map.Map T.Text FilePath
+      optionToDish = fmap (FilePath.combine folder) unresolvedOptionToDish
+  getFromMap optionToDish
   where
-    folder = FilePath.takeDirectory file
+    folder = FilePath.takeDirectory buffetFile
