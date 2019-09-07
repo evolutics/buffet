@@ -8,6 +8,7 @@ import qualified Data.Text as T
 import Prelude ((<$>), uncurry)
 
 mapOrderedEntries :: (T.Text -> Ir.Dish -> a) -> Ir.Buffet -> [a]
-mapOrderedEntries function buffet = uncurry function <$> Map.toAscList map
+mapOrderedEntries function buffet =
+  uncurry function <$> Map.toAscList optionToDish
   where
-    map = Ir.optionToDish buffet
+    optionToDish = Ir.optionToDish buffet
