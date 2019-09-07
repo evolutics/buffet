@@ -3,12 +3,12 @@ module Buffet.Build.BuildInternal
   ) where
 
 import qualified Buffet.Build.BuildTools as BuildTools
+import qualified Buffet.Build.ConditionInstructions as ConditionInstructions
 import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Ir.IrTools as IrTools
 import qualified Data.List as List
 import qualified Data.Text as T
 import qualified Language.Docker as Docker hiding (sourcePaths)
-import qualified Language.Docker.Syntax as Syntax
 import Prelude
   ( Bool(False)
   , Maybe(Just, Nothing)
@@ -20,7 +20,6 @@ import Prelude
   , filter
   , fmap
   , not
-  , pure
   )
 
 get :: Ir.Buffet -> T.Text
@@ -54,35 +53,9 @@ dishesLocalBuildStages = concat . IrTools.mapOrderedEntries dishLocalBuildStages
 
 dishLocalBuildStages :: T.Text -> Ir.Dish -> [Ir.DockerfilePart]
 dishLocalBuildStages option dish =
-  fmap (conditionInstructions option) localBuildStages
+  fmap (ConditionInstructions.get option) localBuildStages
   where
     localBuildStages = Ir.localBuildStages dish
-
-conditionInstructions :: T.Text -> Ir.DockerfilePart -> Ir.DockerfilePart
-conditionInstructions option = fmap conditionInstruction
-  where
-    conditionInstruction (Docker.Copy arguments) =
-      conditionalCopyInstruction arguments
-    conditionInstruction (Docker.Run (Syntax.ArgumentsText command)) =
-      optionConditionalRunInstruction option command
-    conditionInstruction instruction = instruction
-
-conditionalCopyInstruction :: Docker.CopyArgs -> Docker.Instruction T.Text
-conditionalCopyInstruction arguments =
-  Docker.Copy arguments {Docker.sourcePaths = conditionalSources}
-  where
-    conditionalSources = fmap makePattern originalSources <> pure emptyFolder
-    makePattern path =
-      Docker.SourcePath
-        {Docker.unSourcePath = T.snoc (Docker.unSourcePath path) '*'}
-    originalSources = Docker.sourcePaths arguments
-    emptyFolder = Docker.SourcePath {Docker.unSourcePath = T.pack "/var/empty"}
-
-optionConditionalRunInstruction :: T.Text -> T.Text -> Docker.Instruction T.Text
-optionConditionalRunInstruction option =
-  BuildTools.conditionalRunInstruction condition
-  where
-    condition = T.concat [T.pack "[[ -n \"${", option, T.pack "}\" ]]"]
 
 globalBuildStage :: Ir.Buffet -> [Ir.DockerfilePart]
 globalBuildStage buffet =
@@ -110,7 +83,7 @@ globalDishesInstructions = IrTools.mapOrderedEntries globalDishInstructions
 
 globalDishInstructions :: T.Text -> Ir.Dish -> Ir.DockerfilePart
 globalDishInstructions option dish =
-  conditionInstructions option $
+  ConditionInstructions.get option $
   filter (not . BuildTools.isLabel) dishGlobalBuildStage
   where
     dishGlobalBuildStage = Ir.globalBuildStage dish
