@@ -126,7 +126,7 @@ argumentsText (Syntax.ArgumentsList list) = list
 dropHealthchecks :: Docker.Dockerfile -> Docker.Dockerfile
 dropHealthchecks = filter (not . isHealthcheck)
   where
-    isHealthcheck :: Syntax.InstructionPos a -> Bool
+    isHealthcheck :: Docker.InstructionPos a -> Bool
     isHealthcheck (Docker.InstructionPos (Docker.Healthcheck _) _ _) = True
     isHealthcheck _ = False
 

@@ -36,7 +36,7 @@ argInstructions :: Ir.Buffet -> [Ir.DockerfilePart]
 argInstructions buffet = [List.sort $ mainOptions <> baseImageOptions]
   where
     mainOptions = concat $ IrTools.mapOrderedEntries dishArgInstructions buffet
-    baseImageOptions :: [Syntax.Instruction a]
+    baseImageOptions :: [Docker.Instruction a]
     baseImageOptions =
       [Docker.Arg (T.pack "alpine_version") . Just $ T.pack "'3.9.4'"]
 
@@ -45,7 +45,7 @@ dishArgInstructions option dish =
   Docker.Arg option (Just $ T.pack "''") : extraOptions
   where
     extraOptions = filter isExtraOption $ Ir.beforeFirstBuildStage dish
-    isExtraOption :: Syntax.Instruction a -> Bool
+    isExtraOption :: Docker.Instruction a -> Bool
     isExtraOption (Docker.Arg key _) = key /= option
     isExtraOption _ = False
 
