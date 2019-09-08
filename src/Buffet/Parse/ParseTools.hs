@@ -5,11 +5,11 @@ module Buffet.Parse.ParseTools
 
 import qualified Data.Text as T
 import qualified Language.Docker as Docker
-import Prelude (($), (.), either, error, fmap, id)
+import Prelude (FilePath, IO, ($), (.), either, error, fmap, id)
 import qualified Text.Show as Show
 
-parseDockerfile :: T.Text -> Docker.Dockerfile
-parseDockerfile = either (error . Show.show) id . Docker.parseText
+parseDockerfile :: FilePath -> IO Docker.Dockerfile
+parseDockerfile = fmap (either (error . Show.show) id) . Docker.parseFile
 
 patchDockerfile :: Docker.Dockerfile -> Docker.Dockerfile
 patchDockerfile = fmap $ fmap reviveLineBreaks

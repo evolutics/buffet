@@ -3,7 +3,7 @@ module Buffet.Parse.Parse
   ) where
 
 import qualified Buffet.Ir.Ir as Ir
-import qualified Buffet.Parse.GetRawSource as GetRawSource
+import qualified Buffet.Parse.GetSourcePaths as GetSourcePaths
 import qualified Buffet.Parse.ParseTools as ParseTools
 import qualified Buffet.Parse.Validate as Validate
 import qualified Buffet.Toolbox.DockerTools as DockerTools
@@ -29,20 +29,25 @@ import Prelude
   , fmap
   , id
   , length
+  , mapM
   , not
   , pred
+  , pure
   , reverse
   , splitAt
   )
 
 get :: FilePath -> IO Ir.Buffet
-get = fmap parse . GetRawSource.get
+get buffetPath = do
+  optionToDishPath <- GetSourcePaths.get buffetPath
+  optionToDish <- mapM ParseTools.parseDockerfile optionToDishPath
+  pure $ parse optionToDish
   where
     parse = either errors id . parseBuffet
     errors :: [T.Text] -> a
     errors = error . T.unpack . T.unlines
 
-parseBuffet :: Map.Map T.Text T.Text -> Either [T.Text] Ir.Buffet
+parseBuffet :: Map.Map T.Text Docker.Dockerfile -> Either [T.Text] Ir.Buffet
 parseBuffet optionToDish =
   case Validate.get buffet of
     [] -> Right buffet
@@ -50,13 +55,8 @@ parseBuffet optionToDish =
   where
     buffet = Ir.Buffet {Ir.optionToDish = fmap parseDish optionToDish}
 
-parseDish :: T.Text -> Ir.Dish
-parseDish dish = parseDishFromDockerfile dockerfile
-  where
-    dockerfile = ParseTools.patchDockerfile $ ParseTools.parseDockerfile dish
-
-parseDishFromDockerfile :: Docker.Dockerfile -> Ir.Dish
-parseDishFromDockerfile dockerfile =
+parseDish :: Docker.Dockerfile -> Ir.Dish
+parseDish rawDockerfile =
   Ir.Dish
     { Ir.beforeFirstBuildStage = beforeFirstStage
     , Ir.localBuildStages = localStages
@@ -72,6 +72,7 @@ parseDishFromDockerfile dockerfile =
     splitter :: Split.Splitter (Docker.Instruction a)
     splitter = Split.keepDelimsL $ Split.whenElt DockerTools.isFrom
     instructions = Docker.instruction <$> takeActualInstructions dockerfile
+    dockerfile = ParseTools.patchDockerfile rawDockerfile
     (localStages, globalStageInstructions) =
       splitAt (pred $ length stages) stages
     globalStage =
