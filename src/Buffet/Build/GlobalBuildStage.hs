@@ -24,7 +24,9 @@ fromInstruction configuration =
     Docker.BaseImage
       { Docker.image =
           Docker.Image
-            {Docker.registryName = Nothing, Docker.imageName = T.pack "alpine"}
+            { Docker.registryName = Nothing
+            , Docker.imageName = Configuration.baseImageName configuration
+            }
       , Docker.tag =
           Just . Docker.Tag $
           mconcat

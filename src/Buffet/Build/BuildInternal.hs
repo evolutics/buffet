@@ -26,7 +26,8 @@ get buffet =
 configuration :: Configuration.Configuration
 configuration =
   Configuration.Configuration
-    { Configuration.baseImageTagOption = T.pack "alpine_version"
+    { Configuration.baseImageName = T.pack "alpine"
+    , Configuration.baseImageTagOption = T.pack "alpine_version"
     , Configuration.baseImageTagValue = T.pack "3.9.4"
     }
 

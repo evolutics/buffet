@@ -7,7 +7,8 @@ import Prelude (Eq, Ord, Show)
 
 data Configuration =
   Configuration
-    { baseImageTagOption :: T.Text
+    { baseImageName :: T.Text
+    , baseImageTagOption :: T.Text
     , baseImageTagValue :: T.Text
     }
   deriving (Eq, Ord, Show)
