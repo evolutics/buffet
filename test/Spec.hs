@@ -21,15 +21,22 @@ tests = do
       assertFileEqualsText "Main" "Dockerfile" $ Buffet.build "dockerfiles"
 
 buildTests :: FilePath -> IO [Tasty.TestTree]
-buildTests folder = do
-  subfolders <- Directory.listDirectory folder
-  return . fmap assert $ List.sort subfolders
+buildTests = folderBasedTests assert
   where
-    assert subfolder =
-      assertFileEqualsText subfolder (expected subfolder) $ actual subfolder
-    expected subfolder =
-      FilePath.joinPath [folder, subfolder, "expected.Dockerfile"]
-    actual = Buffet.build . FilePath.combine folder
+    assert name path = assertFileEqualsText name (expected path) $ actual path
+    expected path = FilePath.combine path "expected.Dockerfile"
+    actual = Buffet.build
+
+folderBasedTests ::
+     (Tasty.TestName -> FilePath -> Tasty.TestTree)
+  -> FilePath
+  -> IO [Tasty.TestTree]
+folderBasedTests assert folder = do
+  subfolders <- Directory.listDirectory folder
+  return . fmap assertSubfolder $ List.sort subfolders
+  where
+    assertSubfolder subfolder =
+      assert subfolder $ FilePath.combine folder subfolder
 
 assertFileEqualsText ::
      Tasty.TestName -> FilePath -> IO T.Text -> Tasty.TestTree
