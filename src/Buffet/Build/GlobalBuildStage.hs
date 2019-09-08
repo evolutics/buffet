@@ -8,21 +8,30 @@ import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Ir.IrTools as IrTools
 import qualified Data.Text as T
 import qualified Language.Docker as Docker hiding (sourcePaths)
-import Prelude (Maybe(Just, Nothing), ($), (.), concat)
+import Prelude (Maybe(Just, Nothing), ($), (.), concat, mconcat)
 
 get :: Configuration.Configuration -> Ir.Buffet -> [Ir.DockerfilePart]
-get _ buffet =
+get configuration buffet =
   concat
-    [[[fromInstruction]], dishesInstructions buffet, [[workdirInstruction]]]
+    [ [[fromInstruction configuration]]
+    , dishesInstructions buffet
+    , [[workdirInstruction]]
+    ]
 
-fromInstruction :: Docker.Instruction T.Text
-fromInstruction =
+fromInstruction :: Configuration.Configuration -> Docker.Instruction T.Text
+fromInstruction configuration =
   Docker.From
     Docker.BaseImage
       { Docker.image =
           Docker.Image
             {Docker.registryName = Nothing, Docker.imageName = T.pack "alpine"}
-      , Docker.tag = Just . Docker.Tag $ T.pack "\"${alpine_version}\""
+      , Docker.tag =
+          Just . Docker.Tag $
+          mconcat
+            [ T.pack "\"${"
+            , Configuration.baseImageTagOption configuration
+            , T.pack "}\""
+            ]
       , Docker.digest = Nothing
       , Docker.alias = Nothing
       , Docker.platform = Nothing

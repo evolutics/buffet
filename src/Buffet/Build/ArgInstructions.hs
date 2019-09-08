@@ -11,12 +11,14 @@ import qualified Language.Docker as Docker hiding (sourcePaths)
 import Prelude (Bool(False), Maybe(Just), ($), (.), (/=), (<>), concat, filter)
 
 get :: Configuration.Configuration -> Ir.Buffet -> [Ir.DockerfilePart]
-get _ buffet = [List.sort $ mainOptions <> baseImageOptions]
+get configuration buffet = [List.sort $ mainOptions <> baseImageOptions]
   where
     mainOptions = concat $ IrTools.mapOrderedEntries dishArgInstructions buffet
     baseImageOptions :: [Docker.Instruction a]
     baseImageOptions =
-      [Docker.Arg (T.pack "alpine_version") . Just $ T.pack "'3.9.4'"]
+      [ Docker.Arg (Configuration.baseImageTagOption configuration) . Just $
+        T.pack "'3.9.4'"
+      ]
 
 dishArgInstructions :: T.Text -> Ir.Dish -> Ir.DockerfilePart
 dishArgInstructions option dish =
