@@ -1,8 +1,7 @@
 import qualified Buffet
+import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Data.List as List
 import qualified Data.Text as T
-import qualified Data.Text.Lazy as Lazy
-import qualified Data.Text.Lazy.Encoding as Encoding
 import Prelude (FilePath, IO, ($), (.), (<$>), (>>=), fmap, pure)
 import qualified System.Directory as Directory
 import qualified System.FilePath as FilePath
@@ -47,8 +46,7 @@ assertFileEqualsText name expected actualAction =
   where
     diff expectedFile actualFile =
       ["diff", "--unified", expectedFile, actualFile]
-    actualBinaryAction = fmap textToBinary actualAction
-    textToBinary = Encoding.encodeUtf8 . Lazy.fromStrict
+    actualBinaryAction = fmap TextTools.encodeUtf8 actualAction
 
 testTests :: FilePath -> IO [Tasty.TestTree]
 testTests = folderBasedTests assert

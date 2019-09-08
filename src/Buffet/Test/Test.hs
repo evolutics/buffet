@@ -5,11 +5,10 @@ module Buffet.Test.Test
 import qualified Buffet.Build.BuildInternal as BuildInternal
 import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Parse.ParseInternal as ParseInternal
+import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import qualified Data.Text.IO as T.IO
-import qualified Data.Text.Lazy as Lazy
-import qualified Data.Text.Lazy.Encoding as Encoding
 import qualified Data.Yaml as Yaml
 import Prelude
   ( FilePath
@@ -53,11 +52,11 @@ dockerBuild dockerfile arguments = do
   rawImageIdLine <-
     Process.readProcessStdout_ $
     Process.setStdin (textInput dockerfile) processBase
-  let imageIdLine = Lazy.toStrict $ Encoding.decodeUtf8 rawImageIdLine
+  let imageIdLine = TextTools.decodeUtf8 rawImageIdLine
       imageId = T.stripEnd imageIdLine
   pure imageId
   where
-    textInput = Process.byteStringInput . Encoding.encodeUtf8 . Lazy.fromStrict
+    textInput = Process.byteStringInput . TextTools.encodeUtf8
     processBase =
       Process.proc "docker" $ mconcat [["build", "--quiet"], buildArgs, ["-"]]
     buildArgs =

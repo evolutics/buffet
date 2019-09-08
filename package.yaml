@@ -16,6 +16,7 @@ extra-source-files:
 description: Please see the README on GitHub at <https://github.com/evolutics/buffet#readme>
 dependencies:
   - base >= 4.7 && < 5
+  - bytestring
   - containers
   - directory
   - filepath
