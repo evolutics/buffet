@@ -2,6 +2,7 @@ module Buffet.Build.ArgInstructions
   ( get
   ) where
 
+import qualified Buffet.Build.Configuration as Configuration
 import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Ir.IrTools as IrTools
 import qualified Data.List as List
@@ -9,8 +10,8 @@ import qualified Data.Text as T
 import qualified Language.Docker as Docker hiding (sourcePaths)
 import Prelude (Bool(False), Maybe(Just), ($), (.), (/=), (<>), concat, filter)
 
-get :: Ir.Buffet -> [Ir.DockerfilePart]
-get buffet = [List.sort $ mainOptions <> baseImageOptions]
+get :: Configuration.Configuration -> Ir.Buffet -> [Ir.DockerfilePart]
+get _ buffet = [List.sort $ mainOptions <> baseImageOptions]
   where
     mainOptions = concat $ IrTools.mapOrderedEntries dishArgInstructions buffet
     baseImageOptions :: [Docker.Instruction a]

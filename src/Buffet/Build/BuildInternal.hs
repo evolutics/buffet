@@ -3,6 +3,7 @@ module Buffet.Build.BuildInternal
   ) where
 
 import qualified Buffet.Build.ArgInstructions as ArgInstructions
+import qualified Buffet.Build.Configuration as Configuration
 import qualified Buffet.Build.GlobalBuildStage as GlobalBuildStage
 import qualified Buffet.Build.LocalBuildStages as LocalBuildStages
 import qualified Buffet.Ir.Ir as Ir
@@ -17,10 +18,13 @@ get :: Ir.Buffet -> T.Text
 get buffet =
   printDockerfileParts $
   concat
-    [ ArgInstructions.get buffet
-    , LocalBuildStages.get buffet
-    , GlobalBuildStage.get buffet
+    [ ArgInstructions.get configuration buffet
+    , LocalBuildStages.get configuration buffet
+    , GlobalBuildStage.get configuration buffet
     ]
+
+configuration :: Configuration.Configuration
+configuration = Configuration.Configuration {}
 
 printDockerfileParts :: [Ir.DockerfilePart] -> T.Text
 printDockerfileParts = TextTools.intercalateNewline . fmap printInstructions

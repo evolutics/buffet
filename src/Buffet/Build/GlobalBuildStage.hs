@@ -3,14 +3,15 @@ module Buffet.Build.GlobalBuildStage
   ) where
 
 import qualified Buffet.Build.ConditionInstructions as ConditionInstructions
+import qualified Buffet.Build.Configuration as Configuration
 import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Ir.IrTools as IrTools
 import qualified Data.Text as T
 import qualified Language.Docker as Docker hiding (sourcePaths)
 import Prelude (Maybe(Just, Nothing), ($), (.), concat)
 
-get :: Ir.Buffet -> [Ir.DockerfilePart]
-get buffet =
+get :: Configuration.Configuration -> Ir.Buffet -> [Ir.DockerfilePart]
+get _ buffet =
   concat
     [[[fromInstruction]], dishesInstructions buffet, [[workdirInstruction]]]
 
