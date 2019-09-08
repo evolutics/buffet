@@ -1,8 +1,24 @@
 import qualified Buffet
 import qualified Buffet.Toolbox.TextTools as TextTools
+import qualified Data.Aeson as Aeson
 import qualified Data.List as List
 import qualified Data.Text as T
-import Prelude (FilePath, IO, ($), (.), (<$>), (>>=), fmap, pure)
+import qualified Data.Text.Encoding as Encoding
+import Prelude
+  ( Either
+  , FilePath
+  , IO
+  , String
+  , ($)
+  , (.)
+  , (<$>)
+  , (>>=)
+  , either
+  , error
+  , fmap
+  , id
+  , pure
+  )
 import qualified System.Directory as Directory
 import qualified System.FilePath as FilePath
 import qualified Test.Tasty as Tasty
@@ -15,8 +31,9 @@ main = tests >>= Tasty.defaultMain
 tests :: IO Tasty.TestTree
 tests = do
   build <- Tasty.testGroup "Build" <$> buildTests "test/data/build"
+  parse <- Tasty.testGroup "Parse" <$> parseTests "test/data/parse"
   test <- Tasty.testGroup "Test" <$> testTests "test/data/test"
-  pure $ Tasty.testGroup "Tests" [build, test, mainDockerfileTest]
+  pure $ Tasty.testGroup "Tests" [build, parse, test, mainDockerfileTest]
   where
     mainDockerfileTest =
       assertFileEqualsText "Main" "Dockerfile" $ Buffet.build "dockerfiles"
@@ -47,6 +64,27 @@ assertFileEqualsText name expected actualAction =
     diff expectedFile actualFile =
       ["diff", "--unified", expectedFile, actualFile]
     actualBinaryAction = fmap TextTools.encodeUtf8 actualAction
+
+parseTests :: FilePath -> IO [Tasty.TestTree]
+parseTests = folderBasedTests assert
+  where
+    assert name path =
+      assertJsonFileEqualsText name (expected path) $ actual path
+    expected path = FilePath.combine path "expected.json"
+    actual = Buffet.parse
+
+assertJsonFileEqualsText ::
+     Tasty.TestName -> FilePath -> IO T.Text -> Tasty.TestTree
+assertJsonFileEqualsText name rawExpected rawActualAction =
+  HUnit.testCase name $ do
+    expected <- get <$> Aeson.eitherDecodeFileStrict rawExpected
+    rawActual <- rawActualAction
+    let actual :: Aeson.Value
+        actual = get . Aeson.eitherDecodeStrict $ Encoding.encodeUtf8 rawActual
+    HUnit.assertEqual "" expected actual
+  where
+    get :: Either String a -> a
+    get = either error id
 
 testTests :: FilePath -> IO [Tasty.TestTree]
 testTests = folderBasedTests assert
