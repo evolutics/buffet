@@ -26,7 +26,9 @@ get buffet =
 configuration :: Configuration.Configuration
 configuration =
   Configuration.Configuration
-    {Configuration.baseImageTagOption = T.pack "alpine_version"}
+    { Configuration.baseImageTagOption = T.pack "alpine_version"
+    , Configuration.baseImageTagValue = T.pack "3.9.4"
+    }
 
 printDockerfileParts :: [Ir.DockerfilePart] -> T.Text
 printDockerfileParts = TextTools.intercalateNewline . fmap printInstructions

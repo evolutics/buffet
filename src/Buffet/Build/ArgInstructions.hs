@@ -8,17 +8,33 @@ import qualified Buffet.Ir.IrTools as IrTools
 import qualified Data.List as List
 import qualified Data.Text as T
 import qualified Language.Docker as Docker hiding (sourcePaths)
-import Prelude (Bool(False), Maybe(Just), ($), (.), (/=), (<>), concat, filter)
+import Prelude
+  ( Bool(False)
+  , Maybe(Just)
+  , ($)
+  , (/=)
+  , (<>)
+  , concat
+  , filter
+  , mconcat
+  )
 
 get :: Configuration.Configuration -> Ir.Buffet -> [Ir.DockerfilePart]
-get configuration buffet = [List.sort $ mainOptions <> baseImageOptions]
+get configuration buffet =
+  [List.sort $ mainOptions <> baseImageOptions configuration]
   where
     mainOptions = concat $ IrTools.mapOrderedEntries dishArgInstructions buffet
-    baseImageOptions :: [Docker.Instruction a]
-    baseImageOptions =
-      [ Docker.Arg (Configuration.baseImageTagOption configuration) . Just $
-        T.pack "'3.9.4'"
-      ]
+
+baseImageOptions :: Configuration.Configuration -> [Docker.Instruction a]
+baseImageOptions configuration = [Docker.Arg tagOption $ Just tagValue]
+  where
+    tagOption = Configuration.baseImageTagOption configuration
+    tagValue =
+      mconcat
+        [ T.singleton '\''
+        , Configuration.baseImageTagValue configuration
+        , T.singleton '\''
+        ]
 
 dishArgInstructions :: T.Text -> Ir.Dish -> Ir.DockerfilePart
 dishArgInstructions option dish =

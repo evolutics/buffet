@@ -5,8 +5,9 @@ module Buffet.Build.Configuration
 import qualified Data.Text as T
 import Prelude (Eq, Ord, Show)
 
-newtype Configuration =
+data Configuration =
   Configuration
     { baseImageTagOption :: T.Text
+    , baseImageTagValue :: T.Text
     }
   deriving (Eq, Ord, Show)
