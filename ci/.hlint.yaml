@@ -6,3 +6,10 @@
 - modules:
     - { name: [Data.HashMap, Data.Map, Data.Map.Strict], as: Map }
     - { name: [Data.HashSet, Data.Set, Data.Set.Strict], as: Set }
+- group:
+    name: base
+    enabled: true
+    imports:
+      - package base
+    rules:
+      - warn: { lhs: return, rhs: pure }

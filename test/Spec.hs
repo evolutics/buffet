@@ -3,7 +3,7 @@ import qualified Data.List as List
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as Lazy
 import qualified Data.Text.Lazy.Encoding as Encoding
-import Prelude (FilePath, IO, ($), (.), (<$>), (>>=), fmap, return)
+import Prelude (FilePath, IO, ($), (.), (<$>), (>>=), fmap, pure)
 import qualified System.Directory as Directory
 import qualified System.FilePath as FilePath
 import qualified Test.Tasty as Tasty
@@ -17,7 +17,7 @@ tests :: IO Tasty.TestTree
 tests = do
   build <- Tasty.testGroup "Build" <$> buildTests "test/data/build"
   test <- Tasty.testGroup "Test" <$> testTests "test/data/test"
-  return $ Tasty.testGroup "Tests" [build, test, mainDockerfileTest]
+  pure $ Tasty.testGroup "Tests" [build, test, mainDockerfileTest]
   where
     mainDockerfileTest =
       assertFileEqualsText "Main" "Dockerfile" $ Buffet.build "dockerfiles"
@@ -35,7 +35,7 @@ folderBasedTests ::
   -> IO [Tasty.TestTree]
 folderBasedTests assert folder = do
   subfolders <- Directory.listDirectory folder
-  return . fmap assertSubfolder $ List.sort subfolders
+  pure . fmap assertSubfolder $ List.sort subfolders
   where
     assertSubfolder subfolder =
       assert subfolder $ FilePath.combine folder subfolder

@@ -20,7 +20,7 @@ import Prelude
   , concatMap
   , mconcat
   , not
-  , return
+  , pure
   , sequence_
   )
 import qualified System.IO as IO
@@ -55,7 +55,7 @@ dockerBuild dockerfile arguments = do
     Process.setStdin (textInput dockerfile) processBase
   let imageIdLine = Lazy.toStrict $ Encoding.decodeUtf8 rawImageIdLine
       imageId = T.stripEnd imageIdLine
-  return imageId
+  pure imageId
   where
     textInput = Process.byteStringInput . Encoding.encodeUtf8 . Lazy.fromStrict
     processBase =
