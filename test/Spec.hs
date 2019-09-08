@@ -8,6 +8,7 @@ import qualified System.Directory as Directory
 import qualified System.FilePath as FilePath
 import qualified Test.Tasty as Tasty
 import qualified Test.Tasty.Golden as Golden
+import qualified Test.Tasty.HUnit as HUnit
 
 main :: IO ()
 main = tests >>= Tasty.defaultMain
@@ -15,7 +16,8 @@ main = tests >>= Tasty.defaultMain
 tests :: IO Tasty.TestTree
 tests = do
   build <- Tasty.testGroup "Build" <$> buildTests "test/data/build"
-  return $ Tasty.testGroup "Tests" [build, mainDockerfileTest]
+  test <- Tasty.testGroup "Test" <$> testTests "test/data/test"
+  return $ Tasty.testGroup "Tests" [build, test, mainDockerfileTest]
   where
     mainDockerfileTest =
       assertFileEqualsText "Main" "Dockerfile" $ Buffet.build "dockerfiles"
@@ -47,3 +49,10 @@ assertFileEqualsText name expected actualAction =
       ["diff", "--unified", expectedFile, actualFile]
     actualBinaryAction = fmap textToBinary actualAction
     textToBinary = Encoding.encodeUtf8 . Lazy.fromStrict
+
+testTests :: FilePath -> IO [Tasty.TestTree]
+testTests = folderBasedTests assert
+  where
+    assert name path =
+      HUnit.testCase name . Buffet.test path $
+      FilePath.combine path "arguments.yaml"
