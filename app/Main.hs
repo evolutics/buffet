@@ -21,6 +21,11 @@ commands =
            (build <$> Options.argument Options.str (Options.metavar "SOURCE"))
            mempty)
     , Options.command
+        "parse"
+        (Options.info
+           (parse <$> Options.argument Options.str (Options.metavar "SOURCE"))
+           mempty)
+    , Options.command
         "test"
         (Options.info
            (test <$> Options.argument Options.str (Options.metavar "SOURCE") <*>
@@ -30,6 +35,9 @@ commands =
 
 build :: FilePath -> IO ()
 build = Buffet.build Monad.>=> T.IO.putStrLn
+
+parse :: FilePath -> IO ()
+parse = Buffet.parse Monad.>=> T.IO.putStrLn
 
 test :: FilePath -> FilePath -> IO ()
 test = Buffet.test

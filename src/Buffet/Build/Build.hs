@@ -3,9 +3,9 @@ module Buffet.Build.Build
   ) where
 
 import qualified Buffet.Build.BuildInternal as BuildInternal
-import qualified Buffet.Parse.Parse as Parse
+import qualified Buffet.Parse.ParseInternal as ParseInternal
 import qualified Data.Text as T
 import Prelude (FilePath, IO, (.), fmap)
 
 get :: FilePath -> IO T.Text
-get = fmap BuildInternal.get . Parse.get
+get = fmap BuildInternal.get . ParseInternal.get

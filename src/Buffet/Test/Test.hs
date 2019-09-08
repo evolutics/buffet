@@ -4,7 +4,7 @@ module Buffet.Test.Test
 
 import qualified Buffet.Build.BuildInternal as BuildInternal
 import qualified Buffet.Ir.Ir as Ir
-import qualified Buffet.Parse.Parse as Parse
+import qualified Buffet.Parse.ParseInternal as ParseInternal
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import qualified Data.Text.IO as T.IO
@@ -28,7 +28,7 @@ import qualified System.Process.Typed as Process
 
 get :: FilePath -> FilePath -> IO ()
 get buffetSource argumentsFile = do
-  buffetIr <- Parse.get buffetSource
+  buffetIr <- ParseInternal.get buffetSource
   let buffet = BuildInternal.get buffetIr
   arguments <- Yaml.decodeFileThrow argumentsFile
   let _ = arguments :: Map.Map T.Text T.Text
