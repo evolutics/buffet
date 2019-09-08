@@ -15,7 +15,7 @@ get configuration buffet =
   concat
     [ [[fromInstruction configuration]]
     , dishesInstructions buffet
-    , [[workdirInstruction]]
+    , [[workdirInstruction configuration]]
     ]
 
 fromInstruction :: Configuration.Configuration -> Docker.Instruction T.Text
@@ -45,5 +45,5 @@ dishesInstructions = IrTools.mapOrderedEntries dishInstructions
 dishInstructions :: T.Text -> Ir.Dish -> Ir.DockerfilePart
 dishInstructions option = ConditionInstructions.get option . Ir.globalBuildStage
 
-workdirInstruction :: Docker.Instruction T.Text
-workdirInstruction = Docker.Workdir $ T.pack "/workdir"
+workdirInstruction :: Configuration.Configuration -> Docker.Instruction T.Text
+workdirInstruction = Docker.Workdir . T.pack . Configuration.workdir
