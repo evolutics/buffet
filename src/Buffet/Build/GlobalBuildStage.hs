@@ -4,6 +4,7 @@ module Buffet.Build.GlobalBuildStage
 
 import qualified Buffet.Build.ConditionInstructions as ConditionInstructions
 import qualified Buffet.Build.Configuration as Configuration
+import qualified Buffet.Build.PrepareOptionArgInstruction as PrepareOptionArgInstruction
 import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Ir.IrTools as IrTools
 import qualified Data.Text as T
@@ -43,7 +44,9 @@ dishesInstructions :: Ir.Buffet -> [Ir.DockerfilePart]
 dishesInstructions = IrTools.mapOrderedEntries dishInstructions
 
 dishInstructions :: T.Text -> Ir.Dish -> Ir.DockerfilePart
-dishInstructions option = ConditionInstructions.get option . Ir.globalBuildStage
+dishInstructions option =
+  ConditionInstructions.get option .
+  PrepareOptionArgInstruction.get option . Ir.globalBuildStage
 
 workdirInstruction :: Configuration.Configuration -> Docker.Instruction T.Text
 workdirInstruction = Docker.Workdir . T.pack . Configuration.workdir

@@ -5,7 +5,6 @@ module Buffet.Parse.Parse
 import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Parse.GetSourcePaths as GetSourcePaths
 import qualified Buffet.Parse.ParseTools as ParseTools
-import qualified Buffet.Parse.Validate as Validate
 import qualified Buffet.Toolbox.DockerTools as DockerTools
 import qualified Data.List.Split as Split
 import qualified Data.Map.Strict as Map
@@ -15,7 +14,6 @@ import qualified Language.Docker as Docker
 import qualified Language.Docker.Syntax as Syntax
 import Prelude
   ( Bool(False, True)
-  , Either(Left, Right)
   , FilePath
   , IO
   , Maybe(Just, Nothing)
@@ -23,11 +21,8 @@ import Prelude
   , (.)
   , (<$>)
   , concat
-  , either
-  , error
   , filter
   , fmap
-  , id
   , length
   , mapM
   , not
@@ -41,19 +36,11 @@ get :: FilePath -> IO Ir.Buffet
 get buffetPath = do
   optionToDishPath <- GetSourcePaths.get buffetPath
   optionToDish <- mapM ParseTools.parseDockerfile optionToDishPath
-  pure $ parse optionToDish
-  where
-    parse = either errors id . parseBuffet
-    errors :: [T.Text] -> a
-    errors = error . T.unpack . T.unlines
+  pure $ parseBuffet optionToDish
 
-parseBuffet :: Map.Map T.Text Docker.Dockerfile -> Either [T.Text] Ir.Buffet
+parseBuffet :: Map.Map T.Text Docker.Dockerfile -> Ir.Buffet
 parseBuffet optionToDish =
-  case Validate.get buffet of
-    [] -> Right buffet
-    errors -> Left errors
-  where
-    buffet = Ir.Buffet {Ir.optionToDish = fmap parseDish optionToDish}
+  Ir.Buffet {Ir.optionToDish = fmap parseDish optionToDish}
 
 parseDish :: Docker.Dockerfile -> Ir.Dish
 parseDish rawDockerfile =
