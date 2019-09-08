@@ -11,7 +11,7 @@ import qualified Data.Text as T
 import qualified Data.Text.Lazy as Lazy
 import qualified Language.Docker as Docker
 import qualified Language.Docker.Syntax as Syntax
-import Prelude (($), (.), concat, fmap)
+import Prelude (($), (.), concat, fmap, mconcat)
 
 get :: Ir.Buffet -> T.Text
 get buffet =
@@ -26,9 +26,9 @@ printDockerfileParts :: [Ir.DockerfilePart] -> T.Text
 printDockerfileParts = TextTools.intercalateNewline . fmap printInstructions
 
 printInstructions :: Ir.DockerfilePart -> T.Text
-printInstructions = T.concat . fmap printInstruction
+printInstructions = mconcat . fmap printInstruction
   where
     printInstruction (Docker.Run (Syntax.ArgumentsText command)) =
-      T.unlines [T.concat [T.pack "RUN ", command]]
+      T.unlines [mconcat [T.pack "RUN ", command]]
     printInstruction instruction =
       Lazy.toStrict $ Docker.prettyPrint [Docker.instructionPos instruction]

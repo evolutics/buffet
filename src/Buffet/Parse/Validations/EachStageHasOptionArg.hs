@@ -18,6 +18,7 @@ import Prelude
   , concat
   , concatMap
   , dropWhile
+  , mconcat
   , takeWhile
   )
 
@@ -33,7 +34,7 @@ validateStage :: T.Text -> Ir.DockerfilePart -> [T.Text]
 validateStage option stage =
   if any isOptionArg firstArgs
     then []
-    else [T.concat [T.pack "`ARG ", option, T.pack "` is missing."]]
+    else [mconcat [T.pack "`ARG ", option, T.pack "` is missing."]]
   where
     isOptionArg :: Docker.Instruction a -> Bool
     isOptionArg (Docker.Arg key Nothing) = key == option

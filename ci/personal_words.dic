@@ -7,5 +7,6 @@ GMP
 hindent
 HLint
 LTS
+monoid
 whitespace
 YAML

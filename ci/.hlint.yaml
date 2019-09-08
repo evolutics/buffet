@@ -13,3 +13,8 @@
       - package base
     rules:
       - warn: { lhs: return, rhs: pure }
+- group:
+    name: text
+    enabled: true
+    rules:
+      - warn: { lhs: Data.Text.concat, rhs: mconcat }

@@ -7,7 +7,7 @@ import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Data.Text as T
 import qualified Language.Docker as Docker hiding (sourcePaths)
 import qualified Language.Docker.Syntax as Syntax
-import Prelude (($), (<>), concat, fmap, pure)
+import Prelude (($), (<>), concat, fmap, mconcat, pure)
 
 get :: T.Text -> Ir.DockerfilePart -> Ir.DockerfilePart
 get option = fmap conditionInstruction
@@ -32,7 +32,7 @@ conditionalCopyInstruction arguments =
 optionConditionalRunInstruction :: T.Text -> T.Text -> Docker.Instruction T.Text
 optionConditionalRunInstruction option = conditionalRunInstruction condition
   where
-    condition = T.concat [T.pack "[[ -n \"${", option, T.pack "}\" ]]"]
+    condition = mconcat [T.pack "[[ -n \"${", option, T.pack "}\" ]]"]
 
 conditionalRunInstruction :: T.Text -> T.Text -> Docker.Instruction T.Text
 conditionalRunInstruction condition thenPart =
@@ -41,9 +41,9 @@ conditionalRunInstruction condition thenPart =
     command =
       TextTools.intercalateNewline $
       concat [[conditionLine], indentLines thenLines, [indentLine endLine]]
-    conditionLine = T.concat [T.pack "if ", condition, T.pack "; then \\"]
+    conditionLine = mconcat [T.pack "if ", condition, T.pack "; then \\"]
     thenLines = T.lines embeddedThen
-    embeddedThen = T.concat [indentLine thenPart, T.pack " \\"]
+    embeddedThen = mconcat [indentLine thenPart, T.pack " \\"]
     endLine = T.pack "; fi"
 
 indentLines :: [T.Text] -> [T.Text]
