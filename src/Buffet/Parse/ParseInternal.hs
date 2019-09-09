@@ -45,10 +45,18 @@ parseBuffet optionToDish =
 parseDish :: Docker.Dockerfile -> Ir.Dish
 parseDish rawDockerfile =
   Ir.Dish
+    { Ir.instructionPartition = instructionPartition dockerfile
+    , Ir.testCommand = testCommand dockerfile
+    }
+  where
+    dockerfile = ParseTools.patchDockerfile rawDockerfile
+
+instructionPartition :: Docker.Dockerfile -> Ir.InstructionPartition
+instructionPartition dockerfile =
+  Ir.InstructionPartition
     { Ir.beforeFirstBuildStage = beforeFirstStage
     , Ir.localBuildStages = localStages
     , Ir.globalBuildStage = globalStage
-    , Ir.testCommand = testCommand dockerfile
     }
   where
     (beforeFirstStage, stages) =
@@ -59,7 +67,6 @@ parseDish rawDockerfile =
     splitter :: Split.Splitter (Docker.Instruction a)
     splitter = Split.keepDelimsL $ Split.whenElt DockerTools.isFrom
     instructions = Docker.instruction <$> takeActualInstructions dockerfile
-    dockerfile = ParseTools.patchDockerfile rawDockerfile
     (localStages, globalStageInstructions) =
       splitAt (pred $ length stages) stages
     globalStage =

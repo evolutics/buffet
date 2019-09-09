@@ -1,9 +1,11 @@
 {
   "option_to_dish": {
     "example": {
-      "before_first_build_stage": [],
-      "global_build_stage": [],
-      "local_build_stages": [["FROM alpine AS example", "RUN ls"]],
+      "instruction_partition": {
+        "before_first_build_stage": [],
+        "global_build_stage": [],
+        "local_build_stages": [["FROM alpine AS example", "RUN ls"]]
+      },
       "test_command": null
     }
   }

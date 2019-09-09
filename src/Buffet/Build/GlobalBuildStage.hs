@@ -46,7 +46,8 @@ dishesInstructions = IrTools.mapOrderedEntries dishInstructions
 dishInstructions :: T.Text -> Ir.Dish -> Ir.DockerfilePart
 dishInstructions option =
   ConditionInstructions.get option .
-  PrepareOptionArgInstruction.get option . Ir.globalBuildStage
+  PrepareOptionArgInstruction.get option .
+  Ir.globalBuildStage . Ir.instructionPartition
 
 workdirInstruction :: Configuration.Configuration -> Docker.Instruction T.Text
 workdirInstruction = Docker.Workdir . T.pack . Configuration.workdir

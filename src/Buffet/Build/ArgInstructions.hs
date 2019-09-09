@@ -12,6 +12,7 @@ import Prelude
   ( Bool(False)
   , Maybe(Just)
   , ($)
+  , (.)
   , (/=)
   , (<>)
   , concat
@@ -40,7 +41,9 @@ dishArgInstructions :: T.Text -> Ir.Dish -> Ir.DockerfilePart
 dishArgInstructions option dish =
   Docker.Arg option (Just $ T.pack "''") : extraOptions
   where
-    extraOptions = filter isExtraOption $ Ir.beforeFirstBuildStage dish
+    extraOptions =
+      filter isExtraOption . Ir.beforeFirstBuildStage $
+      Ir.instructionPartition dish
     isExtraOption :: Docker.Instruction a -> Bool
     isExtraOption (Docker.Arg key _) = key /= option
     isExtraOption _ = False

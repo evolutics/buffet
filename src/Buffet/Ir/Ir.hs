@@ -2,6 +2,7 @@ module Buffet.Ir.Ir
   ( Buffet(..)
   , DockerfilePart
   , Dish(..)
+  , InstructionPartition(..)
   ) where
 
 import qualified Data.Map.Strict as Map
@@ -17,10 +18,16 @@ newtype Buffet =
 
 data Dish =
   Dish
+    { instructionPartition :: InstructionPartition
+    , testCommand :: Maybe T.Text
+    }
+  deriving (Eq, Ord, Show)
+
+data InstructionPartition =
+  InstructionPartition
     { beforeFirstBuildStage :: DockerfilePart
     , localBuildStages :: [DockerfilePart]
     , globalBuildStage :: DockerfilePart
-    , testCommand :: Maybe T.Text
     }
   deriving (Eq, Ord, Show)
 

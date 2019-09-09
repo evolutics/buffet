@@ -14,7 +14,8 @@ get :: Configuration.Configuration -> Ir.Buffet -> [Ir.DockerfilePart]
 get _ = concat . IrTools.mapOrderedEntries dishBuildStages
 
 dishBuildStages :: T.Text -> Ir.Dish -> [Ir.DockerfilePart]
-dishBuildStages option = fmap (dishBuildStage option) . Ir.localBuildStages
+dishBuildStages option =
+  fmap (dishBuildStage option) . Ir.localBuildStages . Ir.instructionPartition
 
 dishBuildStage :: T.Text -> Ir.DockerfilePart -> Ir.DockerfilePart
 dishBuildStage option =

@@ -26,14 +26,23 @@ instance Aeson.ToJSON Buffet where
 
 data Dish =
   Dish
-    { beforeFirstBuildStage :: DockerfilePart
-    , localBuildStages :: [DockerfilePart]
-    , globalBuildStage :: DockerfilePart
+    { instructionPartition :: InstructionPartition
     , testCommand :: Maybe T.Text
     }
   deriving (Eq, Generics.Generic, Ord, Show)
 
 instance Aeson.ToJSON Dish where
+  toEncoding = Aeson.genericToEncoding options
+
+data InstructionPartition =
+  InstructionPartition
+    { beforeFirstBuildStage :: DockerfilePart
+    , localBuildStages :: [DockerfilePart]
+    , globalBuildStage :: DockerfilePart
+    }
+  deriving (Eq, Generics.Generic, Ord, Show)
+
+instance Aeson.ToJSON InstructionPartition where
   toEncoding = Aeson.genericToEncoding options
 
 type DockerfilePart = [T.Text]
@@ -51,11 +60,19 @@ transformBuffet buffet =
 transformDish :: Ir.Dish -> Dish
 transformDish dish =
   Dish
-    { beforeFirstBuildStage =
-        transformDockerfilePart $ Ir.beforeFirstBuildStage dish
-    , localBuildStages = transformDockerfilePart <$> Ir.localBuildStages dish
-    , globalBuildStage = transformDockerfilePart $ Ir.globalBuildStage dish
+    { instructionPartition =
+        transformInstructionPartition $ Ir.instructionPartition dish
     , testCommand = Ir.testCommand dish
+    }
+
+transformInstructionPartition :: Ir.InstructionPartition -> InstructionPartition
+transformInstructionPartition partition =
+  InstructionPartition
+    { beforeFirstBuildStage =
+        transformDockerfilePart $ Ir.beforeFirstBuildStage partition
+    , localBuildStages =
+        transformDockerfilePart <$> Ir.localBuildStages partition
+    , globalBuildStage = transformDockerfilePart $ Ir.globalBuildStage partition
     }
 
 transformDockerfilePart :: Ir.DockerfilePart -> DockerfilePart
