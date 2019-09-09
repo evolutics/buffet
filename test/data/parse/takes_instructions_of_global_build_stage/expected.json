@@ -3,8 +3,8 @@
     "example": {
       "instruction_partition": {
         "before_first_build_stage": [],
-        "global_build_stage": ["RUN ls"],
-        "local_build_stages": []
+        "local_build_stages": [],
+        "global_build_stage": ["RUN ls"]
       },
       "test_command": null
     }
