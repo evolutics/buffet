@@ -11,7 +11,6 @@ import Prelude
   ( Bool(False, True)
   , ($)
   , (.)
-  , (<$>)
   , concat
   , filter
   , fmap
@@ -22,7 +21,7 @@ import Prelude
   )
 
 get :: Docker.Dockerfile -> Ir.InstructionPartition
-get = partition . patchDockerfile
+get = partition . patchDockerfile . takeActualInstructions
 
 partition :: Docker.Dockerfile -> Ir.InstructionPartition
 partition dockerfile =
@@ -39,11 +38,18 @@ partition dockerfile =
     parts = Split.split splitter instructions
     splitter :: Split.Splitter (Docker.Instruction a)
     splitter = Split.keepDelimsL $ Split.whenElt DockerTools.isFrom
-    instructions = Docker.instruction <$> takeActualInstructions dockerfile
+    instructions = fmap Docker.instruction dockerfile
     (localStages, globalStageInstructions) =
       splitAt (pred $ length stages) stages
     globalStage =
       filter (not . DockerTools.isFrom) $ concat globalStageInstructions
+
+patchDockerfile :: Docker.Dockerfile -> Docker.Dockerfile
+patchDockerfile = fmap $ fmap reviveLineBreaks
+  where
+    reviveLineBreaks = reviveSimpleLineBreak . reviveBlankLine
+    reviveSimpleLineBreak = T.replace (T.pack "   ") $ T.pack " \\\n  "
+    reviveBlankLine = T.replace (T.pack "     && ") $ T.pack " \\\n  \\\n  && "
 
 takeActualInstructions :: Docker.Dockerfile -> Docker.Dockerfile
 takeActualInstructions = filter isTaken
@@ -52,10 +58,3 @@ takeActualInstructions = filter isTaken
     isTaken (Docker.InstructionPos (Docker.Healthcheck _) _ _) = False
     isTaken (Docker.InstructionPos (Docker.Label _) _ _) = False
     isTaken _ = True
-
-patchDockerfile :: Docker.Dockerfile -> Docker.Dockerfile
-patchDockerfile = fmap $ fmap reviveLineBreaks
-  where
-    reviveLineBreaks = reviveSimpleLineBreak . reviveBlankLine
-    reviveSimpleLineBreak = T.replace (T.pack "   ") $ T.pack " \\\n  "
-    reviveBlankLine = T.replace (T.pack "     && ") $ T.pack " \\\n  \\\n  && "
