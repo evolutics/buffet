@@ -1,6 +1,7 @@
 {
   "option_to_dish": {
     "example": {
+      "metadata": [],
       "instruction_partition": {
         "before_first_build_stage": [],
         "local_build_stages": [["FROM alpine AS example", "RUN ls"]],

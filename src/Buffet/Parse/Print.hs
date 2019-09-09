@@ -26,12 +26,22 @@ instance Aeson.ToJSON Buffet where
 
 data Dish =
   Dish
-    { instructionPartition :: InstructionPartition
+    { metadata :: Metadata
+    , instructionPartition :: InstructionPartition
     , testCommand :: Maybe T.Text
     }
   deriving (Eq, Generics.Generic, Ord, Show)
 
 instance Aeson.ToJSON Dish where
+  toEncoding = Aeson.genericToEncoding options
+
+data Metadata =
+  Metadata
+    {
+    }
+  deriving (Eq, Generics.Generic, Ord, Show)
+
+instance Aeson.ToJSON Metadata where
   toEncoding = Aeson.genericToEncoding options
 
 data InstructionPartition =
@@ -60,10 +70,14 @@ transformBuffet buffet =
 transformDish :: Ir.Dish -> Dish
 transformDish dish =
   Dish
-    { instructionPartition =
+    { metadata = transformMetadata $ Ir.metadata dish
+    , instructionPartition =
         transformInstructionPartition $ Ir.instructionPartition dish
     , testCommand = Ir.testCommand dish
     }
+
+transformMetadata :: Ir.Metadata -> Metadata
+transformMetadata _ = Metadata {}
 
 transformInstructionPartition :: Ir.InstructionPartition -> InstructionPartition
 transformInstructionPartition partition =

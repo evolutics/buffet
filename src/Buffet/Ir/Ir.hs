@@ -3,6 +3,7 @@ module Buffet.Ir.Ir
   , DockerfilePart
   , Dish(..)
   , InstructionPartition(..)
+  , Metadata(..)
   ) where
 
 import qualified Data.Map.Strict as Map
@@ -18,8 +19,15 @@ newtype Buffet =
 
 data Dish =
   Dish
-    { instructionPartition :: InstructionPartition
+    { metadata :: Metadata
+    , instructionPartition :: InstructionPartition
     , testCommand :: Maybe T.Text
+    }
+  deriving (Eq, Ord, Show)
+
+data Metadata =
+  Metadata
+    {
     }
   deriving (Eq, Ord, Show)
 
