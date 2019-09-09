@@ -18,6 +18,7 @@ import Prelude
   , fmap
   , id
   , pure
+  , sequence
   )
 import qualified System.Directory as Directory
 import qualified System.FilePath as FilePath
@@ -29,11 +30,14 @@ main :: IO ()
 main = tests >>= Tasty.defaultMain
 
 tests :: IO Tasty.TestTree
-tests = do
-  build <- Tasty.testGroup "Build" <$> buildTests "test/data/build"
-  parse <- Tasty.testGroup "Parse" <$> parseTests "test/data/parse"
-  test <- Tasty.testGroup "Test" <$> testTests "test/data/test"
-  pure $ Tasty.testGroup "Tests" [build, parse, test, mainDockerfileTest]
+tests =
+  Tasty.testGroup "Tests" <$>
+  sequence
+    [ Tasty.testGroup "Build" <$> buildTests "test/data/build"
+    , Tasty.testGroup "Parse" <$> parseTests "test/data/parse"
+    , Tasty.testGroup "Test" <$> testTests "test/data/test"
+    , pure mainDockerfileTest
+    ]
   where
     mainDockerfileTest =
       assertFileEqualsText "Main" "Dockerfile" $ Buffet.build "dockerfiles"
