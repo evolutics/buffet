@@ -1,7 +1,7 @@
 module Buffet.Ir.Ir
   ( Buffet(..)
-  , DockerfilePart
   , Dish(..)
+  , DockerfilePart
   , InstructionPartition(..)
   , Metadata(..)
   ) where
