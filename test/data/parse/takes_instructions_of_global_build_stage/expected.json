@@ -2,7 +2,7 @@
   "option_to_dish": {
     "example": {
       "before_first_build_stage": [],
-      "global_build_stage": [],
+      "global_build_stage": ["RUN ls"],
       "local_build_stages": [],
       "test_command": null
     }

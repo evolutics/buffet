@@ -1,7 +1,7 @@
 {
   "option_to_dish": {
     "example": {
-      "before_first_build_stage": [],
+      "before_first_build_stage": ["ARG example"],
       "global_build_stage": [],
       "local_build_stages": [],
       "test_command": null

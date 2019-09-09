@@ -1,0 +1,2 @@
+ARG example
+FROM alpine

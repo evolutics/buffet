@@ -4,7 +4,7 @@
       "before_first_build_stage": [],
       "global_build_stage": [],
       "local_build_stages": [],
-      "test_command": null
+      "test_command": "ls"
     }
   }
 }
