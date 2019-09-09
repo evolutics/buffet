@@ -27,18 +27,9 @@ parseBuffet optionToDish =
   Ir.Buffet {Ir.optionToDish = fmap parseDish optionToDish}
 
 parseDish :: Docker.Dockerfile -> Ir.Dish
-parseDish rawDockerfile =
+parseDish dockerfile =
   Ir.Dish
     { Ir.metadata = ParseMetadata.get dockerfile
     , Ir.instructionPartition = ParseInstructionPartition.get dockerfile
     , Ir.testCommand = ParseTestCommand.get dockerfile
     }
-  where
-    dockerfile = patchDockerfile rawDockerfile
-
-patchDockerfile :: Docker.Dockerfile -> Docker.Dockerfile
-patchDockerfile = fmap $ fmap reviveLineBreaks
-  where
-    reviveLineBreaks = reviveSimpleLineBreak . reviveBlankLine
-    reviveSimpleLineBreak = T.replace (T.pack "   ") $ T.pack " \\\n  "
-    reviveBlankLine = T.replace (T.pack "     && ") $ T.pack " \\\n  \\\n  && "

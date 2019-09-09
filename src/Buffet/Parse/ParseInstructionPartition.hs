@@ -5,6 +5,7 @@ module Buffet.Parse.ParseInstructionPartition
 import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Toolbox.DockerTools as DockerTools
 import qualified Data.List.Split as Split
+import qualified Data.Text as T
 import qualified Language.Docker as Docker
 import Prelude
   ( Bool(False, True)
@@ -13,6 +14,7 @@ import Prelude
   , (<$>)
   , concat
   , filter
+  , fmap
   , length
   , not
   , pred
@@ -20,7 +22,10 @@ import Prelude
   )
 
 get :: Docker.Dockerfile -> Ir.InstructionPartition
-get dockerfile =
+get = partition . patchDockerfile
+
+partition :: Docker.Dockerfile -> Ir.InstructionPartition
+partition dockerfile =
   Ir.InstructionPartition
     { Ir.beforeFirstBuildStage = beforeFirstStage
     , Ir.localBuildStages = localStages
@@ -47,3 +52,10 @@ takeActualInstructions = filter isTaken
     isTaken (Docker.InstructionPos (Docker.Healthcheck _) _ _) = False
     isTaken (Docker.InstructionPos (Docker.Label _) _ _) = False
     isTaken _ = True
+
+patchDockerfile :: Docker.Dockerfile -> Docker.Dockerfile
+patchDockerfile = fmap $ fmap reviveLineBreaks
+  where
+    reviveLineBreaks = reviveSimpleLineBreak . reviveBlankLine
+    reviveSimpleLineBreak = T.replace (T.pack "   ") $ T.pack " \\\n  "
+    reviveBlankLine = T.replace (T.pack "     && ") $ T.pack " \\\n  \\\n  && "
