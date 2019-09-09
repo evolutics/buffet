@@ -1,0 +1,3 @@
+FROM alpine
+
+HEALTHCHECK CMD true
