@@ -3,22 +3,10 @@ module Buffet.Parse.ParseInstructionPartition
   ) where
 
 import qualified Buffet.Ir.Ir as Ir
-import qualified Buffet.Toolbox.DockerTools as DockerTools
-import qualified Data.List.Split as Split
+import qualified Buffet.Parse.ParseTools as ParseTools
 import qualified Data.Text as T
 import qualified Language.Docker as Docker
-import Prelude
-  ( Bool(False, True)
-  , ($)
-  , (.)
-  , concat
-  , filter
-  , fmap
-  , length
-  , not
-  , pred
-  , splitAt
-  )
+import Prelude (Bool(False, True), ($), (.), filter, fmap, not)
 
 get :: Docker.Dockerfile -> Ir.InstructionPartition
 get = partition . patchDockerfile . takeActualInstructions
@@ -26,23 +14,17 @@ get = partition . patchDockerfile . takeActualInstructions
 partition :: Docker.Dockerfile -> Ir.InstructionPartition
 partition dockerfile =
   Ir.InstructionPartition
-    { Ir.beforeFirstBuildStage = beforeFirstStage
-    , Ir.localBuildStages = localStages
-    , Ir.globalBuildStage = globalStage
+    { Ir.beforeFirstBuildStage = dropPositions beforeFirstStage
+    , Ir.localBuildStages = fmap dropPositions localStages
+    , Ir.globalBuildStage =
+        dropPositions . filter (not . ParseTools.isFrom) $ globalStage
     }
   where
-    (beforeFirstStage, stages) =
-      case parts of
-        [] -> ([], [])
-        (first:rest) -> (first, rest)
-    parts = Split.split splitter instructions
-    splitter :: Split.Splitter (Docker.Instruction a)
-    splitter = Split.keepDelimsL $ Split.whenElt DockerTools.isFrom
-    instructions = fmap Docker.instruction dockerfile
-    (localStages, globalStageInstructions) =
-      splitAt (pred $ length stages) stages
-    globalStage =
-      filter (not . DockerTools.isFrom) $ concat globalStageInstructions
+    (beforeFirstStage, localStages, globalStage) =
+      ParseTools.buildStages dockerfile
+
+dropPositions :: Docker.Dockerfile -> Ir.DockerfilePart
+dropPositions = fmap Docker.instruction
 
 patchDockerfile :: Docker.Dockerfile -> Docker.Dockerfile
 patchDockerfile = fmap $ fmap reviveLineBreaks
