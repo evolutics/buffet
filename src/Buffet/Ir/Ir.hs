@@ -29,6 +29,7 @@ data Metadata =
   Metadata
     { title :: T.Text
     , url :: T.Text
+    , tags :: Map.Map T.Text [T.Text]
     }
   deriving (Eq, Ord, Show)
 

@@ -22,6 +22,7 @@ get dockerfile =
           mempty
           (T.pack "org.opencontainers.image.url")
           labels
+    , Ir.tags = Map.empty
     }
   where
     labels = globalLabels dockerfile
