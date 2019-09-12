@@ -1,7 +1,7 @@
 {
   "option_to_dish": {
     "example": {
-      "metadata": { "title": "" },
+      "metadata": { "title": "", "url": "" },
       "instruction_partition": {
         "before_first_build_stage": [],
         "local_build_stages": [],

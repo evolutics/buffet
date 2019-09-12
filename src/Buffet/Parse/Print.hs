@@ -35,9 +35,10 @@ data Dish =
 instance Aeson.ToJSON Dish where
   toEncoding = Aeson.genericToEncoding options
 
-newtype Metadata =
+data Metadata =
   Metadata
     { title :: T.Text
+    , url :: T.Text
     }
   deriving (Eq, Generics.Generic, Ord, Show)
 
@@ -77,7 +78,7 @@ transformDish dish =
     }
 
 transformMetadata :: Ir.Metadata -> Metadata
-transformMetadata meta = Metadata {title = Ir.title meta}
+transformMetadata meta = Metadata {title = Ir.title meta, url = Ir.url meta}
 
 transformInstructionPartition :: Ir.InstructionPartition -> InstructionPartition
 transformInstructionPartition partition =

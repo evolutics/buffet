@@ -17,6 +17,11 @@ get dockerfile =
           mempty
           (T.pack "org.opencontainers.image.title")
           labels
+    , Ir.url =
+        Map.findWithDefault
+          mempty
+          (T.pack "org.opencontainers.image.url")
+          labels
     }
   where
     labels = globalLabels dockerfile
