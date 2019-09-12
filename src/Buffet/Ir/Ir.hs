@@ -25,9 +25,9 @@ data Dish =
     }
   deriving (Eq, Ord, Show)
 
-data Metadata =
+newtype Metadata =
   Metadata
-    {
+    { title :: T.Text
     }
   deriving (Eq, Ord, Show)
 

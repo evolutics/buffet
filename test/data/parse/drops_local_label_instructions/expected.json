@@ -4,7 +4,7 @@
       "metadata": { "title": "" },
       "instruction_partition": {
         "before_first_build_stage": [],
-        "local_build_stages": [],
+        "local_build_stages": [["FROM alpine AS example"]],
         "global_build_stage": []
       },
       "test_command": null
