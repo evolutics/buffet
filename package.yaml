@@ -18,6 +18,7 @@ dependencies:
   - aeson
   - base >= 4.7 && < 5
   - bytestring
+  - cassava
   - containers
   - directory
   - filepath
@@ -25,6 +26,7 @@ dependencies:
   - split
   - text
   - typed-process
+  - vector
   - yaml
 _ghc-options: &ghc-options
   - -threaded

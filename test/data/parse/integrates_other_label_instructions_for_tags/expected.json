@@ -1,7 +1,11 @@
 {
   "option_to_dish": {
     "example": {
-      "metadata": { "title": "", "url": "", "tags": {} },
+      "metadata": {
+        "title": "",
+        "url": "",
+        "tags": { "org.opencontainers.image.authors": ["Boo Far", "Baz"] }
+      },
       "instruction_partition": {
         "before_first_build_stage": [],
         "local_build_stages": [],
