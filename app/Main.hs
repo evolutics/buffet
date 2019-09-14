@@ -34,10 +34,10 @@ commands =
     ]
 
 build :: FilePath -> IO ()
-build = Buffet.build Monad.>=> T.IO.putStrLn
+build = Buffet.build Monad.>=> T.IO.putStr
 
 parse :: FilePath -> IO ()
-parse = Buffet.parse Monad.>=> T.IO.putStrLn
+parse = Buffet.parse Monad.>=> T.IO.putStr
 
 test :: FilePath -> FilePath -> IO ()
 test = Buffet.test
