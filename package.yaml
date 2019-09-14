@@ -58,7 +58,6 @@ tests:
     dependencies:
       - aeson
       - buffet-internal
-      - bytestring
       - directory
       - filepath
       - tasty
