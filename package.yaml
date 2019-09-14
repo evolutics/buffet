@@ -36,16 +36,17 @@ _ghc-options: &ghc-options
   - -Weverything
   - -Wno-unsafe
   - -Wno-safe
-library:
-  source-dirs: src
-  ghc-options: *ghc-options
+internal-libraries:
+  buffet-internal:
+    source-dirs: src
+    ghc-options: *ghc-options
 executables:
   buffet-exe:
     main: Main.hs
     source-dirs: app
     ghc-options: *ghc-options
     dependencies:
-      - buffet
+      - buffet-internal
       - optparse-applicative
 tests:
   buffet-test:
@@ -53,7 +54,7 @@ tests:
     source-dirs: test
     ghc-options: *ghc-options
     dependencies:
-      - buffet
+      - buffet-internal
       - tasty
       - tasty-golden
       - tasty-hunit
