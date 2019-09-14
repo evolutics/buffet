@@ -36,6 +36,7 @@ internal-libraries:
       - directory
       - filepath
       - language-docker
+      - optparse-applicative
       - split
       - text
       - typed-process
@@ -48,8 +49,6 @@ executables:
     ghc-options: *ghc-options
     dependencies:
       - buffet-internal
-      - optparse-applicative
-      - text
 tests:
   buffet-test:
     main: Spec.hs

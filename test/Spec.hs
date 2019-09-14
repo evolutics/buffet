@@ -1,4 +1,4 @@
-import qualified Buffet
+import qualified Buffet.Facade as Facade
 import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Data.Aeson as Aeson
 import qualified Data.List as List
@@ -40,14 +40,14 @@ tests =
     ]
   where
     mainDockerfileTest =
-      assertFileEqualsText "Main" "Dockerfile" $ Buffet.build "dockerfiles"
+      assertFileEqualsText "Main" "Dockerfile" $ Facade.build "dockerfiles"
 
 buildTests :: FilePath -> IO [Tasty.TestTree]
 buildTests = folderBasedTests assert
   where
     assert name path = assertFileEqualsText name (expected path) $ actual path
     expected path = FilePath.combine path "expected.Dockerfile"
-    actual = Buffet.build
+    actual = Facade.build
 
 folderBasedTests ::
      (Tasty.TestName -> FilePath -> Tasty.TestTree)
@@ -75,7 +75,7 @@ parseTests = folderBasedTests assert
     assert name path =
       assertJsonFileEqualsText name (expected path) $ actual path
     expected path = FilePath.combine path "expected.json"
-    actual = Buffet.parse
+    actual = Facade.parse
 
 assertJsonFileEqualsText ::
      Tasty.TestName -> FilePath -> IO T.Text -> Tasty.TestTree
@@ -94,5 +94,5 @@ testTests :: FilePath -> IO [Tasty.TestTree]
 testTests = folderBasedTests assert
   where
     assert name path =
-      HUnit.testCase name . Buffet.test path $
+      HUnit.testCase name . Facade.test path $
       FilePath.combine path "arguments.yaml"
