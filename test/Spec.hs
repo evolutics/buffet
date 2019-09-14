@@ -1,4 +1,3 @@
-import qualified Buffet.Facade as Facade
 import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Data.Aeson as Aeson
 import qualified Data.List as List
@@ -22,6 +21,7 @@ import Prelude
   )
 import qualified System.Directory as Directory
 import qualified System.FilePath as FilePath
+import qualified System.Process.Typed as Process
 import qualified Test.Tasty as Tasty
 import qualified Test.Tasty.Golden as Golden
 import qualified Test.Tasty.HUnit as HUnit
@@ -40,14 +40,14 @@ tests =
     ]
   where
     mainDockerfileTest =
-      assertFileEqualsText "Main" "Dockerfile" $ Facade.build "dockerfiles"
+      assertFileEqualsText "Main" "Dockerfile" $ build ["dockerfiles"]
 
 buildTests :: FilePath -> IO [Tasty.TestTree]
 buildTests = folderBasedTests assert
   where
     assert name path = assertFileEqualsText name (expected path) $ actual path
     expected path = FilePath.combine path "expected.Dockerfile"
-    actual = Facade.build
+    actual path = build [path]
 
 folderBasedTests ::
      (Tasty.TestName -> FilePath -> Tasty.TestTree)
@@ -59,6 +59,14 @@ folderBasedTests assert folder = do
   where
     assertSubfolder subfolder =
       assert subfolder $ FilePath.combine folder subfolder
+
+build :: [String] -> IO T.Text
+build =
+  fmap TextTools.decodeUtf8 .
+  Process.readProcessStdout_ . Process.proc executable . ("build" :)
+
+executable :: FilePath
+executable = "buffet-exe"
 
 assertFileEqualsText ::
      Tasty.TestName -> FilePath -> IO T.Text -> Tasty.TestTree
@@ -75,7 +83,12 @@ parseTests = folderBasedTests assert
     assert name path =
       assertJsonFileEqualsText name (expected path) $ actual path
     expected path = FilePath.combine path "expected.json"
-    actual = Facade.parse
+    actual path = parse [path]
+
+parse :: [String] -> IO T.Text
+parse =
+  fmap TextTools.decodeUtf8 .
+  Process.readProcessStdout_ . Process.proc executable . ("parse" :)
 
 assertJsonFileEqualsText ::
      Tasty.TestName -> FilePath -> IO T.Text -> Tasty.TestTree
@@ -94,5 +107,7 @@ testTests :: FilePath -> IO [Tasty.TestTree]
 testTests = folderBasedTests assert
   where
     assert name path =
-      HUnit.testCase name . Facade.test path $
-      FilePath.combine path "arguments.yaml"
+      HUnit.testCase name $ test [path, FilePath.combine path "arguments.yaml"]
+
+test :: [String] -> IO ()
+test = Process.runProcess_ . Process.proc executable . ("test" :)

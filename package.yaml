@@ -63,3 +63,4 @@ tests:
       - tasty-golden
       - tasty-hunit
       - text
+      - typed-process
