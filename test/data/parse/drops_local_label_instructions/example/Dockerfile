@@ -1,4 +1,4 @@
 FROM alpine AS example
-LABEL org.opencontainers.image.title="Example"
+LABEL org.opencontainers.image.title='Example'
 
 FROM alpine

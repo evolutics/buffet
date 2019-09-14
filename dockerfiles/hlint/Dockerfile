@@ -1,9 +1,9 @@
 FROM alpine
 ARG hlint
 
-LABEL org.opencontainers.image.title="HLint"
-LABEL org.opencontainers.image.url="https://github.com/ndmitchell/hlint"
-LABEL info.evolutics.buffet.help="hlint --help"
+LABEL org.opencontainers.image.title='HLint'
+LABEL org.opencontainers.image.url='https://github.com/ndmitchell/hlint'
+LABEL info.evolutics.buffet.help='hlint --help'
 
 RUN apk add --no-cache cabal ghc gmp libffi musl-dev ncurses-dev wget \
   && cabal update \
