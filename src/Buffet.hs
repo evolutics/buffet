@@ -21,6 +21,11 @@ commands =
            (build <$> Options.argument Options.str (Options.metavar "SOURCE"))
            mempty)
     , Options.command
+        "document"
+        (Options.info
+           (document <$> Options.argument Options.str (Options.metavar "SOURCE"))
+           mempty)
+    , Options.command
         "parse"
         (Options.info
            (parse <$> Options.argument Options.str (Options.metavar "SOURCE"))
@@ -35,6 +40,9 @@ commands =
 
 build :: FilePath -> IO ()
 build = Facade.build Monad.>=> T.IO.putStr
+
+document :: FilePath -> IO ()
+document = Facade.document Monad.>=> T.IO.putStr
 
 parse :: FilePath -> IO ()
 parse = Facade.parse Monad.>=> T.IO.putStr
