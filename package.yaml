@@ -36,6 +36,7 @@ internal-libraries:
       - directory
       - filepath
       - language-docker
+      - mustache
       - optparse-applicative
       - split
       - text
