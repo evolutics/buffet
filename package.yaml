@@ -24,6 +24,8 @@ _ghc-options: &ghc-options
   - -Weverything
   - -Wno-unsafe
   - -Wno-safe
+data-files:
+  - data/document/default_template.md.mustache
 internal-libraries:
   buffet-internal:
     source-dirs: src
@@ -43,6 +45,10 @@ internal-libraries:
       - typed-process
       - vector
       - yaml
+    other-modules:
+      - Paths_buffet
+    autogen-modules:
+      - Paths_buffet
 executables:
   buffet-exe:
     main: Main.hs

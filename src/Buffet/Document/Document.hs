@@ -4,8 +4,9 @@ module Buffet.Document.Document
 
 import qualified Buffet.Document.DocumentInternal as DocumentInternal
 import qualified Buffet.Parse.ParseInternal as ParseInternal
+import qualified Control.Monad as Monad
 import qualified Data.Text as T
-import Prelude (FilePath, IO, (.), fmap)
+import Prelude (FilePath, IO)
 
 get :: FilePath -> IO T.Text
-get = fmap DocumentInternal.get . ParseInternal.get
+get = ParseInternal.get Monad.>=> DocumentInternal.get
