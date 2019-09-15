@@ -27,6 +27,7 @@ tests =
   Tasty.testGroup "Tests" <$>
   sequence
     [ Tasty.testGroup "Build" <$> buildTests "test/data/build"
+    , Tasty.testGroup "Document" <$> documentTests "test/data/document"
     , Tasty.testGroup "Parse" <$> parseTests "test/data/parse"
     , Tasty.testGroup "Test" <$> testTests "test/data/test"
     , pure mainDockerfileTest
@@ -50,6 +51,19 @@ build =
 
 executable :: FilePath
 executable = "buffet-exe"
+
+documentTests :: FilePath -> IO [Tasty.TestTree]
+documentTests = TestTools.folderBasedTests assert
+  where
+    assert name path =
+      TestTools.assertFileEqualsText name (expected path) $ actual path
+    expected path = FilePath.combine path "expected.md"
+    actual path = document [path]
+
+document :: [String] -> IO T.Text
+document =
+  fmap TextTools.decodeUtf8 .
+  Process.readProcessStdout_ . Process.proc executable . ("document" :)
 
 parseTests :: FilePath -> IO [Tasty.TestTree]
 parseTests folder = do
