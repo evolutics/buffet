@@ -5,6 +5,7 @@ module Buffet.Toolbox.TestTools
   ) where
 
 import qualified Buffet.Toolbox.TextTools as TextTools
+import qualified Control.Monad as Monad
 import qualified Data.Aeson as Aeson
 import qualified Data.List as List
 import qualified Data.Text as T
@@ -56,7 +57,11 @@ folderBasedTests ::
   -> FilePath
   -> IO [Tasty.TestTree]
 folderBasedTests assert folder = do
-  subfolders <- Directory.listDirectory folder
+  folderEntries <- Directory.listDirectory folder
+  subfolders <-
+    Monad.filterM
+      (Directory.doesDirectoryExist . FilePath.combine folder)
+      folderEntries
   pure . fmap assertSubfolder $ List.sort subfolders
   where
     assertSubfolder subfolder =
