@@ -1,3 +1,4 @@
+import qualified Buffet.Toolbox.JsonTools as JsonTools
 import qualified Buffet.Toolbox.TestTools as TestTools
 import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Data.Text as T
@@ -51,11 +52,18 @@ executable :: FilePath
 executable = "buffet-exe"
 
 parseTests :: FilePath -> IO [Tasty.TestTree]
-parseTests = TestTools.folderBasedTests assert
+parseTests folder = do
+  expectedBase <-
+    JsonTools.decodeFile $ FilePath.combine folder "expected_base.json"
+  let assert name path =
+        TestTools.assertJsonComposedFileEqualsText
+          name
+          expectedBase
+          (expectedOverride path) $
+        actual path
+  TestTools.folderBasedTests assert folder
   where
-    assert name path =
-      TestTools.assertJsonFileEqualsText name (expected path) $ actual path
-    expected path = FilePath.combine path "expected.json"
+    expectedOverride path = FilePath.combine path "expected.json"
     actual path = parse [path]
 
 parse :: [String] -> IO T.Text

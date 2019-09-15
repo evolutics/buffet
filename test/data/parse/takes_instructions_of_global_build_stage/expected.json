@@ -1,13 +1,9 @@
 {
   "option_to_dish": {
     "example": {
-      "metadata": { "title": "", "url": "", "tags": {} },
       "instruction_partition": {
-        "before_first_build_stage": [],
-        "local_build_stages": [],
         "global_build_stage": ["RUN ls"]
-      },
-      "test_command": null
+      }
     }
   }
 }

@@ -1,12 +1,13 @@
 module Buffet.Toolbox.TestTools
   ( assertFileEqualsText
-  , assertJsonFileEqualsText
+  , assertJsonComposedFileEqualsText
   , folderBasedTests
   ) where
 
 import qualified Buffet.Toolbox.JsonTools as JsonTools
 import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Control.Monad as Monad
+import qualified Data.Aeson as Aeson
 import qualified Data.List as List
 import qualified Data.Text as T
 import Prelude (FilePath, IO, ($), (.), fmap, pure)
@@ -25,11 +26,12 @@ assertFileEqualsText name expected actualAction =
       ["diff", "--unified", expectedFile, actualFile]
     actualBinaryAction = fmap TextTools.encodeUtf8 actualAction
 
-assertJsonFileEqualsText ::
-     Tasty.TestName -> FilePath -> IO T.Text -> Tasty.TestTree
-assertJsonFileEqualsText name rawExpected rawActualAction =
+assertJsonComposedFileEqualsText ::
+     Tasty.TestName -> Aeson.Value -> FilePath -> IO T.Text -> Tasty.TestTree
+assertJsonComposedFileEqualsText name expectedBase rawExpectedOverride rawActualAction =
   HUnit.testCase name $ do
-    expected <- JsonTools.decodeFile rawExpected
+    expectedOverride <- JsonTools.decodeFile rawExpectedOverride
+    let expected = JsonTools.merge expectedBase expectedOverride
     rawActual <- rawActualAction
     let actual = JsonTools.decodeText rawActual
     HUnit.assertEqual "" expected actual

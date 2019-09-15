@@ -64,3 +64,4 @@ tests:
       - tasty-hunit
       - text
       - typed-process
+      - unordered-containers
