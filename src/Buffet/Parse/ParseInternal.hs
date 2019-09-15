@@ -10,8 +10,19 @@ import qualified Buffet.Parse.ParseTestCommand as ParseTestCommand
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import qualified Language.Docker as Docker
-import Prelude (FilePath, IO, ($), (.), either, error, fmap, id, mapM, pure)
-import qualified Text.Show as Show
+import Prelude
+  ( FilePath
+  , IO
+  , ($)
+  , (.)
+  , either
+  , error
+  , fmap
+  , id
+  , mapM
+  , pure
+  , show
+  )
 
 get :: FilePath -> IO Ir.Buffet
 get buffetPath = do
@@ -20,7 +31,7 @@ get buffetPath = do
   pure $ parseBuffet optionToDish
 
 parseDockerfile :: FilePath -> IO Docker.Dockerfile
-parseDockerfile = fmap (either (error . Show.show) id) . Docker.parseFile
+parseDockerfile = fmap (either (error . show) id) . Docker.parseFile
 
 parseBuffet :: Map.Map T.Text Docker.Dockerfile -> Ir.Buffet
 parseBuffet optionToDish =
