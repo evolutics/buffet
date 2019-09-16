@@ -14,6 +14,7 @@ import Prelude
   , pure
   , sequence
   )
+import qualified System.Directory as Directory
 import qualified System.FilePath as FilePath
 import qualified System.Process.Typed as Process
 import qualified Test.Tasty as Tasty
@@ -56,11 +57,16 @@ executable = "buffet-exe"
 documentTests :: FilePath -> IO [Tasty.TestTree]
 documentTests = TestTools.folderBasedTests assert
   where
-    assert :: Tasty.TestName -> FilePath -> IO Tasty.TestTree
-    assert name path =
-      pure . TestTools.assertFileEqualsText name (expected path) $ actual path
+    assert name path = do
+      hasCustomTemplate <- Directory.doesFileExist customTemplate
+      let actual =
+            if hasCustomTemplate
+              then document ["--template", customTemplate, path]
+              else document [path]
+      pure $ TestTools.assertFileEqualsText name (expected path) actual
+      where
+        customTemplate = FilePath.combine path "template.md.mustache"
     expected path = FilePath.combine path "expected.md"
-    actual path = document [path]
 
 document :: [String] -> IO T.Text
 document =

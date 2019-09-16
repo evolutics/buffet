@@ -6,7 +6,7 @@ import qualified Buffet.Document.DocumentInternal as DocumentInternal
 import qualified Buffet.Parse.ParseInternal as ParseInternal
 import qualified Control.Monad as Monad
 import qualified Data.Text as T
-import Prelude (FilePath, IO)
+import Prelude (FilePath, IO, Maybe)
 
-get :: FilePath -> IO T.Text
-get = ParseInternal.get Monad.>=> DocumentInternal.get
+get :: Maybe FilePath -> FilePath -> IO T.Text
+get template = ParseInternal.get Monad.>=> DocumentInternal.get template

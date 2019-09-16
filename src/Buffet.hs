@@ -3,8 +3,9 @@ module Buffet
   ) where
 
 import qualified Buffet.Facade as Facade
+import qualified Control.Applicative as Applicative
 import qualified Options.Applicative as Options
-import Prelude (IO, ($), (<$>), (<*>), (>>=), mconcat, mempty)
+import Prelude (IO, ($), (<$>), (<*>), (<>), (>>=), mconcat, mempty)
 
 main :: IO ()
 main = Options.execParser (Options.info parser mempty) >>= Facade.get
@@ -25,7 +26,10 @@ buildParser =
 
 documentParser :: Options.Parser Facade.Command
 documentParser =
-  Facade.Document <$> Options.argument Options.str (Options.metavar "SOURCE")
+  Facade.Document <$>
+  Applicative.optional
+    (Options.strOption (Options.long "template" <> Options.metavar "FILE")) <*>
+  Options.argument Options.str (Options.metavar "SOURCE")
 
 parseParser :: Options.Parser Facade.Command
 parseParser =
