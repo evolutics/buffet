@@ -47,7 +47,7 @@ internal-libraries:
       - yaml
     other-modules:
       - Paths_buffet
-    autogen-modules:
+    generated-other-modules:
       - Paths_buffet
 executables:
   buffet-exe:
