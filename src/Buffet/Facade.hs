@@ -9,17 +9,18 @@ import qualified Buffet.Build.Build as Build
 import qualified Buffet.Document.Document as Document
 import qualified Buffet.Parse.Parse as Parse
 import qualified Buffet.Test.Test as Test
-import qualified Data.Text as T
+import qualified Control.Monad as Monad
+import qualified Data.Text.IO as T.IO
 import Prelude (FilePath, IO)
 
-build :: FilePath -> IO T.Text
-build = Build.get
+build :: FilePath -> IO ()
+build = Build.get Monad.>=> T.IO.putStr
 
-document :: FilePath -> IO T.Text
-document = Document.get
+document :: FilePath -> IO ()
+document = Document.get Monad.>=> T.IO.putStr
 
-parse :: FilePath -> IO T.Text
-parse = Parse.get
+parse :: FilePath -> IO ()
+parse = Parse.get Monad.>=> T.IO.putStr
 
 test :: FilePath -> FilePath -> IO ()
 test = Test.get
