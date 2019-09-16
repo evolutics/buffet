@@ -3,40 +3,35 @@ module Buffet
   ) where
 
 import qualified Buffet.Facade as Facade
-import qualified Control.Monad as Monad
 import qualified Options.Applicative as Options
-import Prelude (IO, ($), (<$>), (<*>), mconcat, mempty)
+import Prelude (IO, ($), (<$>), (<*>), (>>=), mconcat, mempty)
 
 main :: IO ()
-main = Monad.join $ Options.execParser (Options.info commands mempty)
+main = Options.execParser (Options.info parser mempty) >>= Facade.get
 
-commands :: Options.Parser (IO ())
-commands =
+parser :: Options.Parser Facade.Command
+parser =
   Options.hsubparser $
   mconcat
-    [ Options.command
-        "build"
-        (Options.info
-           (Facade.build <$>
-            Options.argument Options.str (Options.metavar "SOURCE"))
-           mempty)
-    , Options.command
-        "document"
-        (Options.info
-           (Facade.document <$>
-            Options.argument Options.str (Options.metavar "SOURCE"))
-           mempty)
-    , Options.command
-        "parse"
-        (Options.info
-           (Facade.parse <$>
-            Options.argument Options.str (Options.metavar "SOURCE"))
-           mempty)
-    , Options.command
-        "test"
-        (Options.info
-           (Facade.test <$>
-            Options.argument Options.str (Options.metavar "SOURCE") <*>
-            Options.argument Options.str (Options.metavar "ARGUMENTS"))
-           mempty)
+    [ Options.command "build" (Options.info buildParser mempty)
+    , Options.command "document" (Options.info documentParser mempty)
+    , Options.command "parse" (Options.info parseParser mempty)
+    , Options.command "test" (Options.info testParser mempty)
     ]
+
+buildParser :: Options.Parser Facade.Command
+buildParser =
+  Facade.Build <$> Options.argument Options.str (Options.metavar "SOURCE")
+
+documentParser :: Options.Parser Facade.Command
+documentParser =
+  Facade.Document <$> Options.argument Options.str (Options.metavar "SOURCE")
+
+parseParser :: Options.Parser Facade.Command
+parseParser =
+  Facade.Parse <$> Options.argument Options.str (Options.metavar "SOURCE")
+
+testParser :: Options.Parser Facade.Command
+testParser =
+  Facade.Test <$> Options.argument Options.str (Options.metavar "SOURCE") <*>
+  Options.argument Options.str (Options.metavar "ARGUMENTS")

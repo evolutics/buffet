@@ -1,26 +1,26 @@
 module Buffet.Facade
-  ( build
-  , document
-  , parse
-  , test
+  ( Command(..)
+  , get
   ) where
 
 import qualified Buffet.Build.Build as Build
 import qualified Buffet.Document.Document as Document
 import qualified Buffet.Parse.Parse as Parse
 import qualified Buffet.Test.Test as Test
-import qualified Control.Monad as Monad
 import qualified Data.Text.IO as T.IO
-import Prelude (FilePath, IO)
+import Prelude (Eq, FilePath, IO, Ord, Show, (>>=))
 
-build :: FilePath -> IO ()
-build = Build.get Monad.>=> T.IO.putStr
+data Command
+  = Build FilePath
+  | Document FilePath
+  | Parse FilePath
+  | Test FilePath FilePath
+  deriving (Eq, Ord, Show)
 
-document :: FilePath -> IO ()
-document = Document.get Monad.>=> T.IO.putStr
-
-parse :: FilePath -> IO ()
-parse = Parse.get Monad.>=> T.IO.putStr
-
-test :: FilePath -> FilePath -> IO ()
-test = Test.get
+get :: Command -> IO ()
+get command =
+  case command of
+    Build buffetSource -> Build.get buffetSource >>= T.IO.putStr
+    Document buffetSource -> Document.get buffetSource >>= T.IO.putStr
+    Parse buffetSource -> Parse.get buffetSource >>= T.IO.putStr
+    Test buffetSource argumentsFile -> Test.get buffetSource argumentsFile
