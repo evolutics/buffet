@@ -13,7 +13,6 @@ get option stage = firstFroms <> preparedAfterFirstFroms
   where
     (firstFroms, afterFirstFroms) = span isFrom stage
     preparedAfterFirstFroms = optionArg : List.delete optionArg afterFirstFroms
-    optionArg :: Docker.Instruction T.Text
     optionArg = Docker.Arg option Nothing
 
 isFrom :: Docker.Instruction a -> Bool

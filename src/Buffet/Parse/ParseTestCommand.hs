@@ -18,7 +18,6 @@ get dockerfile =
 lastHealthcheck :: Docker.Dockerfile -> Maybe (Docker.Check T.Text)
 lastHealthcheck = Maybe.listToMaybe . reverse . Maybe.mapMaybe maybeHealthcheck
   where
-    maybeHealthcheck :: Docker.InstructionPos a -> Maybe (Docker.Check a)
     maybeHealthcheck (Docker.InstructionPos (Docker.Healthcheck check) _ _) =
       Just check
     maybeHealthcheck _ = Nothing

@@ -24,6 +24,7 @@ _ghc-options: &ghc-options
   - -Weverything
   - -Wno-unsafe
   - -Wno-safe
+  - -Wno-missing-local-signatures
 data-files:
   - data/document/default_template.md.mustache
 internal-libraries:

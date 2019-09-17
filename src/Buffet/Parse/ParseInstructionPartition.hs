@@ -36,7 +36,6 @@ patchDockerfile = fmap $ fmap reviveLineBreaks
 takeActualInstructions :: Docker.Dockerfile -> Docker.Dockerfile
 takeActualInstructions = filter isTaken
   where
-    isTaken :: Docker.InstructionPos a -> Bool
     isTaken (Docker.InstructionPos (Docker.Healthcheck _) _ _) = False
     isTaken (Docker.InstructionPos (Docker.Label _) _ _) = False
     isTaken _ = True

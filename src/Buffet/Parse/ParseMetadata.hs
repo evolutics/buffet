@@ -40,7 +40,6 @@ get dockerfile =
 globalLabels :: Docker.Dockerfile -> Map.Map T.Text T.Text
 globalLabels = Map.fromList . concatMap labelBindings . globalStage
   where
-    labelBindings :: Docker.InstructionPos a -> [(T.Text, T.Text)]
     labelBindings (Docker.InstructionPos (Docker.Label pairs) _ _) = pairs
     labelBindings _ = []
 

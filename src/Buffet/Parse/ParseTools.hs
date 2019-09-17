@@ -17,7 +17,6 @@ buildStages dockerfile = (beforeFirstStage, localStages, globalStage)
         [] -> ([], [])
         (first:rest) -> (first, rest)
     parts = Split.split splitter dockerfile
-    splitter :: Split.Splitter (Docker.InstructionPos a)
     splitter = Split.keepDelimsL $ Split.whenElt isFrom
     (localStages, globalStageInstructions) =
       splitAt (pred $ length stages) stages

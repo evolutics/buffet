@@ -44,6 +44,5 @@ dishArgInstructions option dish =
     extraOptions =
       filter isExtraOption . Ir.beforeFirstBuildStage $
       Ir.instructionPartition dish
-    isExtraOption :: Docker.Instruction a -> Bool
     isExtraOption (Docker.Arg key _) = key /= option
     isExtraOption _ = False

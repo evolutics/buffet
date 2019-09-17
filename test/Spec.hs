@@ -40,7 +40,6 @@ tests =
 buildTests :: FilePath -> IO [Tasty.TestTree]
 buildTests = TestTools.folderBasedTests assert
   where
-    assert :: Tasty.TestName -> FilePath -> IO Tasty.TestTree
     assert name path =
       pure . TestTools.assertFileEqualsText name (expected path) $ actual path
     expected path = FilePath.combine path "expected.Dockerfile"
@@ -77,8 +76,7 @@ parseTests :: FilePath -> IO [Tasty.TestTree]
 parseTests folder = do
   expectedBase <-
     JsonTools.decodeFile $ FilePath.combine folder "expected_base.json"
-  let assert :: Tasty.TestName -> FilePath -> IO Tasty.TestTree
-      assert name path =
+  let assert name path =
         pure .
         TestTools.assertJsonComposedFileEqualsText
           name
@@ -98,7 +96,6 @@ parse =
 testTests :: FilePath -> IO [Tasty.TestTree]
 testTests = TestTools.folderBasedTests assert
   where
-    assert :: Tasty.TestName -> FilePath -> IO Tasty.TestTree
     assert name path =
       pure . HUnit.testCase name $
       test [path, FilePath.combine path "arguments.yaml"]
