@@ -36,8 +36,7 @@ getFromFolder buffetFolder = do
 getFromFile :: FilePath -> IO (Map.Map T.Text FilePath)
 getFromFile buffetFile = do
   unresolvedOptionToDish <- Yaml.decodeFileThrow buffetFile
-  let _ = unresolvedOptionToDish :: Map.Map T.Text FilePath
-      optionToDish = fmap (FilePath.combine folder) unresolvedOptionToDish
+  let optionToDish = fmap (FilePath.combine folder) unresolvedOptionToDish
   pure optionToDish
   where
     folder = FilePath.takeDirectory buffetFile
