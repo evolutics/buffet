@@ -4,10 +4,9 @@ module Buffet.Ir.IrTools
 
 import qualified Buffet.Ir.Ir as Ir
 import qualified Data.Map.Strict as Map
-import qualified Data.Text as T
 import Prelude ((<$>), uncurry)
 
-mapOrderedEntries :: (T.Text -> Ir.Dish -> a) -> Ir.Buffet -> [a]
+mapOrderedEntries :: (Ir.Option -> Ir.Dish -> a) -> Ir.Buffet -> [a]
 mapOrderedEntries function buffet =
   uncurry function <$> Map.toAscList optionToDish
   where

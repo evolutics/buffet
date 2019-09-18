@@ -29,7 +29,7 @@ get configuration buffet =
 baseImageOptions :: Configuration.Configuration -> [Docker.Instruction a]
 baseImageOptions configuration = [Docker.Arg tagOption $ Just tagValue]
   where
-    tagOption = Configuration.baseImageTagOption configuration
+    tagOption = Ir.option $ Configuration.baseImageTagOption configuration
     tagValue =
       mconcat
         [ T.singleton '\''
@@ -37,12 +37,12 @@ baseImageOptions configuration = [Docker.Arg tagOption $ Just tagValue]
         , T.singleton '\''
         ]
 
-dishArgInstructions :: T.Text -> Ir.Dish -> Ir.DockerfilePart
+dishArgInstructions :: Ir.Option -> Ir.Dish -> Ir.DockerfilePart
 dishArgInstructions option dish =
-  Docker.Arg option (Just $ T.pack "''") : extraOptions
+  Docker.Arg (Ir.option option) (Just $ T.pack "''") : extraOptions
   where
     extraOptions =
       filter isExtraOption . Ir.beforeFirstBuildStage $
       Ir.instructionPartition dish
-    isExtraOption (Docker.Arg key _) = key /= option
+    isExtraOption (Docker.Arg key _) = Ir.Option key /= option
     isExtraOption _ = False

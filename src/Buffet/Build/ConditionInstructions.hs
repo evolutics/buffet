@@ -9,7 +9,7 @@ import qualified Language.Docker as Docker hiding (sourcePaths)
 import qualified Language.Docker.Syntax as Syntax
 import Prelude (($), (<>), concat, fmap, mconcat, pure)
 
-get :: T.Text -> Ir.DockerfilePart -> Ir.DockerfilePart
+get :: Ir.Option -> Ir.DockerfilePart -> Ir.DockerfilePart
 get option = fmap conditionInstruction
   where
     conditionInstruction (Docker.Copy arguments) =
@@ -29,10 +29,11 @@ conditionalCopyInstruction arguments =
     originalSources = Docker.sourcePaths arguments
     emptyFolder = Docker.SourcePath {Docker.unSourcePath = T.pack "/var/empty"}
 
-optionConditionalRunInstruction :: T.Text -> T.Text -> Docker.Instruction T.Text
+optionConditionalRunInstruction ::
+     Ir.Option -> T.Text -> Docker.Instruction T.Text
 optionConditionalRunInstruction option = conditionalRunInstruction condition
   where
-    condition = mconcat [T.pack "[[ -n \"${", option, T.pack "}\" ]]"]
+    condition = mconcat [T.pack "[[ -n \"${", Ir.option option, T.pack "}\" ]]"]
 
 conditionalRunInstruction :: T.Text -> T.Text -> Docker.Instruction T.Text
 conditionalRunInstruction condition thenPart =

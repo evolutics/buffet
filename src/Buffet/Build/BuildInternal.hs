@@ -27,7 +27,7 @@ configuration :: Configuration.Configuration
 configuration =
   Configuration.Configuration
     { Configuration.baseImageName = T.pack "alpine"
-    , Configuration.baseImageTagOption = T.pack "alpine_version"
+    , Configuration.baseImageTagOption = Ir.Option $ T.pack "alpine_version"
     , Configuration.baseImageTagValue = T.pack "3.9.4"
     , Configuration.workdir = "/workdir"
     }

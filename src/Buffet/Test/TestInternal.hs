@@ -22,7 +22,7 @@ import Prelude
 import qualified System.IO as IO
 import qualified System.Process.Typed as Process
 
-get :: Ir.Buffet -> Map.Map T.Text T.Text -> IO ()
+get :: Ir.Buffet -> Map.Map Ir.Option T.Text -> IO ()
 get buffetIr arguments = do
   let buffet = BuildInternal.get buffetIr
   imageId <- dockerBuild buffet arguments
@@ -32,7 +32,8 @@ get buffetIr arguments = do
           (\option dish ->
              case Ir.testCommand dish of
                Nothing ->
-                 putStderrLine $ mconcat [T.pack "No test for dish: ", option]
+                 putStderrLine $
+                 mconcat [T.pack "No test for dish: ", Ir.option option]
                Just testCommand ->
                  Process.runProcess_ $
                  Process.proc
@@ -41,7 +42,7 @@ get buffetIr arguments = do
           optionToDish
   sequence_ tests
 
-dockerBuild :: T.Text -> Map.Map T.Text T.Text -> IO T.Text
+dockerBuild :: T.Text -> Map.Map Ir.Option T.Text -> IO T.Text
 dockerBuild dockerfile arguments = do
   rawImageIdLine <-
     Process.readProcessStdout_ $
@@ -56,11 +57,15 @@ dockerBuild dockerfile arguments = do
     buildArgs =
       concatMap
         (\(key, value) ->
-           ["--build-arg", mconcat [T.unpack key, "=", T.unpack value]]) $
+           [ "--build-arg"
+           , mconcat [T.unpack $ Ir.option key, "=", T.unpack value]
+           ]) $
       Map.toAscList arguments
 
 filterTestedDishes ::
-     Map.Map T.Text Ir.Dish -> Map.Map T.Text T.Text -> Map.Map T.Text Ir.Dish
+     Map.Map Ir.Option Ir.Dish
+  -> Map.Map Ir.Option T.Text
+  -> Map.Map Ir.Option Ir.Dish
 filterTestedDishes optionToDish arguments =
   Map.restrictKeys optionToDish relevantArgumentOptions
   where

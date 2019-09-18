@@ -32,7 +32,7 @@ fromInstruction configuration =
           Just . Docker.Tag $
           mconcat
             [ T.pack "\"${"
-            , Configuration.baseImageTagOption configuration
+            , Ir.option $ Configuration.baseImageTagOption configuration
             , T.pack "}\""
             ]
       , Docker.digest = Nothing
@@ -43,7 +43,7 @@ fromInstruction configuration =
 dishesInstructions :: Ir.Buffet -> [Ir.DockerfilePart]
 dishesInstructions = IrTools.mapOrderedEntries dishInstructions
 
-dishInstructions :: T.Text -> Ir.Dish -> Ir.DockerfilePart
+dishInstructions :: Ir.Option -> Ir.Dish -> Ir.DockerfilePart
 dishInstructions option =
   ConditionInstructions.get option .
   PrepareOptionArgInstruction.get option .

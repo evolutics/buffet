@@ -15,10 +15,10 @@ get buffet =
   Mustache.object
     [T.pack "dishes" Mustache.~> IrTools.mapOrderedEntries transformDish buffet]
 
-transformDish :: T.Text -> Ir.Dish -> Types.Value
+transformDish :: Ir.Option -> Ir.Dish -> Types.Value
 transformDish option dish =
   Mustache.object
-    [ T.pack "option" Mustache.~> option
+    [ T.pack "option" Mustache.~> Ir.option option
     , T.pack "title" Mustache.~> Ir.title (Ir.metadata dish)
     , T.pack "url" Mustache.~> Ir.url (Ir.metadata dish)
     , T.pack "tags" Mustache.~> transformTags (Ir.tags $ Ir.metadata dish)

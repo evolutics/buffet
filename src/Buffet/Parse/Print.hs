@@ -17,12 +17,14 @@ import Prelude (Eq, Maybe, Ord, Show, ($), (.), (<$>), fmap)
 
 newtype Buffet =
   Buffet
-    { optionToDish :: Map.Map T.Text Dish
+    { optionToDish :: Map.Map Option Dish
     }
   deriving (Eq, Generics.Generic, Ord, Show)
 
 instance Aeson.ToJSON Buffet where
   toEncoding = Aeson.genericToEncoding options
+
+type Option = T.Text
 
 data Dish =
   Dish
@@ -67,7 +69,10 @@ get = TextTools.decodeUtf8 . Aeson.encode . transformBuffet
 
 transformBuffet :: Ir.Buffet -> Buffet
 transformBuffet buffet =
-  Buffet {optionToDish = transformDish <$> Ir.optionToDish buffet}
+  Buffet
+    { optionToDish =
+        fmap transformDish . Map.mapKeys Ir.option $ Ir.optionToDish buffet
+    }
 
 transformDish :: Ir.Dish -> Dish
 transformDish dish =

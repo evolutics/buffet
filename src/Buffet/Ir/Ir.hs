@@ -4,6 +4,7 @@ module Buffet.Ir.Ir
   , DockerfilePart
   , InstructionPartition(..)
   , Metadata(..)
+  , Option(..)
   ) where
 
 import qualified Data.Map.Strict as Map
@@ -13,7 +14,13 @@ import Prelude (Eq, Maybe, Ord, Show)
 
 newtype Buffet =
   Buffet
-    { optionToDish :: Map.Map T.Text Dish
+    { optionToDish :: Map.Map Option Dish
+    }
+  deriving (Eq, Ord, Show)
+
+newtype Option =
+  Option
+    { option :: T.Text
     }
   deriving (Eq, Ord, Show)
 
