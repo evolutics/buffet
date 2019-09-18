@@ -4,8 +4,8 @@ module Buffet.Build.ArgInstructions
 
 import qualified Buffet.Build.Configuration as Configuration
 import qualified Buffet.Ir.Ir as Ir
-import qualified Buffet.Ir.IrTools as IrTools
 import qualified Data.List as List
+import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import qualified Language.Docker as Docker hiding (sourcePaths)
 import Prelude
@@ -15,16 +15,19 @@ import Prelude
   , (.)
   , (/=)
   , (<>)
-  , concat
+  , concatMap
   , filter
   , mconcat
+  , uncurry
   )
 
 get :: Configuration.Configuration -> Ir.Buffet -> [Ir.DockerfilePart]
 get configuration buffet =
-  [List.sort $ mainOptions <> baseImageOptions configuration]
+  [List.sort $ baseImageOptions configuration <> mainOptions]
   where
-    mainOptions = concat $ IrTools.mapOrderedEntries dishArgInstructions buffet
+    mainOptions =
+      concatMap (uncurry dishArgInstructions) $ Map.toList optionToDish
+    optionToDish = Ir.optionToDish buffet
 
 baseImageOptions :: Configuration.Configuration -> [Docker.Instruction a]
 baseImageOptions configuration = [Docker.Arg tagOption $ Just tagValue]
