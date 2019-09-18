@@ -8,6 +8,7 @@ module Buffet.Ir.Ir
   ) where
 
 import qualified Data.Map.Strict as Map
+import qualified Data.Ord as Ord
 import qualified Data.Text as T
 import qualified Language.Docker as Docker
 import Prelude (Eq, Maybe, Ord, Show)
@@ -22,7 +23,12 @@ newtype Option =
   Option
     { option :: T.Text
     }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Show)
+
+instance Ord Option where
+  compare = Ord.comparing sortKey
+    where
+      sortKey (Option raw) = (T.toCaseFold raw, raw)
 
 data Dish =
   Dish

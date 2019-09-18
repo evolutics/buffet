@@ -5,14 +5,14 @@ ARG foo=''
 
 FROM alpine:"${alpine_version}"
 
-ARG Foo
-RUN if [[ -n "${Foo}" ]]; then \
-    echo 'Foo' \
-  ; fi
-
 ARG bar
 RUN if [[ -n "${bar}" ]]; then \
     echo 'bar' \
+  ; fi
+
+ARG Foo
+RUN if [[ -n "${Foo}" ]]; then \
+    echo 'Foo' \
   ; fi
 
 ARG foo
