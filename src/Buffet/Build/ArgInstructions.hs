@@ -23,11 +23,7 @@ import Prelude
 
 get :: Configuration.Configuration -> Ir.Buffet -> [Ir.DockerfilePart]
 get configuration buffet =
-  [List.sort $ baseImageOptions configuration <> mainOptions]
-  where
-    mainOptions =
-      concatMap (uncurry dishArgInstructions) $ Map.toList optionToDish
-    optionToDish = Ir.optionToDish buffet
+  [List.sort $ baseImageOptions configuration <> dishesArgInstructions buffet]
 
 baseImageOptions :: Configuration.Configuration -> [Docker.Instruction a]
 baseImageOptions configuration = [Docker.Arg tagOption $ Just tagValue]
@@ -39,6 +35,10 @@ baseImageOptions configuration = [Docker.Arg tagOption $ Just tagValue]
         , Configuration.baseImageTagValue configuration
         , T.singleton '\''
         ]
+
+dishesArgInstructions :: Ir.Buffet -> Ir.DockerfilePart
+dishesArgInstructions =
+  concatMap (uncurry dishArgInstructions) . Map.toList . Ir.optionToDish
 
 dishArgInstructions :: Ir.Option -> Ir.Dish -> Ir.DockerfilePart
 dishArgInstructions option dish =
