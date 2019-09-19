@@ -9,8 +9,10 @@ module Buffet.Ir.Ir
   , TagValue(..)
   ) where
 
+import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Data.Aeson as Aeson
 import qualified Data.Aeson.Types as Types
+import qualified Data.Function as Function
 import qualified Data.Map.Strict as Map
 import qualified Data.Ord as Ord
 import qualified Data.Text as T
@@ -31,9 +33,7 @@ newtype Option =
   deriving (Eq, Show)
 
 instance Ord Option where
-  compare = Ord.comparing sortKey
-    where
-      sortKey (Option raw) = (T.toCaseFold raw, raw)
+  compare = Function.on TextTools.lexicographicalCompare option
 
 instance Aeson.ToJSON Option where
   toJSON = Aeson.toJSON . option
