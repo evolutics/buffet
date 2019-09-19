@@ -7,7 +7,7 @@ import qualified Control.Monad as Monad
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import qualified Data.Yaml as Yaml
-import Prelude (FilePath, IO, ($), (.), (<$>), fmap, pure)
+import Prelude (FilePath, IO, ($), (.), fmap, pure)
 import qualified System.Directory as Directory
 import qualified System.FilePath as FilePath
 
@@ -36,8 +36,7 @@ getFromFolder buffetFolder = do
 
 getFromFile :: FilePath -> IO (Map.Map Ir.Option FilePath)
 getFromFile buffetFile = do
-  unresolvedOptionToDish <-
-    Map.mapKeys Ir.Option <$> Yaml.decodeFileThrow buffetFile
+  unresolvedOptionToDish <- Yaml.decodeFileThrow buffetFile
   let optionToDish = fmap (FilePath.combine folder) unresolvedOptionToDish
   pure optionToDish
   where

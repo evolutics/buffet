@@ -12,8 +12,9 @@ import qualified Data.Aeson.Types as Types
 import qualified Data.Map.Strict as Map
 import qualified Data.Ord as Ord
 import qualified Data.Text as T
+import qualified Data.Yaml as Yaml
 import qualified Language.Docker as Docker
-import Prelude (Eq, Maybe, Ord, Show, (.))
+import Prelude (Eq, Maybe, Ord, Show, (.), fmap)
 
 newtype Buffet =
   Buffet
@@ -37,6 +38,12 @@ instance Aeson.ToJSON Option where
 
 instance Aeson.ToJSONKey Option where
   toJSONKey = Types.toJSONKeyText option
+
+instance Yaml.FromJSON Option where
+  parseJSON = fmap Option . Yaml.parseJSON
+
+instance Types.FromJSONKey Option where
+  fromJSONKey = Aeson.FromJSONKeyText Option
 
 data Dish =
   Dish
