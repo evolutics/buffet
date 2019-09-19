@@ -7,11 +7,13 @@ module Buffet.Ir.Ir
   , Option(..)
   ) where
 
+import qualified Data.Aeson as Aeson
+import qualified Data.Aeson.Types as Types
 import qualified Data.Map.Strict as Map
 import qualified Data.Ord as Ord
 import qualified Data.Text as T
 import qualified Language.Docker as Docker
-import Prelude (Eq, Maybe, Ord, Show)
+import Prelude (Eq, Maybe, Ord, Show, (.))
 
 newtype Buffet =
   Buffet
@@ -29,6 +31,12 @@ instance Ord Option where
   compare = Ord.comparing sortKey
     where
       sortKey (Option raw) = (T.toCaseFold raw, raw)
+
+instance Aeson.ToJSON Option where
+  toJSON = Aeson.toJSON . option
+
+instance Aeson.ToJSONKey Option where
+  toJSONKey = Types.toJSONKeyText option
 
 data Dish =
   Dish
