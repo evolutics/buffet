@@ -1,33 +1,71 @@
+{- HLINT ignore "Avoid restricted extensions" -}
+{-# LANGUAGE DeriveGeneric #-}
+
 module Buffet.Document.TemplateData
   ( get
   ) where
 
 import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Ir.IrTools as IrTools
+import qualified Data.Aeson as Aeson
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
-import Prelude (($), (.), fmap, uncurry)
-import qualified Text.Mustache as Mustache
+import qualified GHC.Generics as Generics
+import Prelude (Eq, Ord, Show, ($), (.), fmap, uncurry)
 import qualified Text.Mustache.Types as Types
 
+newtype Buffet =
+  Buffet
+    { dishes :: [Dish]
+    }
+  deriving (Eq, Generics.Generic, Ord, Show)
+
+instance Aeson.ToJSON Buffet where
+  toEncoding = Aeson.genericToEncoding options
+
+data Dish =
+  Dish
+    { option :: Ir.Option
+    , title :: T.Text
+    , url :: T.Text
+    , tags :: [Tag]
+    }
+  deriving (Eq, Generics.Generic, Ord, Show)
+
+instance Aeson.ToJSON Dish where
+  toEncoding = Aeson.genericToEncoding options
+
+data Tag =
+  Tag
+    { key :: T.Text
+    , values :: [T.Text]
+    }
+  deriving (Eq, Generics.Generic, Ord, Show)
+
+instance Aeson.ToJSON Tag where
+  toEncoding = Aeson.genericToEncoding options
+
+options :: Aeson.Options
+options = Aeson.defaultOptions {Aeson.fieldLabelModifier = Aeson.camelTo2 '_'}
+
 get :: Ir.Buffet -> Types.Value
-get buffet =
-  Mustache.object
-    [T.pack "dishes" Mustache.~> IrTools.mapOrderedEntries transformDish buffet]
+get = Types.mFromJSON . transformBuffet
 
-transformDish :: Ir.Option -> Ir.Dish -> Types.Value
-transformDish option dish =
-  Mustache.object
-    [ T.pack "option" Mustache.~= option
-    , T.pack "title" Mustache.~> Ir.title (Ir.metadata dish)
-    , T.pack "url" Mustache.~> Ir.url (Ir.metadata dish)
-    , T.pack "tags" Mustache.~> transformTags (Ir.tags $ Ir.metadata dish)
-    ]
+transformBuffet :: Ir.Buffet -> Buffet
+transformBuffet buffet =
+  Buffet {dishes = IrTools.mapOrderedEntries transformDish buffet}
 
-transformTags :: Map.Map T.Text [T.Text] -> [Types.Value]
+transformDish :: Ir.Option -> Ir.Dish -> Dish
+transformDish option' dish =
+  Dish
+    { option = option'
+    , title = Ir.title $ Ir.metadata dish
+    , url = Ir.url $ Ir.metadata dish
+    , tags = transformTags . Ir.tags $ Ir.metadata dish
+    }
+
+transformTags :: Map.Map T.Text [T.Text] -> [Tag]
 transformTags = fmap (uncurry transformTag) . Map.toAscList
 
-transformTag :: T.Text -> [T.Text] -> Types.Value
-transformTag key values =
-  Mustache.object
-    [T.pack "key" Mustache.~> key, T.pack "values" Mustache.~> values]
+transformTag :: T.Text -> [T.Text] -> Tag
+transformTag key' values' = Tag {key = key', values = values'}
