@@ -48,11 +48,11 @@ globalStage dockerfile = stage
   where
     (_, _, stage) = ParseTools.buildStages dockerfile
 
-parseTags :: Map.Map T.Text T.Text -> Map.Map Ir.TagKey [T.Text]
+parseTags :: Map.Map T.Text T.Text -> Map.Map Ir.TagKey [Ir.TagValue]
 parseTags = fmap parseTagValues . Map.mapKeys Ir.TagKey
 
-parseTagValues :: T.Text -> [T.Text]
-parseTagValues raw = maybe [raw] concat $ parseCsv raw
+parseTagValues :: T.Text -> [Ir.TagValue]
+parseTagValues raw = fmap Ir.TagValue . maybe [raw] concat $ parseCsv raw
 
 parseCsv :: T.Text -> Maybe [[T.Text]]
 parseCsv =

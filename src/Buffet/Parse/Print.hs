@@ -39,7 +39,7 @@ data Metadata =
   Metadata
     { title :: T.Text
     , url :: T.Text
-    , tags :: Map.Map Ir.TagKey [T.Text]
+    , tags :: Map.Map Ir.TagKey [Ir.TagValue]
     }
   deriving (Eq, Generics.Generic, Ord, Show)
 

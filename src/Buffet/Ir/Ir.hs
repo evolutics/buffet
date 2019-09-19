@@ -6,6 +6,7 @@ module Buffet.Ir.Ir
   , Metadata(..)
   , Option(..)
   , TagKey(..)
+  , TagValue(..)
   ) where
 
 import qualified Data.Aeson as Aeson
@@ -58,7 +59,7 @@ data Metadata =
   Metadata
     { title :: T.Text
     , url :: T.Text
-    , tags :: Map.Map TagKey [T.Text]
+    , tags :: Map.Map TagKey [TagValue]
     }
   deriving (Eq, Ord, Show)
 
@@ -73,6 +74,18 @@ instance Aeson.ToJSON TagKey where
 
 instance Aeson.ToJSONKey TagKey where
   toJSONKey = Types.toJSONKeyText tagKey
+
+newtype TagValue =
+  TagValue
+    { tagValue :: T.Text
+    }
+  deriving (Eq, Ord, Show)
+
+instance Aeson.ToJSON TagValue where
+  toJSON = Aeson.toJSON . tagValue
+
+instance Aeson.ToJSONKey TagValue where
+  toJSONKey = Types.toJSONKeyText tagValue
 
 data InstructionPartition =
   InstructionPartition
