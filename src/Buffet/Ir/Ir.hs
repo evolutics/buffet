@@ -67,7 +67,10 @@ newtype TagKey =
   TagKey
     { tagKey :: T.Text
     }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Show)
+
+instance Ord TagKey where
+  compare = Function.on TextTools.lexicographicalCompare tagKey
 
 instance Aeson.ToJSON TagKey where
   toJSON = Aeson.toJSON . tagKey
