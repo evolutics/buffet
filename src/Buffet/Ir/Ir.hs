@@ -82,7 +82,10 @@ newtype TagValue =
   TagValue
     { tagValue :: T.Text
     }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Show)
+
+instance Ord TagValue where
+  compare = Function.on TextTools.lexicographicalCompare tagValue
 
 instance Aeson.ToJSON TagValue where
   toJSON = Aeson.toJSON . tagValue
