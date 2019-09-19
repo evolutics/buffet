@@ -37,7 +37,7 @@ instance Aeson.ToJSON Dish where
 
 data Tag =
   Tag
-    { key :: T.Text
+    { key :: Ir.TagKey
     , values :: [T.Text]
     }
   deriving (Eq, Generics.Generic, Ord, Show)
@@ -64,8 +64,8 @@ transformDish option' dish =
     , tags = transformTags . Ir.tags $ Ir.metadata dish
     }
 
-transformTags :: Map.Map T.Text [T.Text] -> [Tag]
+transformTags :: Map.Map Ir.TagKey [T.Text] -> [Tag]
 transformTags = fmap (uncurry transformTag) . Map.toAscList
 
-transformTag :: T.Text -> [T.Text] -> Tag
+transformTag :: Ir.TagKey -> [T.Text] -> Tag
 transformTag key' values' = Tag {key = key', values = values'}
