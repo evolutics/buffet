@@ -5,6 +5,7 @@ module Buffet.Document.TemplateData
   ( get
   ) where
 
+import qualified Buffet.Document.DocumentTools as DocumentTools
 import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Ir.IrTools as IrTools
 import qualified Data.Aeson as Aeson
@@ -21,7 +22,7 @@ newtype Buffet =
   deriving (Eq, Generics.Generic, Ord, Show)
 
 instance Aeson.ToJSON Buffet where
-  toEncoding = Aeson.genericToEncoding options
+  toEncoding = Aeson.genericToEncoding DocumentTools.templateDataOptions
 
 data Dish =
   Dish
@@ -33,7 +34,7 @@ data Dish =
   deriving (Eq, Generics.Generic, Ord, Show)
 
 instance Aeson.ToJSON Dish where
-  toEncoding = Aeson.genericToEncoding options
+  toEncoding = Aeson.genericToEncoding DocumentTools.templateDataOptions
 
 data Tag =
   Tag
@@ -43,10 +44,7 @@ data Tag =
   deriving (Eq, Generics.Generic, Ord, Show)
 
 instance Aeson.ToJSON Tag where
-  toEncoding = Aeson.genericToEncoding options
-
-options :: Aeson.Options
-options = Aeson.defaultOptions {Aeson.fieldLabelModifier = Aeson.camelTo2 '_'}
+  toEncoding = Aeson.genericToEncoding DocumentTools.templateDataOptions
 
 get :: Ir.Buffet -> Types.Value
 get = Types.mFromJSON . transformBuffet
