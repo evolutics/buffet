@@ -11,7 +11,12 @@ import Prelude (($), (.), fmap)
 import qualified Text.Mustache.Types as Types
 
 get :: Ir.Buffet -> Types.Value
-get = Types.mFromJSON . makeKeysSnakeCase . Aeson.toJSON . TemplateBuffet.get
+get =
+  Types.mFromJSON .
+  escapeKeysForMustache . makeKeysSnakeCase . Aeson.toJSON . TemplateBuffet.get
+
+escapeKeysForMustache :: Aeson.Value -> Aeson.Value
+escapeKeysForMustache = mapKeys $ T.replace (T.pack ".") (T.pack "_")
 
 makeKeysSnakeCase :: Aeson.Value -> Aeson.Value
 makeKeysSnakeCase = mapKeys $ T.pack . Aeson.camelTo2 '_' . T.unpack
