@@ -6,7 +6,6 @@ module Buffet.Document.TemplateDishes
   , get
   ) where
 
-import qualified Buffet.Document.DocumentTools as DocumentTools
 import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Ir.IrTools as IrTools
 import qualified Data.Aeson as Aeson
@@ -24,8 +23,7 @@ data Dish =
     }
   deriving (Eq, Generics.Generic, Ord, Show)
 
-instance Aeson.ToJSON Dish where
-  toEncoding = Aeson.genericToEncoding DocumentTools.templateDataOptions
+instance Aeson.ToJSON Dish
 
 data Tag =
   Tag
@@ -34,8 +32,7 @@ data Tag =
     }
   deriving (Eq, Generics.Generic, Ord, Show)
 
-instance Aeson.ToJSON Tag where
-  toEncoding = Aeson.genericToEncoding DocumentTools.templateDataOptions
+instance Aeson.ToJSON Tag
 
 get :: Ir.Buffet -> [Dish]
 get = IrTools.mapOrderedEntries transformDish

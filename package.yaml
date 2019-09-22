@@ -44,6 +44,7 @@ internal-libraries:
       - split
       - text
       - typed-process
+      - unordered-containers
       - vector
       - yaml
     other-modules:
