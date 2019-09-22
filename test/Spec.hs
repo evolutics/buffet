@@ -58,14 +58,14 @@ documentTests = TestTools.folderBasedTests assert
   where
     assert name path = do
       hasCustomTemplate <- Directory.doesFileExist customTemplate
-      let actual =
+      let (expected, actual) =
             if hasCustomTemplate
-              then document ["--template", customTemplate, path]
-              else document [path]
-      pure $ TestTools.assertFileEqualsText name (expected path) actual
+              then ( FilePath.combine path "expected.md"
+                   , document ["--template", customTemplate, path])
+              else (FilePath.combine path "expected.todo", document [path])
+      pure $ TestTools.assertFileEqualsText name expected actual
       where
         customTemplate = FilePath.combine path "template.md.mustache"
-    expected path = FilePath.combine path "expected.md"
 
 document :: [String] -> IO T.Text
 document =

@@ -4,8 +4,9 @@ module Buffet.Document.DocumentInternal
 
 import qualified Buffet.Document.TemplateContext as TemplateContext
 import qualified Buffet.Ir.Ir as Ir
+import qualified Buffet.Toolbox.TextTools as TextTools
+import qualified Data.Aeson as Aeson
 import qualified Data.Text as T
-import qualified Paths_buffet
 import Prelude
   ( FilePath
   , IO
@@ -24,26 +25,28 @@ import Prelude
   )
 import qualified System.FilePath as FilePath
 import qualified Text.Mustache as Mustache
+import qualified Text.Mustache.Types as Types
 
 get :: Maybe FilePath -> Ir.Buffet -> IO T.Text
-get customTemplate buffet = do
-  template <- getTemplate customTemplate
+get customTemplate =
+  maybe (pure . printTemplateContext) renderTemplate customTemplate .
+  TemplateContext.get
+
+printTemplateContext :: Aeson.Value -> T.Text
+printTemplateContext = TextTools.decodeUtf8 . Aeson.encode
+
+renderTemplate :: FilePath -> Aeson.Value -> IO T.Text
+renderTemplate templatePath templateContext = do
+  template <- getTemplate templatePath
   let (errors, result) =
-        Mustache.checkedSubstitute template $ TemplateContext.get buffet
+        Mustache.checkedSubstitute template $ Types.mFromJSON templateContext
   if null errors
     then pure result
     else error . unlines $ fmap show errors
 
-getTemplate :: Maybe FilePath -> IO Mustache.Template
-getTemplate customTemplate = do
-  templatePath <- getTemplatePath customTemplate
-  let searchSpace = [".", FilePath.takeDirectory templatePath]
+getTemplate :: FilePath -> IO Mustache.Template
+getTemplate templatePath = do
   result <- Mustache.automaticCompile searchSpace templatePath
   pure $ either (error . show) id result
-
-getTemplatePath :: Maybe FilePath -> IO FilePath
-getTemplatePath = maybe getDefaultTemplatePath pure
-
-getDefaultTemplatePath :: IO FilePath
-getDefaultTemplatePath =
-  Paths_buffet.getDataFileName "data/document/default_template.md.mustache"
+  where
+    searchSpace = [".", FilePath.takeDirectory templatePath]

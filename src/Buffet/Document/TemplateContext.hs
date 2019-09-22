@@ -8,11 +8,9 @@ import qualified Data.Aeson as Aeson
 import qualified Data.HashMap.Strict as HashMap
 import qualified Data.Text as T
 import Prelude (($), (.), fmap)
-import qualified Text.Mustache.Types as Types
 
-get :: Ir.Buffet -> Types.Value
+get :: Ir.Buffet -> Aeson.Value
 get =
-  Types.mFromJSON .
   escapeKeysForMustache . makeKeysSnakeCase . Aeson.toJSON . TemplateBuffet.get
 
 escapeKeysForMustache :: Aeson.Value -> Aeson.Value
