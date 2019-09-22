@@ -2,7 +2,7 @@ module Buffet.Document.DocumentInternal
   ( get
   ) where
 
-import qualified Buffet.Document.TemplateData as TemplateData
+import qualified Buffet.Document.TemplateContext as TemplateContext
 import qualified Buffet.Ir.Ir as Ir
 import qualified Data.Text as T
 import qualified Paths_buffet
@@ -29,7 +29,7 @@ get :: Maybe FilePath -> Ir.Buffet -> IO T.Text
 get customTemplate buffet = do
   template <- getTemplate customTemplate
   let (errors, result) =
-        Mustache.checkedSubstitute template $ TemplateData.get buffet
+        Mustache.checkedSubstitute template $ TemplateContext.get buffet
   if null errors
     then pure result
     else error . unlines $ fmap show errors

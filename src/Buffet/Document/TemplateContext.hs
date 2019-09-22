@@ -1,4 +1,4 @@
-module Buffet.Document.TemplateData
+module Buffet.Document.TemplateContext
   ( get
   ) where
 
