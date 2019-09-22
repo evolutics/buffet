@@ -6,9 +6,11 @@ import qualified Buffet.Document.TemplateContext as TemplateContext
 import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Data.Aeson as Aeson
+import qualified Data.Aeson.Encode.Pretty as Pretty
 import qualified Data.Text as T
 import Prelude
-  ( FilePath
+  ( Bool(True)
+  , FilePath
   , IO
   , Maybe
   , ($)
@@ -33,7 +35,14 @@ get customTemplate =
   TemplateContext.get
 
 printTemplateContext :: Aeson.Value -> T.Text
-printTemplateContext = TextTools.decodeUtf8 . Aeson.encode
+printTemplateContext = TextTools.decodeUtf8 . Pretty.encodePretty' configuration
+  where
+    configuration =
+      Pretty.defConfig
+        { Pretty.confIndent = Pretty.Spaces 2
+        , Pretty.confCompare = TextTools.lexicographicalCompare
+        , Pretty.confTrailingNewline = True
+        }
 
 renderTemplate :: FilePath -> Aeson.Value -> IO T.Text
 renderTemplate templatePath templateContext = do

@@ -1,0 +1,17 @@
+{
+  "dishes": [
+    {
+      "option": "bar",
+      "tags": {},
+      "title": "Bar",
+      "url": "https://example.com/bar"
+    },
+    {
+      "option": "foo",
+      "tags": {},
+      "title": "Foo",
+      "url": "https://example.com/foo"
+    }
+  ],
+  "tag_groups": {}
+}

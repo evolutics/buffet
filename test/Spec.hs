@@ -62,7 +62,7 @@ documentTests = TestTools.folderBasedTests assert
             if hasCustomTemplate
               then ( FilePath.combine path "expected.md"
                    , document ["--template", customTemplate, path])
-              else (FilePath.combine path "expected.todo", document [path])
+              else (FilePath.combine path "expected.json", document [path])
       pure $ TestTools.assertFileEqualsText name expected actual
       where
         customTemplate = FilePath.combine path "template.md.mustache"
