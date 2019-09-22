@@ -1,4 +1,18 @@
 # Today's Menu
 
-- `bar`
-- `foo`
+## `bar`
+
+Authors:
+
+- Baz
+
+Version:
+
+## `foo`
+
+Authors:
+
+- Boo
+- Far
+
+Version: 1.2.3

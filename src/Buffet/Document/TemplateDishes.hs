@@ -12,27 +12,18 @@ import qualified Data.Aeson as Aeson
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import qualified GHC.Generics as Generics
-import Prelude (Eq, Ord, Show, ($), (.), fmap, uncurry)
+import Prelude (Eq, Ord, Show, ($))
 
 data Dish =
   Dish
     { option :: Ir.Option
     , title :: T.Text
     , url :: T.Text
-    , tags :: [Tag]
+    , tags :: Map.Map Ir.TagKey [Ir.TagValue]
     }
   deriving (Eq, Generics.Generic, Ord, Show)
 
 instance Aeson.ToJSON Dish
-
-data Tag =
-  Tag
-    { key :: Ir.TagKey
-    , values :: [Ir.TagValue]
-    }
-  deriving (Eq, Generics.Generic, Ord, Show)
-
-instance Aeson.ToJSON Tag
 
 get :: Ir.Buffet -> [Dish]
 get = IrTools.mapOrderedEntries transformDish
@@ -43,11 +34,5 @@ transformDish option' dish =
     { option = option'
     , title = Ir.title $ Ir.metadata dish
     , url = Ir.url $ Ir.metadata dish
-    , tags = transformTags . Ir.tags $ Ir.metadata dish
+    , tags = Ir.tags $ Ir.metadata dish
     }
-
-transformTags :: Map.Map Ir.TagKey [Ir.TagValue] -> [Tag]
-transformTags = fmap (uncurry transformTag) . Map.toAscList
-
-transformTag :: Ir.TagKey -> [Ir.TagValue] -> Tag
-transformTag key' values' = Tag {key = key', values = values'}

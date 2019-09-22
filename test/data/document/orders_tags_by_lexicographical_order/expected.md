@@ -1,3 +1,0 @@
-- `info.evolutics.buffet.bar`
-- `info.evolutics.buffet.Foo`
-- `info.evolutics.buffet.foo`
