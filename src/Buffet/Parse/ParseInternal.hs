@@ -7,12 +7,13 @@ import qualified Buffet.Parse.GetSourcePaths as GetSourcePaths
 import qualified Buffet.Parse.ParseInstructionPartition as ParseInstructionPartition
 import qualified Buffet.Parse.ParseMetadata as ParseMetadata
 import qualified Buffet.Parse.ParseTestCommand as ParseTestCommand
+import qualified Buffet.Toolbox.ExceptionTools as ExceptionTools
 import qualified Control.Exception as Exception
 import qualified Control.Monad as Monad
 import qualified Data.Map.Strict as Map
 import qualified Language.Docker as Docker
 import qualified Language.Docker.Parser as Parser
-import Prelude (FilePath, IO, Show, ($), (.), either, fmap, mapM, pure, show)
+import Prelude (FilePath, IO, Show, ($), (.), either, fmap, pure, show)
 
 newtype Exception =
   Exception Parser.Error
@@ -25,7 +26,9 @@ instance Exception.Exception Exception
 get :: FilePath -> IO Ir.Buffet
 get buffetPath = do
   optionToDishPath <- GetSourcePaths.get buffetPath
-  optionToDish <- mapM parseDockerfile optionToDishPath
+  optionToDish <-
+    ExceptionTools.sequenceAccumulatingExceptions $
+    fmap parseDockerfile optionToDishPath
   pure $ parseBuffet optionToDish
 
 parseDockerfile :: FilePath -> IO Docker.Dockerfile
