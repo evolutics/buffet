@@ -5,12 +5,11 @@ ARG foo=''
 FROM alpine:"${alpine_version}"
 
 ARG bar
+ARG foo
 RUN if [[ -n "${bar}" ]]; then \
     echo 'Hello' \
-  ; fi
-
-ARG foo
-RUN if [[ -n "${foo}" ]]; then \
+  ; fi \
+  && if [[ -n "${foo}" ]]; then \
     ls \
   ; fi
 

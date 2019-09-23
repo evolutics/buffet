@@ -17,6 +17,12 @@ RUN if [[ -n "${hindent}" ]]; then \
 FROM alpine:"${alpine_version}"
 
 ARG brittany
+ARG git
+ARG gitlint
+ARG hindent
+ARG hlint
+ARG hunspell
+ARG prettier
 RUN if [[ -n "${brittany}" ]]; then \
     apk add --no-cache cabal ghc gmp libffi musl-dev ncurses-dev wget \
     && cabal update \
@@ -26,27 +32,18 @@ RUN if [[ -n "${brittany}" ]]; then \
     && rm -r "${HOME}/.cabal" \
     \
     && apk del cabal ghc \
-  ; fi
-
-ARG git
-RUN if [[ -n "${git}" ]]; then \
+  ; fi \
+  && if [[ -n "${git}" ]]; then \
     apk add --no-cache "git==${git}" \
-  ; fi
-
-ARG gitlint
-RUN if [[ -n "${gitlint}" ]]; then \
+  ; fi \
+  && if [[ -n "${gitlint}" ]]; then \
     apk add --no-cache git python3 \
     && pip3 install "gitlint==${gitlint}" \
-  ; fi
-
-ARG hindent
-RUN if [[ -n "${hindent}" ]]; then \
+  ; fi \
+  && if [[ -n "${hindent}" ]]; then \
     apk add --no-cache gmp-dev \
-  ; fi
-COPY --from=hindent /root/.local/bin/hindent* /var/empty /usr/local/bin/
-
-ARG hlint
-RUN if [[ -n "${hlint}" ]]; then \
+  ; fi \
+  && if [[ -n "${hlint}" ]]; then \
     apk add --no-cache cabal ghc gmp libffi musl-dev ncurses-dev wget \
     && cabal update \
     \
@@ -56,17 +53,14 @@ RUN if [[ -n "${hlint}" ]]; then \
     && find "${HOME}/.cabal" ! -name hlint.yaml -delete \
     \
     && apk del cabal ghc \
-  ; fi
-
-ARG hunspell
-RUN if [[ -n "${hunspell}" ]]; then \
+  ; fi \
+  && if [[ -n "${hunspell}" ]]; then \
     apk add --no-cache "hunspell==${hunspell}" hunspell-en \
-  ; fi
-
-ARG prettier
-RUN if [[ -n "${prettier}" ]]; then \
+  ; fi \
+  && if [[ -n "${prettier}" ]]; then \
     apk add --no-cache yarn \
     && yarn global add "prettier@${prettier}" \
   ; fi
+COPY --from=hindent /root/.local/bin/hindent* /var/empty /usr/local/bin/
 
 WORKDIR /workdir

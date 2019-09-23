@@ -5,19 +5,19 @@ module Buffet.Build.GlobalBuildStage
 import qualified Buffet.Build.ConditionInstructions as ConditionInstructions
 import qualified Buffet.Build.Configuration as Configuration
 import qualified Buffet.Build.PrepareOptionArgInstruction as PrepareOptionArgInstruction
+import qualified Buffet.Build.ScheduleParallelInstructions as ScheduleParallelInstructions
 import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Ir.IrTools as IrTools
 import qualified Data.Text as T
 import qualified Language.Docker as Docker hiding (sourcePaths)
-import Prelude (Maybe(Just, Nothing), ($), (.), concat, mconcat)
+import Prelude (Maybe(Just, Nothing), ($), (.), mconcat)
 
 get :: Configuration.Configuration -> Ir.Buffet -> [Ir.DockerfilePart]
 get configuration buffet =
-  concat
-    [ [[fromInstruction configuration]]
-    , dishesInstructions buffet
-    , [[workdirInstruction configuration]]
-    ]
+  [ [fromInstruction configuration]
+  , dishesInstructions buffet
+  , [workdirInstruction configuration]
+  ]
 
 fromInstruction :: Configuration.Configuration -> Docker.Instruction T.Text
 fromInstruction configuration =
@@ -40,8 +40,9 @@ fromInstruction configuration =
       , Docker.platform = Nothing
       }
 
-dishesInstructions :: Ir.Buffet -> [Ir.DockerfilePart]
-dishesInstructions = IrTools.mapOrderedEntries dishInstructions
+dishesInstructions :: Ir.Buffet -> Ir.DockerfilePart
+dishesInstructions =
+  ScheduleParallelInstructions.get . IrTools.mapOrderedEntries dishInstructions
 
 dishInstructions :: Ir.Option -> Ir.Dish -> Ir.DockerfilePart
 dishInstructions option =
