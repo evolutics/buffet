@@ -7,12 +7,11 @@ module Buffet.Document.TemplateDishes
   ) where
 
 import qualified Buffet.Ir.Ir as Ir
-import qualified Buffet.Ir.IrTools as IrTools
 import qualified Data.Aeson as Aeson
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import qualified GHC.Generics as Generics
-import Prelude (Eq, Ord, Show, ($))
+import Prelude (Eq, Ord, Show, ($), (.), fmap, uncurry)
 
 data Dish =
   Dish
@@ -26,7 +25,7 @@ data Dish =
 instance Aeson.ToJSON Dish
 
 get :: Ir.Buffet -> [Dish]
-get = IrTools.mapOrderedEntries transformDish
+get = fmap (uncurry transformDish) . Map.toAscList . Ir.optionToDish
 
 transformDish :: Ir.Option -> Ir.Dish -> Dish
 transformDish option' dish =

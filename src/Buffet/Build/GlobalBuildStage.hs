@@ -7,10 +7,10 @@ import qualified Buffet.Build.Configuration as Configuration
 import qualified Buffet.Build.PrepareOptionArgInstruction as PrepareOptionArgInstruction
 import qualified Buffet.Build.ScheduleParallelInstructions as ScheduleParallelInstructions
 import qualified Buffet.Ir.Ir as Ir
-import qualified Buffet.Ir.IrTools as IrTools
+import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import qualified Language.Docker as Docker hiding (sourcePaths)
-import Prelude (Maybe(Just, Nothing), ($), (.), mconcat)
+import Prelude (Maybe(Just, Nothing), ($), (.), fmap, mconcat, uncurry)
 
 get :: Configuration.Configuration -> Ir.Buffet -> [Ir.DockerfilePart]
 get configuration buffet =
@@ -42,7 +42,8 @@ fromInstruction configuration =
 
 dishesInstructions :: Ir.Buffet -> Ir.DockerfilePart
 dishesInstructions =
-  ScheduleParallelInstructions.get . IrTools.mapOrderedEntries dishInstructions
+  ScheduleParallelInstructions.get .
+  fmap (uncurry dishInstructions) . Map.toAscList . Ir.optionToDish
 
 dishInstructions :: Ir.Option -> Ir.Dish -> Ir.DockerfilePart
 dishInstructions option =

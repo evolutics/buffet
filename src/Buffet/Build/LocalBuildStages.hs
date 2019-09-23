@@ -6,11 +6,11 @@ import qualified Buffet.Build.ConditionInstructions as ConditionInstructions
 import qualified Buffet.Build.Configuration as Configuration
 import qualified Buffet.Build.PrepareOptionArgInstruction as PrepareOptionArgInstruction
 import qualified Buffet.Ir.Ir as Ir
-import qualified Buffet.Ir.IrTools as IrTools
-import Prelude ((.), concat, fmap)
+import qualified Data.Map.Strict as Map
+import Prelude ((.), concatMap, fmap, uncurry)
 
 get :: Configuration.Configuration -> Ir.Buffet -> [Ir.DockerfilePart]
-get _ = concat . IrTools.mapOrderedEntries dishBuildStages
+get _ = concatMap (uncurry dishBuildStages) . Map.toAscList . Ir.optionToDish
 
 dishBuildStages :: Ir.Option -> Ir.Dish -> [Ir.DockerfilePart]
 dishBuildStages option =
