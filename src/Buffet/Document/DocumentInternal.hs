@@ -20,9 +20,7 @@ import Prelude
   , (.)
   , (<>)
   , either
-  , error
   , fmap
-  , id
   , maybe
   , pure
   , show
@@ -32,11 +30,14 @@ import qualified System.FilePath as FilePath
 import qualified Text.Mustache as Mustache
 import qualified Text.Mustache.Render as Render
 import qualified Text.Mustache.Types as Types
+import qualified Text.Parsec as Parsec
 
-newtype Exception =
-  SubstituteException (NonEmpty.NonEmpty Render.SubstitutionError)
+data Exception
+  = CompileException Parsec.ParseError
+  | SubstituteException (NonEmpty.NonEmpty Render.SubstitutionError)
 
 instance Show Exception where
+  show (CompileException error) = show error
   show (SubstituteException errors) =
     unlines . NonEmpty.toList $ fmap show' errors
     where
@@ -80,6 +81,6 @@ renderTemplate templatePath templateContext = do
 getTemplate :: FilePath -> IO Mustache.Template
 getTemplate templatePath = do
   result <- Mustache.automaticCompile searchSpace templatePath
-  pure $ either (error . show) id result
+  either (Exception.throwIO . CompileException) pure result
   where
     searchSpace = [".", FilePath.takeDirectory templatePath]
