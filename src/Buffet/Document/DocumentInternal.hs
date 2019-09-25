@@ -34,12 +34,12 @@ import qualified Text.Parsec as Parsec
 
 data Exception
   = CompileException Parsec.ParseError
-  | SubstituteException (NonEmpty.NonEmpty Render.SubstitutionError)
+  | SubstituteException FilePath (NonEmpty.NonEmpty Render.SubstitutionError)
 
 instance Show Exception where
   show (CompileException error) = show error
-  show (SubstituteException errors) =
-    unlines . NonEmpty.toList $ fmap show' errors
+  show (SubstituteException path errors) =
+    unlines . NonEmpty.toList . NonEmpty.cons (path <> ":") $ fmap show' errors
     where
       show' (Render.VariableNotFound name) =
         "Variable not found: " <> showName name
@@ -48,7 +48,7 @@ instance Show Exception where
       show' Render.InvertedImplicitSection = "Inverted implicit section"
       show' (Render.SectionTargetNotFound name) =
         "Section target not found: " <> showName name
-      show' (Render.PartialNotFound path) = "Partial not found: " <> path
+      show' (Render.PartialNotFound path') = "Partial not found: " <> path'
       show' (Render.DirectlyRenderedValue value) =
         "Directly rendered value: " <> show value
       showName = T.unpack . T.intercalate (T.pack ".")
@@ -75,7 +75,7 @@ renderTemplate templatePath templateContext = do
   template <- getTemplate templatePath
   let (errors, result) =
         Mustache.checkedSubstitute template $ Types.mFromJSON templateContext
-  maybe (pure result) (Exception.throwIO . SubstituteException) $
+  maybe (pure result) (Exception.throwIO . SubstituteException templatePath) $
     NonEmpty.nonEmpty errors
 
 getTemplate :: FilePath -> IO Mustache.Template
