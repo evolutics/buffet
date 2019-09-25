@@ -9,15 +9,16 @@ import qualified Control.Monad as Monad
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import qualified Data.Yaml as Yaml
-import Prelude (FilePath, IO, Show, ($), (.), fmap, pure, show)
+import Prelude (FilePath, IO, Show, ($), (.), fmap, mconcat, pure, show)
 import qualified System.Directory as Directory
 import qualified System.FilePath as FilePath
 
-newtype Exception =
-  ParseException Yaml.ParseException
+data Exception =
+  ParseException FilePath Yaml.ParseException
 
 instance Show Exception where
-  show (ParseException exception) = Yaml.prettyPrintParseException exception
+  show (ParseException path exception) =
+    mconcat [path, ":\n", Yaml.prettyPrintParseException exception]
 
 instance Exception.Exception Exception
 
@@ -47,7 +48,8 @@ getFromFolder buffetFolder = do
 getFromFile :: FilePath -> IO (Map.Map Ir.Option FilePath)
 getFromFile buffetFile = do
   unresolvedOptionToDish <-
-    ExceptionTools.eitherThrow ParseException $ Yaml.decodeFileEither buffetFile
+    ExceptionTools.eitherThrow (ParseException buffetFile) $
+    Yaml.decodeFileEither buffetFile
   let optionToDish = fmap (FilePath.combine folder) unresolvedOptionToDish
   pure optionToDish
   where
