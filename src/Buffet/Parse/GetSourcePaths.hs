@@ -9,14 +9,16 @@ import qualified Control.Monad as Monad
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import qualified Data.Yaml as Yaml
-import Prelude (FilePath, IO, Show, ($), (.), fmap, mconcat, pure, show)
+import Prelude (FilePath, IO, Show, ($), (.), (<>), fmap, mconcat, pure, show)
 import qualified System.Directory as Directory
 import qualified System.FilePath as FilePath
 
-data Exception =
-  ParseException FilePath Yaml.ParseException
+data Exception
+  = NoSuchBuffetPath FilePath
+  | ParseException FilePath Yaml.ParseException
 
 instance Show Exception where
+  show (NoSuchBuffetPath path) = "No such file or folder for Buffet: " <> path
   show (ParseException path exception) =
     mconcat [path, ":\n", Yaml.prettyPrintParseException exception]
 
@@ -24,10 +26,14 @@ instance Exception.Exception Exception
 
 get :: FilePath -> IO (Map.Map Ir.Option FilePath)
 get buffetPath = do
-  isFolder <- Directory.doesDirectoryExist buffetPath
-  if isFolder
-    then getFromFolder buffetPath
-    else getFromFile buffetPath
+  isAvailable <- Directory.doesPathExist buffetPath
+  if isAvailable
+    then do
+      isFolder <- Directory.doesDirectoryExist buffetPath
+      if isFolder
+        then getFromFolder buffetPath
+        else getFromFile buffetPath
+    else Exception.throwIO $ NoSuchBuffetPath buffetPath
 
 getFromFolder :: FilePath -> IO (Map.Map Ir.Option FilePath)
 getFromFolder buffetFolder = do
