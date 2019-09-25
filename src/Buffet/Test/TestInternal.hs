@@ -4,28 +4,18 @@ module Buffet.Test.TestInternal
 
 import qualified Buffet.Build.BuildInternal as BuildInternal
 import qualified Buffet.Ir.Ir as Ir
-import qualified Buffet.Toolbox.TextTools as TextTools
+import qualified Buffet.Test.DockerBuild as DockerBuild
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import qualified Data.Text.IO as T.IO
-import Prelude
-  ( IO
-  , Maybe(Just, Nothing)
-  , ($)
-  , (.)
-  , concatMap
-  , mconcat
-  , not
-  , pure
-  , sequence_
-  )
+import Prelude (IO, Maybe(Just, Nothing), ($), (.), mconcat, not, sequence_)
 import qualified System.IO as IO
 import qualified System.Process.Typed as Process
 
 get :: Ir.Buffet -> Map.Map Ir.Option T.Text -> IO ()
 get buffetIr arguments = do
   let buffet = BuildInternal.get buffetIr
-  imageId <- dockerBuild buffet arguments
+  imageId <- DockerBuild.get buffet arguments
   let optionToDish = filterTestedDishes (Ir.optionToDish buffetIr) arguments
       tests =
         Map.mapWithKey
@@ -41,26 +31,6 @@ get buffetIr arguments = do
                    ["run", T.unpack imageId, "sh", "-c", T.unpack testCommand])
           optionToDish
   sequence_ tests
-
-dockerBuild :: T.Text -> Map.Map Ir.Option T.Text -> IO T.Text
-dockerBuild dockerfile arguments = do
-  rawImageIdLine <-
-    Process.readProcessStdout_ $
-    Process.setStdin (textInput dockerfile) processBase
-  let imageIdLine = TextTools.decodeUtf8 rawImageIdLine
-      imageId = T.stripEnd imageIdLine
-  pure imageId
-  where
-    textInput = Process.byteStringInput . TextTools.encodeUtf8
-    processBase =
-      Process.proc "docker" $ mconcat [["build", "--quiet"], buildArgs, ["-"]]
-    buildArgs =
-      concatMap
-        (\(key, value) ->
-           [ "--build-arg"
-           , mconcat [T.unpack $ Ir.option key, "=", T.unpack value]
-           ]) $
-      Map.toAscList arguments
 
 filterTestedDishes ::
      Map.Map Ir.Option Ir.Dish
