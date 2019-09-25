@@ -3,12 +3,13 @@ module Buffet.Parse.GetSourcePaths
   ) where
 
 import qualified Buffet.Ir.Ir as Ir
+import qualified Buffet.Toolbox.ExceptionTools as ExceptionTools
 import qualified Control.Exception as Exception
 import qualified Control.Monad as Monad
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import qualified Data.Yaml as Yaml
-import Prelude (FilePath, IO, Show, ($), (.), (>>=), either, fmap, pure, show)
+import Prelude (FilePath, IO, Show, ($), (.), fmap, pure, show)
 import qualified System.Directory as Directory
 import qualified System.FilePath as FilePath
 
@@ -46,8 +47,7 @@ getFromFolder buffetFolder = do
 getFromFile :: FilePath -> IO (Map.Map Ir.Option FilePath)
 getFromFile buffetFile = do
   unresolvedOptionToDish <-
-    Yaml.decodeFileEither buffetFile >>=
-    either (Exception.throwIO . ParseException) pure
+    ExceptionTools.eitherThrow ParseException $ Yaml.decodeFileEither buffetFile
   let optionToDish = fmap (FilePath.combine folder) unresolvedOptionToDish
   pure optionToDish
   where

@@ -4,6 +4,7 @@ module Buffet.Document.DocumentInternal
 
 import qualified Buffet.Document.TemplateContext as TemplateContext
 import qualified Buffet.Ir.Ir as Ir
+import qualified Buffet.Toolbox.ExceptionTools as ExceptionTools
 import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Control.Exception as Exception
 import qualified Data.Aeson as Aeson
@@ -19,7 +20,6 @@ import Prelude
   , ($)
   , (.)
   , (<>)
-  , either
   , fmap
   , maybe
   , pure
@@ -79,8 +79,8 @@ renderTemplate templatePath templateContext = do
     NonEmpty.nonEmpty errors
 
 getTemplate :: FilePath -> IO Mustache.Template
-getTemplate templatePath = do
-  result <- Mustache.automaticCompile searchSpace templatePath
-  either (Exception.throwIO . CompileException) pure result
+getTemplate templatePath =
+  ExceptionTools.eitherThrow CompileException $
+  Mustache.automaticCompile searchSpace templatePath
   where
     searchSpace = [".", FilePath.takeDirectory templatePath]

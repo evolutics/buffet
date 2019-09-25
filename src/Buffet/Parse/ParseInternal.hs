@@ -9,11 +9,10 @@ import qualified Buffet.Parse.ParseMetadata as ParseMetadata
 import qualified Buffet.Parse.ParseTestCommand as ParseTestCommand
 import qualified Buffet.Toolbox.ExceptionTools as ExceptionTools
 import qualified Control.Exception as Exception
-import qualified Control.Monad as Monad
 import qualified Data.Map.Strict as Map
 import qualified Language.Docker as Docker
 import qualified Language.Docker.Parser as Parser
-import Prelude (FilePath, IO, Show, ($), (.), either, fmap, pure, show)
+import Prelude (FilePath, IO, Show, ($), (.), fmap, pure, show)
 
 newtype Exception =
   Exception Parser.Error
@@ -32,8 +31,7 @@ get buffetPath = do
   pure $ parseBuffet optionToDish
 
 parseDockerfile :: FilePath -> IO Docker.Dockerfile
-parseDockerfile =
-  Docker.parseFile Monad.>=> either (Exception.throwIO . Exception) pure
+parseDockerfile = ExceptionTools.eitherThrow Exception . Docker.parseFile
 
 parseBuffet :: Map.Map Ir.Option Docker.Dockerfile -> Ir.Buffet
 parseBuffet optionToDish =
