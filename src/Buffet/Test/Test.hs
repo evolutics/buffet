@@ -7,13 +7,14 @@ import qualified Buffet.Test.TestInternal as TestInternal
 import qualified Buffet.Toolbox.ExceptionTools as ExceptionTools
 import qualified Control.Exception as Exception
 import qualified Data.Yaml as Yaml
-import Prelude (FilePath, IO, Show, ($), show)
+import Prelude (FilePath, IO, Show, ($), mconcat, show)
 
-newtype Exception =
-  Exception Yaml.ParseException
+data Exception =
+  Exception FilePath Yaml.ParseException
 
 instance Show Exception where
-  show (Exception exception) = Yaml.prettyPrintParseException exception
+  show (Exception path exception) =
+    mconcat [path, ":\n", Yaml.prettyPrintParseException exception]
 
 instance Exception.Exception Exception
 
@@ -21,5 +22,6 @@ get :: FilePath -> FilePath -> IO ()
 get buffetSource argumentsFile = do
   buffet <- ParseInternal.get buffetSource
   arguments <-
-    ExceptionTools.eitherThrow Exception $ Yaml.decodeFileEither argumentsFile
+    ExceptionTools.eitherThrow (Exception argumentsFile) $
+    Yaml.decodeFileEither argumentsFile
   TestInternal.get buffet arguments
