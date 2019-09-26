@@ -8,7 +8,8 @@ import qualified Buffet.Document.Document as Document
 import qualified Buffet.Parse.Parse as Parse
 import qualified Buffet.Test.Test as Test
 import qualified Data.Text.IO as T.IO
-import Prelude (Eq, FilePath, IO, Maybe, Ord, Show, (>>=))
+import Prelude (Bool, Eq, FilePath, IO, Maybe, Ord, Show, (>>=))
+import qualified System.Exit as Exit
 
 data Command
   = Build FilePath
@@ -24,4 +25,11 @@ get command =
     Document template buffetSource ->
       Document.get template buffetSource >>= T.IO.putStr
     Parse buffetSource -> Parse.get buffetSource >>= T.IO.putStr
-    Test buffetSource argumentsFile -> Test.get buffetSource argumentsFile
+    Test buffetSource argumentsFile ->
+      Test.get buffetSource argumentsFile >>= exit
+
+exit :: Bool -> IO a
+exit isSuccess =
+  if isSuccess
+    then Exit.exitSuccess
+    else Exit.exitFailure
