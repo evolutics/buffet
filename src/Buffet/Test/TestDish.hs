@@ -12,6 +12,7 @@ import Prelude
   , Maybe(Just, Nothing)
   , ($)
   , (.)
+  , maybe
   , mconcat
   , pure
   )
@@ -20,6 +21,12 @@ import qualified System.Process.Typed as Process
 
 get :: Configuration.Configuration -> IO Bool
 get configuration =
+  if maybe True T.null $ Configuration.optionValue configuration
+    then pure True
+    else checkHealth configuration
+
+checkHealth :: Configuration.Configuration -> IO Bool
+checkHealth configuration =
   case Ir.healthCheck $ Configuration.dish configuration of
     Nothing -> do
       T.IO.hPutStrLn log $

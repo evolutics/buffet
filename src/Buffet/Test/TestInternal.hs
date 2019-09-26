@@ -9,15 +9,14 @@ import qualified Buffet.Test.DockerBuild as DockerBuild
 import qualified Buffet.Test.TestDish as TestDish
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
-import Prelude (Bool, IO, ($), (.), and, not, pure, sequence)
+import Prelude (Bool, IO, ($), and, pure, sequence)
 import qualified System.IO as IO
 
 get :: Ir.Buffet -> Map.Map Ir.Option T.Text -> IO Bool
 get buffetIr arguments = do
   let buffet = BuildInternal.get buffetIr
   imageId <- DockerBuild.get buffet arguments
-  let optionToDish = filterTestedDishes (Ir.optionToDish buffetIr) arguments
-      tests = Map.mapWithKey test optionToDish
+  let tests = Map.mapWithKey test $ Ir.optionToDish buffetIr
         where
           test option dish =
             TestDish.get
@@ -25,16 +24,8 @@ get buffetIr arguments = do
                 { Configuration.log = IO.stderr
                 , Configuration.imageId = imageId
                 , Configuration.option = option
+                , Configuration.optionValue = Map.lookup option arguments
                 , Configuration.dish = dish
                 }
   testResults <- sequence tests
   pure $ and testResults
-
-filterTestedDishes ::
-     Map.Map Ir.Option Ir.Dish
-  -> Map.Map Ir.Option T.Text
-  -> Map.Map Ir.Option Ir.Dish
-filterTestedDishes optionToDish arguments =
-  Map.restrictKeys optionToDish relevantArgumentOptions
-  where
-    relevantArgumentOptions = Map.keysSet $ Map.filter (not . T.null) arguments
