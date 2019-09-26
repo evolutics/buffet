@@ -4,6 +4,7 @@ module Buffet.Test.TestInternal
 
 import qualified Buffet.Build.BuildInternal as BuildInternal
 import qualified Buffet.Ir.Ir as Ir
+import qualified Buffet.Test.Configuration as Configuration
 import qualified Buffet.Test.DockerBuild as DockerBuild
 import qualified Buffet.Test.TestDish as TestDish
 import qualified Data.Map.Strict as Map
@@ -14,8 +15,10 @@ get :: Ir.Buffet -> Map.Map Ir.Option T.Text -> IO ()
 get buffetIr arguments = do
   let buffet = BuildInternal.get buffetIr
   imageId <- DockerBuild.get buffet arguments
-  let optionToDish = filterTestedDishes (Ir.optionToDish buffetIr) arguments
-      tests = Map.mapWithKey (TestDish.get imageId) optionToDish
+  let configuration =
+        Configuration.Configuration {Configuration.imageId = imageId}
+      optionToDish = filterTestedDishes (Ir.optionToDish buffetIr) arguments
+      tests = Map.mapWithKey (TestDish.get configuration) optionToDish
   sequence_ tests
 
 filterTestedDishes ::
