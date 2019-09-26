@@ -11,7 +11,7 @@ data Configuration =
     { baseImageName :: T.Text
     , baseImageTagOption :: Ir.Option
     , baseImageTagValue :: T.Text
-    , optimize :: Bool
     , workdir :: FilePath
+    , optimize :: Bool
     }
   deriving (Eq, Ord, Show)

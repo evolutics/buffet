@@ -8,7 +8,7 @@ import qualified System.IO as IO
 
 data Configuration =
   Configuration
-    { imageId :: T.Text
-    , log :: IO.Handle
+    { log :: IO.Handle
+    , imageId :: T.Text
     }
   deriving (Eq, Show)

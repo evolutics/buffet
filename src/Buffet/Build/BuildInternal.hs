@@ -29,8 +29,8 @@ configuration =
     { Configuration.baseImageName = T.pack "alpine"
     , Configuration.baseImageTagOption = Ir.Option $ T.pack "alpine_version"
     , Configuration.baseImageTagValue = T.pack "3.9.4"
-    , Configuration.optimize = True
     , Configuration.workdir = "/workdir"
+    , Configuration.optimize = True
     }
 
 printDockerfileParts :: [Ir.DockerfilePart] -> T.Text

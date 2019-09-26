@@ -18,7 +18,7 @@ get buffetIr arguments = do
   imageId <- DockerBuild.get buffet arguments
   let configuration =
         Configuration.Configuration
-          {Configuration.imageId = imageId, Configuration.log = IO.stderr}
+          {Configuration.log = IO.stderr, Configuration.imageId = imageId}
       optionToDish = filterTestedDishes (Ir.optionToDish buffetIr) arguments
       tests = Map.mapWithKey (TestDish.get configuration) optionToDish
   testResults <- sequence tests
