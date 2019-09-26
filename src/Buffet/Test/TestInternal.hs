@@ -16,11 +16,17 @@ get :: Ir.Buffet -> Map.Map Ir.Option T.Text -> IO Bool
 get buffetIr arguments = do
   let buffet = BuildInternal.get buffetIr
   imageId <- DockerBuild.get buffet arguments
-  let configuration =
-        Configuration.Configuration
-          {Configuration.log = IO.stderr, Configuration.imageId = imageId}
-      optionToDish = filterTestedDishes (Ir.optionToDish buffetIr) arguments
-      tests = Map.mapWithKey (TestDish.get configuration) optionToDish
+  let optionToDish = filterTestedDishes (Ir.optionToDish buffetIr) arguments
+      tests = Map.mapWithKey test optionToDish
+        where
+          test option dish =
+            TestDish.get
+              Configuration.Configuration
+                { Configuration.log = IO.stderr
+                , Configuration.imageId = imageId
+                , Configuration.option = option
+                , Configuration.dish = dish
+                }
   testResults <- sequence tests
   pure $ and testResults
 

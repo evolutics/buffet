@@ -18,12 +18,15 @@ import Prelude
 import qualified System.Exit as Exit
 import qualified System.Process.Typed as Process
 
-get :: Configuration.Configuration -> Ir.Option -> Ir.Dish -> IO Bool
-get configuration option dish =
-  case Ir.healthCheck dish of
+get :: Configuration.Configuration -> IO Bool
+get configuration =
+  case Ir.healthCheck $ Configuration.dish configuration of
     Nothing -> do
       T.IO.hPutStrLn log $
-        mconcat [T.pack "No test for dish: ", Ir.option option]
+        mconcat
+          [ T.pack "No test for dish: "
+          , Ir.option $ Configuration.option configuration
+          ]
       pure True
     Just command -> do
       exitCode <-
