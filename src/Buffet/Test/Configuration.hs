@@ -3,10 +3,12 @@ module Buffet.Test.Configuration
   ) where
 
 import qualified Data.Text as T
-import Prelude (Eq, Ord, Show)
+import Prelude (Eq, Show)
+import qualified System.IO as IO
 
-newtype Configuration =
+data Configuration =
   Configuration
     { imageId :: T.Text
+    , log :: IO.Handle
     }
-  deriving (Eq, Ord, Show)
+  deriving (Eq, Show)
