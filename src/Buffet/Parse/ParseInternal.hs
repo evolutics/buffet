@@ -4,9 +4,9 @@ module Buffet.Parse.ParseInternal
 
 import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Parse.GetSourcePaths as GetSourcePaths
+import qualified Buffet.Parse.ParseHealthCheck as ParseHealthCheck
 import qualified Buffet.Parse.ParseInstructionPartition as ParseInstructionPartition
 import qualified Buffet.Parse.ParseMetadata as ParseMetadata
-import qualified Buffet.Parse.ParseTestCommand as ParseTestCommand
 import qualified Buffet.Toolbox.ExceptionTools as ExceptionTools
 import qualified Control.Exception as Exception
 import qualified Data.Map.Strict as Map
@@ -42,5 +42,5 @@ parseDish dockerfile =
   Ir.Dish
     { Ir.metadata = ParseMetadata.get dockerfile
     , Ir.instructionPartition = ParseInstructionPartition.get dockerfile
-    , Ir.testCommand = ParseTestCommand.get dockerfile
+    , Ir.healthCheck = ParseHealthCheck.get dockerfile
     }

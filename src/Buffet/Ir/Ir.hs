@@ -51,7 +51,7 @@ data Dish =
   Dish
     { metadata :: Metadata
     , instructionPartition :: InstructionPartition
-    , testCommand :: Maybe T.Text
+    , healthCheck :: Maybe T.Text
     }
   deriving (Eq, Ord, Show)
 

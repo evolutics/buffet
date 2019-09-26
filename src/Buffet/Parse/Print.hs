@@ -28,7 +28,7 @@ data Dish =
   Dish
     { metadata :: Metadata
     , instructionPartition :: InstructionPartition
-    , testCommand :: Maybe T.Text
+    , healthCheck :: Maybe T.Text
     }
   deriving (Eq, Generics.Generic, Ord, Show)
 
@@ -75,7 +75,7 @@ transformDish dish =
     { metadata = transformMetadata $ Ir.metadata dish
     , instructionPartition =
         transformInstructionPartition $ Ir.instructionPartition dish
-    , testCommand = Ir.testCommand dish
+    , healthCheck = Ir.healthCheck dish
     }
 
 transformMetadata :: Ir.Metadata -> Metadata

@@ -1,4 +1,4 @@
-module Buffet.Parse.ParseTestCommand
+module Buffet.Parse.ParseHealthCheck
   ( get
   ) where
 

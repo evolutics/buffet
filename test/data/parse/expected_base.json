@@ -7,7 +7,7 @@
         "local_build_stages": [],
         "global_build_stage": []
       },
-      "test_command": null
+      "health_check": null
     }
   }
 }
