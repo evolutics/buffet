@@ -12,7 +12,7 @@ import qualified Data.Text as T
 import qualified Data.Text.Lazy as Lazy
 import qualified Language.Docker as Docker
 import qualified Language.Docker.Syntax as Syntax
-import Prelude (($), (.), concat, fmap, mconcat)
+import Prelude (Bool(True), ($), (.), concat, fmap, mconcat)
 
 get :: Ir.Buffet -> T.Text
 get buffet =
@@ -29,6 +29,7 @@ configuration =
     { Configuration.baseImageName = T.pack "alpine"
     , Configuration.baseImageTagOption = Ir.Option $ T.pack "alpine_version"
     , Configuration.baseImageTagValue = T.pack "3.9.4"
+    , Configuration.optimize = True
     , Configuration.workdir = "/workdir"
     }
 
