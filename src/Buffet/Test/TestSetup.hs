@@ -1,5 +1,5 @@
-module Buffet.Test.Configuration
-  ( Configuration(..)
+module Buffet.Test.TestSetup
+  ( TestSetup(..)
   ) where
 
 import qualified Buffet.Ir.Ir as Ir
@@ -7,8 +7,8 @@ import qualified Data.Text as T
 import Prelude (Eq, Maybe, Show)
 import qualified System.IO as IO
 
-data Configuration =
-  Configuration
+data TestSetup =
+  TestSetup
     { log :: IO.Handle
     , imageId :: T.Text
     , option :: Ir.Option

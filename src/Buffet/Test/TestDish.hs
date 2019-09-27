@@ -3,7 +3,7 @@ module Buffet.Test.TestDish
   ) where
 
 import qualified Buffet.Ir.Ir as Ir
-import qualified Buffet.Test.Configuration as Configuration
+import qualified Buffet.Test.TestSetup as TestSetup
 import qualified Data.Text as T
 import qualified Data.Text.IO as T.IO
 import Prelude
@@ -19,21 +19,19 @@ import Prelude
 import qualified System.Exit as Exit
 import qualified System.Process.Typed as Process
 
-get :: Configuration.Configuration -> IO Bool
-get configuration =
-  if maybe True T.null $ Configuration.optionValue configuration
+get :: TestSetup.TestSetup -> IO Bool
+get testSetup =
+  if maybe True T.null $ TestSetup.optionValue testSetup
     then pure True
-    else checkHealth configuration
+    else checkHealth testSetup
 
-checkHealth :: Configuration.Configuration -> IO Bool
-checkHealth configuration =
-  case Ir.healthCheck $ Configuration.dish configuration of
+checkHealth :: TestSetup.TestSetup -> IO Bool
+checkHealth testSetup =
+  case Ir.healthCheck $ TestSetup.dish testSetup of
     Nothing -> do
       T.IO.hPutStrLn log $
         mconcat
-          [ T.pack "No test for dish: "
-          , Ir.option $ Configuration.option configuration
-          ]
+          [T.pack "No test for dish: ", Ir.option $ TestSetup.option testSetup]
       pure True
     Just command -> do
       exitCode <-
@@ -43,7 +41,7 @@ checkHealth configuration =
         Process.proc
           "docker"
           [ "run"
-          , T.unpack $ Configuration.imageId configuration
+          , T.unpack $ TestSetup.imageId testSetup
           , "sh"
           , "-c"
           , T.unpack command
@@ -53,4 +51,4 @@ checkHealth configuration =
           Exit.ExitSuccess -> True
           Exit.ExitFailure _ -> False
   where
-    log = Configuration.log configuration
+    log = TestSetup.log testSetup

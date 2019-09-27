@@ -4,9 +4,9 @@ module Buffet.Test.TestInternal
 
 import qualified Buffet.Build.BuildInternal as BuildInternal
 import qualified Buffet.Ir.Ir as Ir
-import qualified Buffet.Test.Configuration as Configuration
 import qualified Buffet.Test.DockerBuild as DockerBuild
 import qualified Buffet.Test.TestDish as TestDish
+import qualified Buffet.Test.TestSetup as TestSetup
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import Prelude (Bool, IO, ($), and, pure, sequence)
@@ -22,12 +22,12 @@ get buffetIr arguments = do
         where
           test option dish =
             TestDish.get
-              Configuration.Configuration
-                { Configuration.log = IO.stderr
-                , Configuration.imageId = imageId
-                , Configuration.option = option
-                , Configuration.optionValue = Map.lookup option arguments
-                , Configuration.dish = dish
+              TestSetup.TestSetup
+                { TestSetup.log = IO.stderr
+                , TestSetup.imageId = imageId
+                , TestSetup.option = option
+                , TestSetup.optionValue = Map.lookup option arguments
+                , TestSetup.dish = dish
                 }
   testResults <- sequence tests
   pure $ evaluateTestResults testResults
