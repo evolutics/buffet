@@ -12,6 +12,8 @@ import qualified Data.Text as T
 import Prelude (Bool, IO, ($), and, pure, sequence)
 import qualified System.IO as IO
 
+type TestResults = Map.Map Ir.Option Bool
+
 get :: Ir.Buffet -> Map.Map Ir.Option T.Text -> IO Bool
 get buffetIr arguments = do
   let buffet = BuildInternal.get buffetIr
@@ -28,4 +30,7 @@ get buffetIr arguments = do
                 , Configuration.dish = dish
                 }
   testResults <- sequence tests
-  pure $ and testResults
+  pure $ evaluateTestResults testResults
+
+evaluateTestResults :: TestResults -> Bool
+evaluateTestResults = and
