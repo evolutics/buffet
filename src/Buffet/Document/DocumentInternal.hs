@@ -8,12 +8,10 @@ import qualified Buffet.Toolbox.ExceptionTools as ExceptionTools
 import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Control.Exception as Exception
 import qualified Data.Aeson as Aeson
-import qualified Data.Aeson.Encode.Pretty as Pretty
 import qualified Data.List.NonEmpty as NonEmpty
 import qualified Data.Text as T
 import Prelude
-  ( Bool(True)
-  , FilePath
+  ( FilePath
   , IO
   , Maybe
   , Show
@@ -61,14 +59,7 @@ get customTemplate =
   TemplateContext.get
 
 printTemplateContext :: Aeson.Value -> T.Text
-printTemplateContext = TextTools.decodeUtf8 . Pretty.encodePretty' configuration
-  where
-    configuration =
-      Pretty.defConfig
-        { Pretty.confIndent = Pretty.Spaces 2
-        , Pretty.confCompare = TextTools.lexicographicalCompare
-        , Pretty.confTrailingNewline = True
-        }
+printTemplateContext = TextTools.prettyPrintJson
 
 renderTemplate :: FilePath -> Aeson.Value -> IO T.Text
 renderTemplate templatePath templateContext = do
