@@ -14,7 +14,7 @@ import qualified System.IO as IO
 
 type TestResults = Map.Map Ir.Option Bool
 
-get :: Ir.Buffet -> Map.Map Ir.Option T.Text -> IO Bool
+get :: Ir.Buffet -> Map.Map Ir.Option T.Text -> IO (Bool, T.Text)
 get buffetIr arguments = do
   let buffet = BuildInternal.get buffetIr
   imageId <- DockerBuild.get buffet arguments
@@ -32,5 +32,5 @@ get buffetIr arguments = do
   testResults <- sequence tests
   pure $ evaluateTestResults testResults
 
-evaluateTestResults :: TestResults -> Bool
-evaluateTestResults = and
+evaluateTestResults :: TestResults -> (Bool, T.Text)
+evaluateTestResults testResults = (and testResults, T.pack "TODO\n")

@@ -18,7 +18,6 @@ import qualified System.Directory as Directory
 import qualified System.FilePath as FilePath
 import qualified System.Process.Typed as Process
 import qualified Test.Tasty as Tasty
-import qualified Test.Tasty.HUnit as HUnit
 
 main :: IO ()
 main = tests >>= Tasty.defaultMain
@@ -97,8 +96,11 @@ testTests :: FilePath -> IO [Tasty.TestTree]
 testTests = TestTools.folderBasedTests assert
   where
     assert name path =
-      pure . HUnit.testCase name $
-      test [path, FilePath.combine path "arguments.yaml"]
+      pure . TestTools.assertFileEqualsText name (expected path) $ actual path
+    expected path = FilePath.combine path "expected.todo"
+    actual path = test [path, FilePath.combine path "arguments.yaml"]
 
-test :: [String] -> IO ()
-test = Process.runProcess_ . Process.proc executable . ("test" :)
+test :: [String] -> IO T.Text
+test =
+  fmap TextTools.decodeUtf8 .
+  Process.readProcessStdout_ . Process.proc executable . ("test" :)

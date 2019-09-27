@@ -6,6 +6,7 @@ import qualified Buffet.Parse.ParseInternal as ParseInternal
 import qualified Buffet.Test.TestInternal as TestInternal
 import qualified Buffet.Toolbox.ExceptionTools as ExceptionTools
 import qualified Control.Exception as Exception
+import qualified Data.Text as T
 import qualified Data.Yaml as Yaml
 import Prelude (Bool, FilePath, IO, Show, ($), mconcat, show)
 
@@ -18,7 +19,7 @@ instance Show Exception where
 
 instance Exception.Exception Exception
 
-get :: FilePath -> FilePath -> IO Bool
+get :: FilePath -> FilePath -> IO (Bool, T.Text)
 get buffetSource argumentsFile = do
   buffet <- ParseInternal.get buffetSource
   arguments <-
