@@ -10,10 +10,11 @@ import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Test.TestSetup as TestSetup
 import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Data.Aeson as Aeson
+import qualified Data.Maybe as Maybe
 import qualified Data.Text as T
 import qualified GHC.Generics as Generics
 import Prelude
-  ( Bool(True)
+  ( Bool
   , Eq
   , IO
   , Maybe(Nothing)
@@ -22,16 +23,17 @@ import Prelude
   , ($)
   , (.)
   , (==)
-  , maybe
+  , mempty
   , pure
   , traverse
   )
 import qualified System.Exit as Exit
 import qualified System.Process.Typed as Process
 
-newtype TestResult =
+data TestResult =
   TestResult
-    { healthCheckPassed :: Maybe Bool
+    { optionValue :: T.Text
+    , healthCheckPassed :: Maybe Bool
     }
   deriving (Eq, Generics.Generic, Ord, Show)
 
@@ -41,10 +43,14 @@ instance Aeson.ToJSON TestResult where
 get :: TestSetup.TestSetup -> IO TestResult
 get testSetup = do
   healthCheckPassed' <-
-    if maybe True T.null $ TestSetup.optionValue testSetup
+    if T.null optionValue'
       then pure Nothing
       else checkHealth testSetup
-  pure TestResult {healthCheckPassed = healthCheckPassed'}
+  pure
+    TestResult
+      {optionValue = optionValue', healthCheckPassed = healthCheckPassed'}
+  where
+    optionValue' = Maybe.fromMaybe mempty $ TestSetup.optionValue testSetup
 
 checkHealth :: TestSetup.TestSetup -> IO (Maybe Bool)
 checkHealth testSetup = traverse run . Ir.healthCheck $ TestSetup.dish testSetup

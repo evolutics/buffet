@@ -1,5 +1,6 @@
 {
   "example": {
-    "health_check_passed": null
+    "health_check_passed": null,
+    "option_value": ""
   }
 }

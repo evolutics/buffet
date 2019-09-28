@@ -1,11 +1,14 @@
 {
   "bar": {
-    "health_check_passed": true
+    "health_check_passed": true,
+    "option_value": "1.2.3"
   },
   "baz": {
-    "health_check_passed": null
+    "health_check_passed": null,
+    "option_value": "0.1.0"
   },
   "foo": {
-    "health_check_passed": null
+    "health_check_passed": null,
+    "option_value": ""
   }
 }

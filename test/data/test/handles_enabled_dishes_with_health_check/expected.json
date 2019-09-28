@@ -1,5 +1,6 @@
 {
   "git": {
-    "health_check_passed": true
+    "health_check_passed": true,
+    "option_value": "2.20.1-r0"
   }
 }
