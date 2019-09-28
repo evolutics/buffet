@@ -52,7 +52,9 @@ checkHealth testSetup =
     Nothing -> do
       T.IO.hPutStrLn log $
         mconcat
-          [T.pack "No test for dish: ", Ir.option $ TestSetup.option testSetup]
+          [ T.pack "No health check for dish: "
+          , Ir.option $ TestSetup.option testSetup
+          ]
       pure True
     Just command -> do
       exitCode <-
