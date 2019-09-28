@@ -18,11 +18,6 @@ type TestResults = Map.Map Ir.Option TestDish.TestResult
 
 get :: Ir.Buffet -> Map.Map Ir.Option T.Text -> IO (Bool, T.Text)
 get buffet arguments = do
-  let dockerBuild =
-        DockerBuild.DockerBuild
-          { DockerBuild.dockerfile = BuildInternal.get buffet
-          , DockerBuild.arguments = arguments
-          }
   imageId <- DockerBuild.get dockerBuild
   let tests = Map.mapWithKey test $ Ir.optionToDish buffet
         where
@@ -37,6 +32,12 @@ get buffet arguments = do
                 }
   testResults <- sequenceA tests
   pure $ evaluateTestResults testResults
+  where
+    dockerBuild =
+      DockerBuild.DockerBuild
+        { DockerBuild.dockerfile = BuildInternal.get buffet
+        , DockerBuild.arguments = arguments
+        }
 
 evaluateTestResults :: TestResults -> (Bool, T.Text)
 evaluateTestResults testResults =
