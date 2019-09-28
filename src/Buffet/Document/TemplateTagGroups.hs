@@ -7,6 +7,7 @@ module Buffet.Document.TemplateTagGroups
   ) where
 
 import qualified Buffet.Ir.Ir as Ir
+import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Data.Aeson as Aeson
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
@@ -20,7 +21,8 @@ data TagGroup =
     }
   deriving (Eq, Generics.Generic, Ord, Show)
 
-instance Aeson.ToJSON TagGroup
+instance Aeson.ToJSON TagGroup where
+  toJSON = Aeson.genericToJSON TextTools.defaultJsonOptions
 
 get :: Ir.Buffet -> Map.Map Ir.TagKey [TagGroup]
 get = fmap getTagGroup . keyToValueToOption

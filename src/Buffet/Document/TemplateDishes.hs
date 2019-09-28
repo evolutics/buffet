@@ -7,6 +7,7 @@ module Buffet.Document.TemplateDishes
   ) where
 
 import qualified Buffet.Ir.Ir as Ir
+import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Data.Aeson as Aeson
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
@@ -22,7 +23,8 @@ data Dish =
     }
   deriving (Eq, Generics.Generic, Ord, Show)
 
-instance Aeson.ToJSON Dish
+instance Aeson.ToJSON Dish where
+  toJSON = Aeson.genericToJSON TextTools.defaultJsonOptions
 
 get :: Ir.Buffet -> [Dish]
 get = fmap (uncurry transformDish) . Map.toAscList . Ir.optionToDish

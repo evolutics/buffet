@@ -10,14 +10,10 @@ import qualified Data.Text as T
 import Prelude (($), (.), fmap)
 
 get :: Ir.Buffet -> Aeson.Value
-get =
-  escapeKeysForMustache . makeKeysSnakeCase . Aeson.toJSON . TemplateBuffet.get
+get = escapeKeysForMustache . Aeson.toJSON . TemplateBuffet.get
 
 escapeKeysForMustache :: Aeson.Value -> Aeson.Value
 escapeKeysForMustache = mapKeys $ T.replace (T.pack ".") (T.pack "_")
-
-makeKeysSnakeCase :: Aeson.Value -> Aeson.Value
-makeKeysSnakeCase = mapKeys $ T.pack . Aeson.camelTo2 '_' . T.unpack
 
 mapKeys :: (T.Text -> T.Text) -> Aeson.Value -> Aeson.Value
 mapKeys function (Aeson.Array array) =

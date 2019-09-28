@@ -8,6 +8,7 @@ module Buffet.Document.TemplateBuffet
 import qualified Buffet.Document.TemplateDishes as TemplateDishes
 import qualified Buffet.Document.TemplateTagGroups as TemplateTagGroups
 import qualified Buffet.Ir.Ir as Ir
+import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Data.Aeson as Aeson
 import qualified Data.Map.Strict as Map
 import qualified GHC.Generics as Generics
@@ -20,7 +21,8 @@ data Buffet =
     }
   deriving (Eq, Generics.Generic, Ord, Show)
 
-instance Aeson.ToJSON Buffet
+instance Aeson.ToJSON Buffet where
+  toJSON = Aeson.genericToJSON TextTools.defaultJsonOptions
 
 get :: Ir.Buffet -> Buffet
 get buffet =
