@@ -7,6 +7,7 @@ import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Test.DockerBuild as DockerBuild
 import qualified Buffet.Test.TestDish as TestDish
 import qualified Buffet.Test.TestSetup as TestSetup
+import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import Prelude (Bool, IO, ($), and, pure, sequence)
@@ -33,4 +34,5 @@ get buffetIr arguments = do
   pure $ evaluateTestResults testResults
 
 evaluateTestResults :: TestResults -> (Bool, T.Text)
-evaluateTestResults testResults = (and testResults, T.pack "TODO\n")
+evaluateTestResults testResults =
+  (and testResults, TextTools.prettyPrintJson testResults)

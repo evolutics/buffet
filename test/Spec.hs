@@ -97,7 +97,7 @@ testTests = TestTools.folderBasedTests assert
   where
     assert name path =
       pure . TestTools.assertFileEqualsText name (expected path) $ actual path
-    expected path = FilePath.combine path "expected.todo"
+    expected path = FilePath.combine path "expected.json"
     actual path = test [path, FilePath.combine path "arguments.yaml"]
 
 test :: [String] -> IO T.Text
