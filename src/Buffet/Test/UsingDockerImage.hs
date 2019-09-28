@@ -1,10 +1,11 @@
-module Buffet.Test.DockerBuild
+module Buffet.Test.UsingDockerImage
   ( DockerBuild(..)
   , get
   ) where
 
 import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Toolbox.TextTools as TextTools
+import qualified Control.Exception as Exception
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import Prelude (Eq, IO, Ord, Show, ($), (.), concatMap, mconcat, pure)
@@ -17,8 +18,11 @@ data DockerBuild =
     }
   deriving (Eq, Ord, Show)
 
-get :: DockerBuild -> IO T.Text
-get build = do
+get :: (T.Text -> IO a) -> DockerBuild -> IO a
+get useImage build = Exception.bracket (buildImage build) removeImage useImage
+
+buildImage :: DockerBuild -> IO T.Text
+buildImage build = do
   rawImageIdLine <-
     Process.readProcessStdout_ $
     Process.setStdin (textInput $ dockerfile build) processBase
@@ -37,3 +41,8 @@ get build = do
            ]) .
       Map.toAscList $
       arguments build
+
+removeImage :: T.Text -> IO ()
+removeImage imageId =
+  Process.runProcess_ . Process.setStdout Process.nullStream $
+  Process.proc "docker" ["rmi", T.unpack imageId]
