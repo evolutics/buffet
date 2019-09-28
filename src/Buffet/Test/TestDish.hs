@@ -11,28 +11,27 @@ import qualified Buffet.Test.TestSetup as TestSetup
 import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Data.Aeson as Aeson
 import qualified Data.Text as T
-import qualified Data.Text.IO as T.IO
 import qualified GHC.Generics as Generics
 import Prelude
   ( Bool(True)
   , Eq
   , IO
-  , Maybe(Just, Nothing)
+  , Maybe(Nothing)
   , Ord
   , Show
   , ($)
   , (.)
   , (==)
   , maybe
-  , mconcat
   , pure
+  , traverse
   )
 import qualified System.Exit as Exit
 import qualified System.Process.Typed as Process
 
 newtype TestResult =
   TestResult
-    { healthCheckPassed :: Bool
+    { healthCheckPassed :: Maybe Bool
     }
   deriving (Eq, Generics.Generic, Ord, Show)
 
@@ -43,21 +42,14 @@ get :: TestSetup.TestSetup -> IO TestResult
 get testSetup = do
   healthCheckPassed' <-
     if maybe True T.null $ TestSetup.optionValue testSetup
-      then pure True
+      then pure Nothing
       else checkHealth testSetup
   pure TestResult {healthCheckPassed = healthCheckPassed'}
 
-checkHealth :: TestSetup.TestSetup -> IO Bool
-checkHealth testSetup =
-  case Ir.healthCheck $ TestSetup.dish testSetup of
-    Nothing -> do
-      T.IO.hPutStrLn log $
-        mconcat
-          [ T.pack "No health check for dish: "
-          , Ir.option $ TestSetup.option testSetup
-          ]
-      pure True
-    Just command -> do
+checkHealth :: TestSetup.TestSetup -> IO (Maybe Bool)
+checkHealth testSetup = traverse run . Ir.healthCheck $ TestSetup.dish testSetup
+  where
+    run command = do
       exitCode <-
         Process.runProcess .
         Process.setStderr (Process.useHandleOpen log) .
@@ -71,5 +63,4 @@ checkHealth testSetup =
           , T.unpack command
           ]
       pure $ exitCode == Exit.ExitSuccess
-  where
     log = TestSetup.log testSetup
