@@ -1,19 +1,27 @@
 module Buffet.Test.DockerBuild
-  ( get
+  ( DockerBuild(..)
+  , get
   ) where
 
 import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
-import Prelude (IO, ($), (.), concatMap, mconcat, pure)
+import Prelude (Eq, IO, Ord, Show, ($), (.), concatMap, mconcat, pure)
 import qualified System.Process.Typed as Process
 
-get :: T.Text -> Map.Map Ir.Option T.Text -> IO T.Text
-get dockerfile arguments = do
+data DockerBuild =
+  DockerBuild
+    { dockerfile :: T.Text
+    , arguments :: Map.Map Ir.Option T.Text
+    }
+  deriving (Eq, Ord, Show)
+
+get :: DockerBuild -> IO T.Text
+get build = do
   rawImageIdLine <-
     Process.readProcessStdout_ $
-    Process.setStdin (textInput dockerfile) processBase
+    Process.setStdin (textInput $ dockerfile build) processBase
   let imageIdLine = TextTools.decodeUtf8 rawImageIdLine
       imageId = T.stripEnd imageIdLine
   pure imageId
@@ -26,5 +34,6 @@ get dockerfile arguments = do
         (\(key, value) ->
            [ "--build-arg"
            , mconcat [T.unpack $ Ir.option key, "=", T.unpack value]
-           ]) $
-      Map.toAscList arguments
+           ]) .
+      Map.toAscList $
+      arguments build

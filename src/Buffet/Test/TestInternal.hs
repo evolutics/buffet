@@ -17,10 +17,14 @@ import qualified System.IO as IO
 type TestResults = Map.Map Ir.Option TestDish.TestResult
 
 get :: Ir.Buffet -> Map.Map Ir.Option T.Text -> IO (Bool, T.Text)
-get buffetIr arguments = do
-  let buffet = BuildInternal.get buffetIr
-  imageId <- DockerBuild.get buffet arguments
-  let tests = Map.mapWithKey test $ Ir.optionToDish buffetIr
+get buffet arguments = do
+  let dockerBuild =
+        DockerBuild.DockerBuild
+          { DockerBuild.dockerfile = BuildInternal.get buffet
+          , DockerBuild.arguments = arguments
+          }
+  imageId <- DockerBuild.get dockerBuild
+  let tests = Map.mapWithKey test $ Ir.optionToDish buffet
         where
           test option dish =
             TestDish.get
