@@ -11,7 +11,7 @@ import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Data.Map.Strict as Map
 import qualified Data.Maybe as Maybe
 import qualified Data.Text as T
-import Prelude (Bool(True), IO, ($), (.), and, fmap, pure, sequence)
+import Prelude (Bool(True), IO, ($), (.), and, fmap, pure, sequenceA)
 import qualified System.IO as IO
 
 type TestResults = Map.Map Ir.Option TestDish.TestResult
@@ -31,7 +31,7 @@ get buffetIr arguments = do
                 , TestSetup.optionValue = Map.lookup option arguments
                 , TestSetup.dish = dish
                 }
-  testResults <- sequence tests
+  testResults <- sequenceA tests
   pure $ evaluateTestResults testResults
 
 evaluateTestResults :: TestResults -> (Bool, T.Text)

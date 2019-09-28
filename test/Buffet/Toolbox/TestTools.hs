@@ -10,7 +10,7 @@ import qualified Control.Monad as Monad
 import qualified Data.Aeson as Aeson
 import qualified Data.List as List
 import qualified Data.Text as T
-import Prelude (FilePath, IO, ($), (.), fmap, mapM)
+import Prelude (FilePath, IO, ($), (.), fmap, traverse)
 import qualified System.Directory as Directory
 import qualified System.FilePath as FilePath
 import qualified Test.Tasty as Tasty
@@ -46,7 +46,7 @@ folderBasedTests assert folder = do
     Monad.filterM
       (Directory.doesDirectoryExist . FilePath.combine folder)
       folderEntries
-  mapM assertSubfolder $ List.sort subfolders
+  traverse assertSubfolder $ List.sort subfolders
   where
     assertSubfolder subfolder =
       assert subfolder $ FilePath.combine folder subfolder

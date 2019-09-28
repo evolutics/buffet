@@ -12,7 +12,7 @@ import Prelude
   , (>>=)
   , fmap
   , pure
-  , sequence
+  , sequenceA
   )
 import qualified System.Directory as Directory
 import qualified System.FilePath as FilePath
@@ -25,7 +25,7 @@ main = tests >>= Tasty.defaultMain
 tests :: IO Tasty.TestTree
 tests =
   Tasty.testGroup "Tests" <$>
-  sequence
+  sequenceA
     [ Tasty.testGroup "Build" <$> buildTests "test/data/build"
     , Tasty.testGroup "Document" <$> documentTests "test/data/document"
     , Tasty.testGroup "Parse" <$> parseTests "test/data/parse"

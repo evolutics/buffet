@@ -12,7 +12,9 @@
     imports:
       - package base
     rules:
+      - warn: { lhs: mapM, rhs: traverse }
       - warn: { lhs: return, rhs: pure }
+      - warn: { lhs: sequence, rhs: sequenceA }
 - group:
     name: text
     enabled: true
