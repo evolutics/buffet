@@ -1,5 +1,6 @@
 module Buffet.Toolbox.TextTools
   ( decodeUtf8
+  , defaultJsonOptions
   , encodeUtf8
   , intercalateNewline
   , lexicographicalCompare
@@ -17,6 +18,10 @@ import Prelude (Bool(True), Ordering, (.))
 
 decodeUtf8 :: ByteString.ByteString -> T.Text
 decodeUtf8 = Lazy.toStrict . Encoding.decodeUtf8
+
+defaultJsonOptions :: Aeson.Options
+defaultJsonOptions =
+  Aeson.defaultOptions {Aeson.fieldLabelModifier = Aeson.camelTo2 '_'}
 
 encodeUtf8 :: T.Text -> ByteString.ByteString
 encodeUtf8 = Encoding.encodeUtf8 . Lazy.fromStrict

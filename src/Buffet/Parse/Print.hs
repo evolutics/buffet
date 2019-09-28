@@ -22,7 +22,7 @@ newtype Buffet =
   deriving (Eq, Generics.Generic, Ord, Show)
 
 instance Aeson.ToJSON Buffet where
-  toEncoding = Aeson.genericToEncoding options
+  toEncoding = Aeson.genericToEncoding TextTools.defaultJsonOptions
 
 data Dish =
   Dish
@@ -33,7 +33,7 @@ data Dish =
   deriving (Eq, Generics.Generic, Ord, Show)
 
 instance Aeson.ToJSON Dish where
-  toEncoding = Aeson.genericToEncoding options
+  toEncoding = Aeson.genericToEncoding TextTools.defaultJsonOptions
 
 data Metadata =
   Metadata
@@ -44,7 +44,7 @@ data Metadata =
   deriving (Eq, Generics.Generic, Ord, Show)
 
 instance Aeson.ToJSON Metadata where
-  toEncoding = Aeson.genericToEncoding options
+  toEncoding = Aeson.genericToEncoding TextTools.defaultJsonOptions
 
 data InstructionPartition =
   InstructionPartition
@@ -55,12 +55,9 @@ data InstructionPartition =
   deriving (Eq, Generics.Generic, Ord, Show)
 
 instance Aeson.ToJSON InstructionPartition where
-  toEncoding = Aeson.genericToEncoding options
+  toEncoding = Aeson.genericToEncoding TextTools.defaultJsonOptions
 
 type DockerfilePart = [T.Text]
-
-options :: Aeson.Options
-options = Aeson.defaultOptions {Aeson.fieldLabelModifier = Aeson.camelTo2 '_'}
 
 get :: Ir.Buffet -> T.Text
 get = TextTools.decodeUtf8 . Aeson.encode . transformBuffet
