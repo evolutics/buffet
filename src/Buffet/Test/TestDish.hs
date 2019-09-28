@@ -14,7 +14,7 @@ import qualified Data.Text as T
 import qualified Data.Text.IO as T.IO
 import qualified GHC.Generics as Generics
 import Prelude
-  ( Bool(False, True)
+  ( Bool(True)
   , Eq
   , IO
   , Maybe(Just, Nothing)
@@ -22,6 +22,7 @@ import Prelude
   , Show
   , ($)
   , (.)
+  , (==)
   , maybe
   , mconcat
   , pure
@@ -69,9 +70,6 @@ checkHealth testSetup =
           , "-c"
           , T.unpack command
           ]
-      pure $
-        case exitCode of
-          Exit.ExitSuccess -> True
-          Exit.ExitFailure _ -> False
+      pure $ exitCode == Exit.ExitSuccess
   where
     log = TestSetup.log testSetup
