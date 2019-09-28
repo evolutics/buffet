@@ -10,10 +10,10 @@ import qualified Buffet.Test.TestSetup as TestSetup
 import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
-import Prelude (Bool, IO, ($), and, pure, sequence)
+import Prelude (Bool, IO, ($), and, fmap, pure, sequence)
 import qualified System.IO as IO
 
-type TestResults = Map.Map Ir.Option Bool
+type TestResults = Map.Map Ir.Option TestDish.TestResult
 
 get :: Ir.Buffet -> Map.Map Ir.Option T.Text -> IO (Bool, T.Text)
 get buffetIr arguments = do
@@ -35,4 +35,7 @@ get buffetIr arguments = do
 
 evaluateTestResults :: TestResults -> (Bool, T.Text)
 evaluateTestResults testResults =
-  (and testResults, TextTools.prettyPrintJson testResults)
+  (and $ fmap isSuccess testResults, TextTools.prettyPrintJson testResults)
+
+isSuccess :: TestDish.TestResult -> Bool
+isSuccess = TestDish.healthCheckPassed

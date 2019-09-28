@@ -1,3 +1,5 @@
 {
-  "example": true
+  "example": {
+    "health_check_passed": true
+  }
 }

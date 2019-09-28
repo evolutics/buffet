@@ -1,5 +1,11 @@
 {
-  "bar": true,
-  "baz": true,
-  "foo": true
+  "bar": {
+    "health_check_passed": true
+  },
+  "baz": {
+    "health_check_passed": true
+  },
+  "foo": {
+    "health_check_passed": true
+  }
 }

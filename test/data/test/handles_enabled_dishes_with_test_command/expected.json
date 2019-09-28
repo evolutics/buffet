@@ -1,3 +1,5 @@
 {
-  "git": true
+  "git": {
+    "health_check_passed": true
+  }
 }
