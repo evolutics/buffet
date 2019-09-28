@@ -95,10 +95,16 @@ parse =
 testTests :: FilePath -> IO [Tasty.TestTree]
 testTests = TestTools.folderBasedTests assert
   where
-    assert name path =
-      pure . TestTools.assertFileEqualsText name (expected path) $ actual path
-    expected path = FilePath.combine path "expected.json"
-    actual path = test [path, FilePath.combine path "arguments.yaml"]
+    assert name path = do
+      hasCustomArguments <- Directory.doesFileExist customArguments
+      let actual =
+            if hasCustomArguments
+              then test ["--arguments", customArguments, path]
+              else test [path]
+      pure $ TestTools.assertFileEqualsText name expected actual
+      where
+        customArguments = FilePath.combine path "arguments.yaml"
+        expected = FilePath.combine path "expected.json"
 
 test :: [String] -> IO T.Text
 test =

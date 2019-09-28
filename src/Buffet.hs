@@ -37,5 +37,7 @@ parseParser =
 
 testParser :: Options.Parser Facade.Command
 testParser =
-  Facade.Test <$> Options.argument Options.str (Options.metavar "SOURCE") <*>
-  Options.argument Options.str (Options.metavar "ARGUMENTS")
+  Facade.Test <$>
+  Applicative.optional
+    (Options.strOption (Options.long "arguments" <> Options.metavar "ARGUMENTS")) <*>
+  Options.argument Options.str (Options.metavar "SOURCE")

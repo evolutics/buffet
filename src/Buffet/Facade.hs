@@ -16,7 +16,7 @@ data Command
   = Build FilePath
   | Document (Maybe FilePath) FilePath
   | Parse FilePath
-  | Test FilePath FilePath
+  | Test (Maybe FilePath) FilePath
   deriving (Eq, Ord, Show)
 
 get :: Command -> IO ()
@@ -26,8 +26,8 @@ get command =
     Document template buffetSource ->
       Document.get template buffetSource >>= T.IO.putStr
     Parse buffetSource -> Parse.get buffetSource >>= T.IO.putStr
-    Test buffetSource argumentsFile ->
-      Test.get buffetSource argumentsFile >>= uncurry exitPrintingStdout
+    Test argumentsFile buffetSource ->
+      Test.get argumentsFile buffetSource >>= uncurry exitPrintingStdout
 
 exitPrintingStdout :: Bool -> T.Text -> IO a
 exitPrintingStdout isSuccess result = do
