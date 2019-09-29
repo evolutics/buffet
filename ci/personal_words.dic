@@ -9,5 +9,7 @@ HLint
 JSON
 LTS
 monoid
+stderr
+stdout
 whitespace
 YAML
