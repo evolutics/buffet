@@ -64,7 +64,7 @@ checkHealth testSetup = traverse run . Ir.healthCheck $ TestSetup.dish testSetup
           "docker"
           [ "run"
           , "--rm"
-          , T.unpack $ TestSetup.imageId testSetup
+          , T.unpack $ TestSetup.image testSetup
           , "sh"
           , "-c"
           , T.unpack command

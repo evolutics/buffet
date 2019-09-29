@@ -19,14 +19,14 @@ type TestResults = Map.Map Ir.Option TestDish.TestResult
 get :: Ir.Buffet -> Map.Map Ir.Option T.Text -> IO (Bool, T.Text)
 get buffet arguments = UsingDockerImage.get use configuration
   where
-    use imageId = evaluateTestResults <$> sequenceA tests
+    use image = evaluateTestResults <$> sequenceA tests
       where
         tests = Map.mapWithKey test $ Ir.optionToDish buffet
         test option dish =
           TestDish.get
             TestSetup.TestSetup
               { TestSetup.log = log
-              , TestSetup.imageId = imageId
+              , TestSetup.image = image
               , TestSetup.option = option
               , TestSetup.optionValue = Map.lookup option arguments
               , TestSetup.dish = dish

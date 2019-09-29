@@ -10,7 +10,7 @@ import qualified System.IO as IO
 data TestSetup =
   TestSetup
     { log :: IO.Handle
-    , imageId :: T.Text
+    , image :: T.Text
     , option :: Ir.Option
     , optionValue :: Maybe T.Text
     , dish :: Ir.Dish

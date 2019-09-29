@@ -9,9 +9,12 @@ import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Control.Exception as Exception
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
+import qualified Data.Word as Word
+import qualified Numeric
 import Prelude (Eq, IO, Ord, Show, ($), (.), concatMap, mconcat, pure)
 import qualified System.IO as IO
 import qualified System.Process.Typed as Process
+import qualified System.Random as Random
 
 data Configuration =
   Configuration
@@ -36,18 +39,16 @@ get useImage configuration =
 
 buildImage :: Configuration -> IO T.Text
 buildImage configuration = do
-  rawImageIdLine <-
-    Process.readProcessStdout_ . Process.setStderr (Process.useHandleOpen log') $
+  image <- randomImage
+  let processBase =
+        Process.proc "docker" $
+        mconcat [["build", "--tag", T.unpack image], buildArgs, ["-"]]
+  Process.runProcess_ .
+    Process.setStderr (Process.useHandleOpen log') .
+    Process.setStdout (Process.useHandleOpen log') $
     Process.setStdin (textInput dockerfile') processBase
-  let imageIdLine = TextTools.decodeUtf8 rawImageIdLine
-      imageId = T.stripEnd imageIdLine
-  pure imageId
+  pure image
   where
-    log' = log configuration
-    textInput = Process.byteStringInput . TextTools.encodeUtf8
-    dockerfile' = dockerfile $ dockerBuild configuration
-    processBase =
-      Process.proc "docker" $ mconcat [["build", "--quiet"], buildArgs, ["-"]]
     buildArgs =
       concatMap
         (\(key, value) ->
@@ -56,12 +57,24 @@ buildImage configuration = do
            ]) $
       Map.toAscList arguments'
     arguments' = arguments $ dockerBuild configuration
+    log' = log configuration
+    textInput = Process.byteStringInput . TextTools.encodeUtf8
+    dockerfile' = dockerfile $ dockerBuild configuration
+
+randomImage :: IO T.Text
+randomImage = do
+  tagNumber <- Random.randomIO
+  let _ = tagNumber :: Word.Word64
+      tag = T.pack $ Numeric.showHex tagNumber ""
+  pure $ mconcat [name, T.pack ":", tag]
+  where
+    name = T.pack "buffet-tmp"
 
 removeImage :: Configuration -> T.Text -> IO ()
-removeImage configuration imageId =
+removeImage configuration image =
   Process.runProcess_ .
   Process.setStderr (Process.useHandleOpen log') .
   Process.setStdout (Process.useHandleOpen log') $
-  Process.proc "docker" ["rmi", T.unpack imageId]
+  Process.proc "docker" ["rmi", T.unpack image]
   where
     log' = log configuration

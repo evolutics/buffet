@@ -41,6 +41,7 @@ internal-libraries:
       - mustache
       - optparse-applicative
       - parsec
+      - random
       - split
       - text
       - typed-process
