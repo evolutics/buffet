@@ -5,6 +5,7 @@ module Buffet.Test.TestInternal
 import qualified Buffet.Build.BuildInternal as BuildInternal
 import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Test.TestDish as TestDish
+import qualified Buffet.Test.TestResult as TestResult
 import qualified Buffet.Test.TestSetup as TestSetup
 import qualified Buffet.Test.UsingDockerImage as UsingDockerImage
 import qualified Buffet.Toolbox.TextTools as TextTools
@@ -14,7 +15,7 @@ import qualified Data.Text as T
 import Prelude (Bool(True), IO, ($), (.), (<$>), and, fmap, sequenceA)
 import qualified System.IO as IO
 
-type TestResults = Map.Map Ir.Option TestDish.TestResult
+type TestResults = Map.Map Ir.Option TestResult.TestResult
 
 get :: Ir.Buffet -> Map.Map Ir.Option T.Text -> IO (Bool, T.Text)
 get buffet arguments = UsingDockerImage.get use configuration
@@ -46,5 +47,5 @@ evaluateTestResults :: TestResults -> (Bool, T.Text)
 evaluateTestResults testResults =
   (and $ fmap isSuccess testResults, TextTools.prettyPrintJson testResults)
 
-isSuccess :: TestDish.TestResult -> Bool
-isSuccess = Maybe.fromMaybe True . TestDish.healthCheckPassed
+isSuccess :: TestResult.TestResult -> Bool
+isSuccess = Maybe.fromMaybe True . TestResult.healthCheckPassed
