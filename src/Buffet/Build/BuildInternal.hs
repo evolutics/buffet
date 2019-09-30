@@ -26,9 +26,8 @@ get buffet =
 configuration :: Configuration.Configuration
 configuration =
   Configuration.Configuration
-    { Configuration.baseImageName = T.pack "alpine"
-    , Configuration.baseImageTagOption = Ir.Option $ T.pack "alpine_version"
-    , Configuration.baseImageTagValue = T.pack "3.9.4"
+    { Configuration.baseImageOption = Ir.Option $ T.pack "base_image"
+    , Configuration.baseImageDefault = T.pack "alpine:3.9.4"
     , Configuration.workdir = "/workdir"
     , Configuration.optimize = True
     }

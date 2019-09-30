@@ -1,7 +1,7 @@
-ARG alpine_version='3.9.4'
+ARG base_image='alpine:3.9.4'
 ARG example=''
 
-FROM alpine:"${alpine_version}"
+FROM "${base_image}"
 
 ARG example
 RUN if [[ -n "${example}" ]]; then \

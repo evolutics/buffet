@@ -23,16 +23,18 @@ import Prelude
 
 get :: Configuration.Configuration -> Ir.Buffet -> [Ir.DockerfilePart]
 get configuration buffet =
-  [List.sort $ baseImageOptions configuration <> dishesArgInstructions buffet]
+  [ List.sort $
+    [baseImageArgInstruction configuration] <> dishesArgInstructions buffet
+  ]
 
-baseImageOptions :: Configuration.Configuration -> [Docker.Instruction a]
-baseImageOptions configuration = [Docker.Arg tagOption $ Just tagValue]
+baseImageArgInstruction :: Configuration.Configuration -> Docker.Instruction a
+baseImageArgInstruction configuration = Docker.Arg option $ Just value
   where
-    tagOption = Ir.option $ Configuration.baseImageTagOption configuration
-    tagValue =
+    option = Ir.option $ Configuration.baseImageOption configuration
+    value =
       mconcat
         [ T.singleton '\''
-        , Configuration.baseImageTagValue configuration
+        , Configuration.baseImageDefault configuration
         , T.singleton '\''
         ]
 

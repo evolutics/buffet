@@ -11,7 +11,7 @@ import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import qualified Language.Docker as Docker hiding (sourcePaths)
 import Prelude
-  ( Maybe(Just, Nothing)
+  ( Maybe(Nothing)
   , ($)
   , (.)
   , concat
@@ -37,15 +37,14 @@ fromInstruction configuration =
       { Docker.image =
           Docker.Image
             { Docker.registryName = Nothing
-            , Docker.imageName = Configuration.baseImageName configuration
+            , Docker.imageName =
+                mconcat
+                  [ T.pack "\"${"
+                  , Ir.option $ Configuration.baseImageOption configuration
+                  , T.pack "}\""
+                  ]
             }
-      , Docker.tag =
-          Just . Docker.Tag $
-          mconcat
-            [ T.pack "\"${"
-            , Ir.option $ Configuration.baseImageTagOption configuration
-            , T.pack "}\""
-            ]
+      , Docker.tag = Nothing
       , Docker.digest = Nothing
       , Docker.alias = Nothing
       , Docker.platform = Nothing

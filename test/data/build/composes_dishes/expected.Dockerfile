@@ -1,8 +1,8 @@
-ARG alpine_version='3.9.4'
 ARG bar=''
+ARG base_image='alpine:3.9.4'
 ARG foo=''
 
-FROM alpine:"${alpine_version}"
+FROM "${base_image}"
 
 ARG bar
 ARG foo

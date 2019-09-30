@@ -8,9 +8,8 @@ import Prelude (Bool, Eq, FilePath, Ord, Show)
 
 data Configuration =
   Configuration
-    { baseImageName :: T.Text
-    , baseImageTagOption :: Ir.Option
-    , baseImageTagValue :: T.Text
+    { baseImageOption :: Ir.Option
+    , baseImageDefault :: T.Text
     , workdir :: FilePath
     , optimize :: Bool
     }
