@@ -4,6 +4,7 @@ module Buffet.Test.Test
 
 import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Parse.ParseInternal as ParseInternal
+import qualified Buffet.Test.Configuration as Configuration
 import qualified Buffet.Test.TestInternal as TestInternal
 import qualified Buffet.Toolbox.ExceptionTools as ExceptionTools
 import qualified Control.Exception as Exception
@@ -32,10 +33,10 @@ instance Show Exception where
 
 instance Exception.Exception Exception
 
-get :: Maybe FilePath -> FilePath -> IO (Bool, T.Text)
-get argumentsFile buffetSource = do
+get :: Configuration.Configuration -> FilePath -> IO (Bool, T.Text)
+get configuration buffetSource = do
   buffet <- ParseInternal.get buffetSource
-  arguments <- getArguments argumentsFile
+  arguments <- getArguments $ Configuration.arguments configuration
   TestInternal.get buffet arguments
 
 getArguments :: Maybe FilePath -> IO (Map.Map Ir.Option T.Text)

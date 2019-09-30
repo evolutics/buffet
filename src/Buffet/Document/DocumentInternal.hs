@@ -2,6 +2,7 @@ module Buffet.Document.DocumentInternal
   ( get
   ) where
 
+import qualified Buffet.Document.Configuration as Configuration
 import qualified Buffet.Document.TemplateContext as TemplateContext
 import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Toolbox.ExceptionTools as ExceptionTools
@@ -13,7 +14,6 @@ import qualified Data.Text as T
 import Prelude
   ( FilePath
   , IO
-  , Maybe
   , Show
   , ($)
   , (.)
@@ -53,9 +53,12 @@ instance Show Exception where
 
 instance Exception.Exception Exception
 
-get :: Maybe FilePath -> Ir.Buffet -> IO T.Text
-get customTemplate =
-  maybe (pure . printTemplateContext) renderTemplate customTemplate .
+get :: Configuration.Configuration -> Ir.Buffet -> IO T.Text
+get configuration =
+  maybe
+    (pure . printTemplateContext)
+    renderTemplate
+    (Configuration.template configuration) .
   TemplateContext.get
 
 printTemplateContext :: Aeson.Value -> T.Text

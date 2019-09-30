@@ -8,8 +8,10 @@ module Buffet.Facade
   ) where
 
 import qualified Buffet.Build.Build as Build
+import qualified Buffet.Document.Configuration as Document
 import qualified Buffet.Document.Document as Document
 import qualified Buffet.Parse.Parse as Parse
+import qualified Buffet.Test.Configuration as Test
 import qualified Buffet.Test.Test as Test
 import qualified Data.Text as T
 import qualified Data.Text.IO as T.IO
@@ -62,16 +64,20 @@ build arguments = Build.get (buildBuffet arguments) >>= T.IO.putStr
 
 document :: DocumentArguments -> IO ()
 document arguments =
-  Document.get (documentTemplate arguments) (documentBuffet arguments) >>=
-  T.IO.putStr
+  Document.get configuration (documentBuffet arguments) >>= T.IO.putStr
+  where
+    configuration =
+      Document.Configuration {Document.template = documentTemplate arguments}
 
 parse :: ParseArguments -> IO ()
 parse arguments = Parse.get (parseBuffet arguments) >>= T.IO.putStr
 
 test :: TestArguments -> IO ()
 test arguments =
-  Test.get (testArguments arguments) (testBuffet arguments) >>=
-  uncurry exitPrintingStdout
+  Test.get configuration (testBuffet arguments) >>= uncurry exitPrintingStdout
+  where
+    configuration =
+      Test.Configuration {Test.arguments = testArguments arguments}
 
 exitPrintingStdout :: Bool -> T.Text -> IO a
 exitPrintingStdout isSuccess result = do
