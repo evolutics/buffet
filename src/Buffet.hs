@@ -5,7 +5,7 @@ module Buffet
 import qualified Buffet.Facade as Facade
 import qualified Control.Applicative as Applicative
 import qualified Options.Applicative as Options
-import Prelude (IO, ($), (<$>), (<*>), (<>), (>>=), mconcat, mempty)
+import Prelude (IO, ($), (<$>), (<*>), (<>), (>>=), fmap, mconcat, mempty)
 
 main :: IO ()
 main = Options.execParser (Options.info parser mempty) >>= Facade.get
@@ -22,22 +22,28 @@ parser =
 
 buildParser :: Options.Parser Facade.Command
 buildParser =
-  Facade.Build <$> Options.argument Options.str (Options.metavar "SOURCE")
+  fmap Facade.Build $
+  Facade.BuildArguments <$>
+  Options.argument Options.str (Options.metavar "SOURCE")
 
 documentParser :: Options.Parser Facade.Command
 documentParser =
-  Facade.Document <$>
+  fmap Facade.Document $
+  Facade.DocumentArguments <$>
   Applicative.optional
     (Options.strOption (Options.long "template" <> Options.metavar "FILE")) <*>
   Options.argument Options.str (Options.metavar "SOURCE")
 
 parseParser :: Options.Parser Facade.Command
 parseParser =
-  Facade.Parse <$> Options.argument Options.str (Options.metavar "SOURCE")
+  fmap Facade.Parse $
+  Facade.ParseArguments <$>
+  Options.argument Options.str (Options.metavar "SOURCE")
 
 testParser :: Options.Parser Facade.Command
 testParser =
-  Facade.Test <$>
+  fmap Facade.Test $
+  Facade.TestArguments <$>
   Applicative.optional
     (Options.strOption (Options.long "arguments" <> Options.metavar "ARGUMENTS")) <*>
   Options.argument Options.str (Options.metavar "SOURCE")
