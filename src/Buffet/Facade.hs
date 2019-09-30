@@ -22,12 +22,24 @@ data Command
 get :: Command -> IO ()
 get command =
   case command of
-    Build buffetSource -> Build.get buffetSource >>= T.IO.putStr
-    Document template buffetSource ->
-      Document.get template buffetSource >>= T.IO.putStr
-    Parse buffetSource -> Parse.get buffetSource >>= T.IO.putStr
-    Test argumentsFile buffetSource ->
-      Test.get argumentsFile buffetSource >>= uncurry exitPrintingStdout
+    Build buffetSource -> build buffetSource
+    Document template buffetSource -> document template buffetSource
+    Parse buffetSource -> parse buffetSource
+    Test argumentsFile buffetSource -> test argumentsFile buffetSource
+
+build :: FilePath -> IO ()
+build buffetSource = Build.get buffetSource >>= T.IO.putStr
+
+document :: Maybe FilePath -> FilePath -> IO ()
+document template buffetSource =
+  Document.get template buffetSource >>= T.IO.putStr
+
+parse :: FilePath -> IO ()
+parse buffetSource = Parse.get buffetSource >>= T.IO.putStr
+
+test :: Maybe FilePath -> FilePath -> IO ()
+test argumentsFile buffetSource =
+  Test.get argumentsFile buffetSource >>= uncurry exitPrintingStdout
 
 exitPrintingStdout :: Bool -> T.Text -> IO a
 exitPrintingStdout isSuccess result = do
