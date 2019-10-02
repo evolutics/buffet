@@ -3,6 +3,7 @@ module Buffet.Parse.ParseMenu
   ) where
 
 import qualified Buffet.Ir.Ir as Ir
+import qualified Buffet.Parse.Menu as Menu
 import qualified Buffet.Toolbox.ExceptionTools as ExceptionTools
 import qualified Control.Exception as Exception
 import qualified Control.Monad as Monad
@@ -24,7 +25,7 @@ instance Show Exception where
 
 instance Exception.Exception Exception
 
-get :: FilePath -> IO (Map.Map Ir.Option FilePath)
+get :: FilePath -> IO Menu.Menu
 get menu = do
   isAvailable <- Directory.doesPathExist menu
   if isAvailable
@@ -35,28 +36,33 @@ get menu = do
         else getFromFile menu
     else Exception.throwIO $ NoSuchMenu menu
 
-getFromFolder :: FilePath -> IO (Map.Map Ir.Option FilePath)
+getFromFolder :: FilePath -> IO Menu.Menu
 getFromFolder menu = do
   folderEntries <- Directory.listDirectory menu
   options <-
     Monad.filterM
       (Directory.doesDirectoryExist . FilePath.combine menu)
       folderEntries
-  let optionToDish =
-        Map.fromList $
-        fmap
-          (\option ->
-             ( Ir.Option $ T.pack option
-             , FilePath.joinPath [menu, option, "Dockerfile"]))
-          options
-  pure optionToDish
+  pure
+    Menu.Menu
+      { Menu.optionToDish =
+          Map.fromList $
+          fmap
+            (\option ->
+               ( Ir.Option $ T.pack option
+               , FilePath.joinPath [menu, option, "Dockerfile"]))
+            options
+      }
 
-getFromFile :: FilePath -> IO (Map.Map Ir.Option FilePath)
+getFromFile :: FilePath -> IO Menu.Menu
 getFromFile menu = do
   unresolvedOptionToDish <-
     ExceptionTools.eitherThrow (ParseException menu) $
     Yaml.decodeFileEither menu
-  let optionToDish = fmap (FilePath.combine folder) unresolvedOptionToDish
-  pure optionToDish
+  pure
+    Menu.Menu
+      { Menu.optionToDish =
+          fmap (FilePath.combine folder) unresolvedOptionToDish
+      }
   where
     folder = FilePath.takeDirectory menu
