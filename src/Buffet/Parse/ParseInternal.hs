@@ -3,9 +3,9 @@ module Buffet.Parse.ParseInternal
   ) where
 
 import qualified Buffet.Ir.Ir as Ir
-import qualified Buffet.Parse.GetSourcePaths as GetSourcePaths
 import qualified Buffet.Parse.ParseHealthCheck as ParseHealthCheck
 import qualified Buffet.Parse.ParseInstructionPartition as ParseInstructionPartition
+import qualified Buffet.Parse.ParseMenu as ParseMenu
 import qualified Buffet.Parse.ParseMetadata as ParseMetadata
 import qualified Buffet.Toolbox.ExceptionTools as ExceptionTools
 import qualified Control.Exception as Exception
@@ -23,11 +23,10 @@ instance Show Exception where
 instance Exception.Exception Exception
 
 get :: FilePath -> IO Ir.Buffet
-get buffetPath = do
-  optionToDishPath <- GetSourcePaths.get buffetPath
+get menuSource = do
+  menu <- ParseMenu.get menuSource
   optionToDish <-
-    ExceptionTools.sequenceAccumulatingExceptions $
-    fmap parseDockerfile optionToDishPath
+    ExceptionTools.sequenceAccumulatingExceptions $ fmap parseDockerfile menu
   pure $ parseBuffet optionToDish
 
 parseDockerfile :: FilePath -> IO Docker.Dockerfile

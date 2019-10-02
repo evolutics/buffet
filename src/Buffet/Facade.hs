@@ -27,27 +27,27 @@ data Command
 
 newtype BuildArguments =
   BuildArguments
-    { buildBuffet :: FilePath
+    { buildMenu :: FilePath
     }
   deriving (Eq, Ord, Show)
 
 data DocumentArguments =
   DocumentArguments
     { documentTemplate :: Maybe FilePath
-    , documentBuffet :: FilePath
+    , documentMenu :: FilePath
     }
   deriving (Eq, Ord, Show)
 
 newtype ParseArguments =
   ParseArguments
-    { parseBuffet :: FilePath
+    { parseMenu :: FilePath
     }
   deriving (Eq, Ord, Show)
 
 data TestArguments =
   TestArguments
     { testArguments :: Maybe FilePath
-    , testBuffet :: FilePath
+    , testMenu :: FilePath
     }
   deriving (Eq, Ord, Show)
 
@@ -60,21 +60,21 @@ get command =
     Test arguments -> test arguments
 
 build :: BuildArguments -> IO ()
-build arguments = Build.get (buildBuffet arguments) >>= T.IO.putStr
+build arguments = Build.get (buildMenu arguments) >>= T.IO.putStr
 
 document :: DocumentArguments -> IO ()
 document arguments =
-  Document.get configuration (documentBuffet arguments) >>= T.IO.putStr
+  Document.get configuration (documentMenu arguments) >>= T.IO.putStr
   where
     configuration =
       Document.Configuration {Document.template = documentTemplate arguments}
 
 parse :: ParseArguments -> IO ()
-parse arguments = Parse.get (parseBuffet arguments) >>= T.IO.putStr
+parse arguments = Parse.get (parseMenu arguments) >>= T.IO.putStr
 
 test :: TestArguments -> IO ()
 test arguments =
-  Test.get configuration (testBuffet arguments) >>= uncurry exitPrintingStdout
+  Test.get configuration (testMenu arguments) >>= uncurry exitPrintingStdout
   where
     configuration =
       Test.Configuration {Test.arguments = testArguments arguments}
