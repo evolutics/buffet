@@ -5,7 +5,18 @@ module Buffet
 import qualified Buffet.Facade as Facade
 import qualified Control.Applicative as Applicative
 import qualified Options.Applicative as Options
-import Prelude (IO, ($), (<$>), (<*>), (<>), (>>=), fmap, mconcat, mempty)
+import Prelude
+  ( FilePath
+  , IO
+  , ($)
+  , (<$>)
+  , (<*>)
+  , (<>)
+  , (>>=)
+  , fmap
+  , mconcat
+  , mempty
+  )
 
 main :: IO ()
 main = Options.execParser (Options.info parser mempty) >>= Facade.get
@@ -21,9 +32,10 @@ parser =
     ]
 
 buildParser :: Options.Parser Facade.Command
-buildParser =
-  fmap Facade.Build $
-  Facade.BuildArguments <$>
+buildParser = fmap Facade.Build $ Facade.BuildArguments <$> buffetOperand
+
+buffetOperand :: Options.Parser FilePath
+buffetOperand =
   Options.argument Options.str (Options.metavar "buffet_yaml_file_or_folder")
 
 documentParser :: Options.Parser Facade.Command
@@ -33,13 +45,10 @@ documentParser =
   Applicative.optional
     (Options.strOption
        (Options.long "template" <> Options.metavar "mustache_file")) <*>
-  Options.argument Options.str (Options.metavar "buffet_yaml_file_or_folder")
+  buffetOperand
 
 parseParser :: Options.Parser Facade.Command
-parseParser =
-  fmap Facade.Parse $
-  Facade.ParseArguments <$>
-  Options.argument Options.str (Options.metavar "buffet_yaml_file_or_folder")
+parseParser = fmap Facade.Parse $ Facade.ParseArguments <$> buffetOperand
 
 testParser :: Options.Parser Facade.Command
 testParser =
@@ -47,4 +56,4 @@ testParser =
   Facade.TestArguments <$>
   Applicative.optional
     (Options.strOption (Options.long "arguments" <> Options.metavar "yaml_file")) <*>
-  Options.argument Options.str (Options.metavar "buffet_yaml_file_or_folder")
+  buffetOperand
