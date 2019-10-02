@@ -24,26 +24,27 @@ buildParser :: Options.Parser Facade.Command
 buildParser =
   fmap Facade.Build $
   Facade.BuildArguments <$>
-  Options.argument Options.str (Options.metavar "source")
+  Options.argument Options.str (Options.metavar "buffet_yaml_file_or_folder")
 
 documentParser :: Options.Parser Facade.Command
 documentParser =
   fmap Facade.Document $
   Facade.DocumentArguments <$>
   Applicative.optional
-    (Options.strOption (Options.long "template" <> Options.metavar "file")) <*>
-  Options.argument Options.str (Options.metavar "source")
+    (Options.strOption
+       (Options.long "template" <> Options.metavar "mustache_file")) <*>
+  Options.argument Options.str (Options.metavar "buffet_yaml_file_or_folder")
 
 parseParser :: Options.Parser Facade.Command
 parseParser =
   fmap Facade.Parse $
   Facade.ParseArguments <$>
-  Options.argument Options.str (Options.metavar "source")
+  Options.argument Options.str (Options.metavar "buffet_yaml_file_or_folder")
 
 testParser :: Options.Parser Facade.Command
 testParser =
   fmap Facade.Test $
   Facade.TestArguments <$>
   Applicative.optional
-    (Options.strOption (Options.long "arguments" <> Options.metavar "arguments")) <*>
-  Options.argument Options.str (Options.metavar "source")
+    (Options.strOption (Options.long "arguments" <> Options.metavar "yaml_file")) <*>
+  Options.argument Options.str (Options.metavar "buffet_yaml_file_or_folder")
