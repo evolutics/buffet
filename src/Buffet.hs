@@ -24,26 +24,26 @@ buildParser :: Options.Parser Facade.Command
 buildParser =
   fmap Facade.Build $
   Facade.BuildArguments <$>
-  Options.argument Options.str (Options.metavar "SOURCE")
+  Options.argument Options.str (Options.metavar "source")
 
 documentParser :: Options.Parser Facade.Command
 documentParser =
   fmap Facade.Document $
   Facade.DocumentArguments <$>
   Applicative.optional
-    (Options.strOption (Options.long "template" <> Options.metavar "FILE")) <*>
-  Options.argument Options.str (Options.metavar "SOURCE")
+    (Options.strOption (Options.long "template" <> Options.metavar "file")) <*>
+  Options.argument Options.str (Options.metavar "source")
 
 parseParser :: Options.Parser Facade.Command
 parseParser =
   fmap Facade.Parse $
   Facade.ParseArguments <$>
-  Options.argument Options.str (Options.metavar "SOURCE")
+  Options.argument Options.str (Options.metavar "source")
 
 testParser :: Options.Parser Facade.Command
 testParser =
   fmap Facade.Test $
   Facade.TestArguments <$>
   Applicative.optional
-    (Options.strOption (Options.long "arguments" <> Options.metavar "ARGUMENTS")) <*>
-  Options.argument Options.str (Options.metavar "SOURCE")
+    (Options.strOption (Options.long "arguments" <> Options.metavar "arguments")) <*>
+  Options.argument Options.str (Options.metavar "source")
