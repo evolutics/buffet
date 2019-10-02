@@ -22,14 +22,16 @@ main :: IO ()
 main = Options.execParser (Options.info parser mempty) >>= Facade.get
 
 parser :: Options.Parser Facade.Command
-parser =
-  Options.hsubparser $
-  mconcat
-    [ Options.command "build" (Options.info buildParser mempty)
-    , Options.command "document" (Options.info documentParser mempty)
-    , Options.command "parse" (Options.info parseParser mempty)
-    , Options.command "test" (Options.info testParser mempty)
-    ]
+parser = Options.helper <*> helpless
+  where
+    helpless =
+      Options.hsubparser $
+      mconcat
+        [ Options.command "build" (Options.info buildParser mempty)
+        , Options.command "document" (Options.info documentParser mempty)
+        , Options.command "parse" (Options.info parseParser mempty)
+        , Options.command "test" (Options.info testParser mempty)
+        ]
 
 buildParser :: Options.Parser Facade.Command
 buildParser = fmap Facade.Build $ Facade.BuildArguments <$> buffetOperand
