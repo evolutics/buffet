@@ -34,7 +34,7 @@ tests =
     ]
   where
     mainDockerfileTest =
-      TestTools.assertFileEqualsText "Main" "Dockerfile" $ build ["dockerfiles"]
+      TestTools.assertFileEqualsText "Main" "Dockerfile" $ build ["menu.yaml"]
 
 buildTests :: FilePath -> IO [Tasty.TestTree]
 buildTests = TestTools.folderBasedTests assert

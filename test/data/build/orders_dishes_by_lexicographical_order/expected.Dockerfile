@@ -1,6 +1,6 @@
 ARG Foo=''
 ARG bar=''
-ARG base_image='alpine:3.9.4'
+ARG base_image='alpine:latest'
 ARG foo=''
 
 FROM "${base_image}"

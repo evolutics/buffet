@@ -22,7 +22,7 @@ defaultMenu :: Menu
 defaultMenu =
   Menu
     { baseImageOption = Ir.Option $ T.pack "base_image"
-    , baseImageDefault = T.pack "alpine:3.9.4"
+    , baseImageDefault = T.pack "alpine:latest"
     , workdir = "/workdir"
     , optimize = True
     , optionToDish = Map.empty

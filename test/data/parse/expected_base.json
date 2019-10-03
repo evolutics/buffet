@@ -1,6 +1,6 @@
 {
   "base_image_option": "base_image",
-  "base_image_default": "alpine:3.9.4",
+  "base_image_default": "alpine:latest",
   "workdir": "/workdir",
   "optimize": true,
   "option_to_dish": {
