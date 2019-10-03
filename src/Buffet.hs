@@ -22,9 +22,9 @@ main :: IO ()
 main = Options.execParser (Options.info parser mempty) >>= Facade.get
 
 parser :: Options.Parser Facade.Command
-parser = Options.helper <*> helpless
+parser = Options.helper <*> versionOption <*> raw
   where
-    helpless =
+    raw =
       Options.hsubparser $
       mconcat
         [ Options.command "build" (Options.info buildParser mempty)
@@ -32,6 +32,20 @@ parser = Options.helper <*> helpless
         , Options.command "parse" (Options.info parseParser mempty)
         , Options.command "test" (Options.info testParser mempty)
         ]
+
+versionOption :: Options.Parser (a -> a)
+versionOption =
+  Options.infoOption "Buffet 0.1.0" $
+  mconcat
+    [ Options.long "version"
+    , Options.help $
+      mconcat
+        [ "Prints the program name with version on stdout "
+        , "and exits successfully "
+        , "according to the GNU coding standards."
+        ]
+    , Options.hidden
+    ]
 
 buildParser :: Options.Parser Facade.Command
 buildParser = fmap Facade.Build $ Facade.BuildArguments <$> menuOperand
