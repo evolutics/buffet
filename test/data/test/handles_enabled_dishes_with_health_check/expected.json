@@ -1,6 +1,6 @@
 {
-  "git": {
+  "example": {
     "health_check_passed": true,
-    "option_value": "2.22.0-r0"
+    "option_value": "1.2.3"
   }
 }
