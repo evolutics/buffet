@@ -18,11 +18,15 @@ import qualified Data.Ord as Ord
 import qualified Data.Text as T
 import qualified Data.Yaml as Yaml
 import qualified Language.Docker as Docker
-import Prelude (Eq, Maybe, Ord, Show, (.), fmap)
+import Prelude (Bool, Eq, FilePath, Maybe, Ord, Show, (.), fmap)
 
-newtype Buffet =
+data Buffet =
   Buffet
-    { optionToDish :: Map.Map Option Dish
+    { baseImageOption :: Option
+    , baseImageDefault :: T.Text
+    , workdir :: FilePath
+    , optimize :: Bool
+    , optionToDish :: Map.Map Option Dish
     }
   deriving (Eq, Ord, Show)
 

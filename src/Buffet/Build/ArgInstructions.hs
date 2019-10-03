@@ -2,7 +2,6 @@ module Buffet.Build.ArgInstructions
   ( get
   ) where
 
-import qualified Buffet.Build.Configuration as Configuration
 import qualified Buffet.Ir.Ir as Ir
 import qualified Data.List as List
 import qualified Data.Map.Strict as Map
@@ -21,22 +20,16 @@ import Prelude
   , uncurry
   )
 
-get :: Configuration.Configuration -> Ir.Buffet -> [Ir.DockerfilePart]
-get configuration buffet =
-  [ List.sort $
-    [baseImageArgInstruction configuration] <> dishesArgInstructions buffet
-  ]
+get :: Ir.Buffet -> [Ir.DockerfilePart]
+get buffet =
+  [List.sort $ [baseImageArgInstruction buffet] <> dishesArgInstructions buffet]
 
-baseImageArgInstruction :: Configuration.Configuration -> Docker.Instruction a
-baseImageArgInstruction configuration = Docker.Arg option $ Just value
+baseImageArgInstruction :: Ir.Buffet -> Docker.Instruction a
+baseImageArgInstruction buffet = Docker.Arg option $ Just value
   where
-    option = Ir.option $ Configuration.baseImageOption configuration
+    option = Ir.option $ Ir.baseImageOption buffet
     value =
-      mconcat
-        [ T.singleton '\''
-        , Configuration.baseImageDefault configuration
-        , T.singleton '\''
-        ]
+      mconcat [T.singleton '\'', Ir.baseImageDefault buffet, T.singleton '\'']
 
 dishesArgInstructions :: Ir.Buffet -> Ir.DockerfilePart
 dishesArgInstructions =

@@ -31,7 +31,14 @@ parseBuffet menu = do
   optionToDish <-
     ExceptionTools.sequenceAccumulatingExceptions . fmap parseDockerfile $
     Menu.optionToDish menu
-  pure Ir.Buffet {Ir.optionToDish = fmap parseDish optionToDish}
+  pure
+    Ir.Buffet
+      { Ir.baseImageOption = Menu.baseImageOption menu
+      , Ir.baseImageDefault = Menu.baseImageDefault menu
+      , Ir.workdir = Menu.workdir menu
+      , Ir.optimize = Menu.optimize menu
+      , Ir.optionToDish = fmap parseDish optionToDish
+      }
 
 parseDockerfile :: FilePath -> IO Docker.Dockerfile
 parseDockerfile = ExceptionTools.eitherThrow Exception . Docker.parseFile

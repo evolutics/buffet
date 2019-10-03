@@ -19,7 +19,7 @@ get menu = do
       (Directory.doesDirectoryExist . FilePath.combine menu)
       folderEntries
   pure
-    Menu.Menu
+    Menu.defaultMenu
       { Menu.optionToDish =
           Map.fromList $
           fmap

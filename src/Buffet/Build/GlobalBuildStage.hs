@@ -3,7 +3,6 @@ module Buffet.Build.GlobalBuildStage
   ) where
 
 import qualified Buffet.Build.ConditionInstructions as ConditionInstructions
-import qualified Buffet.Build.Configuration as Configuration
 import qualified Buffet.Build.PrepareOptionArgInstruction as PrepareOptionArgInstruction
 import qualified Buffet.Build.ScheduleParallelInstructions as ScheduleParallelInstructions
 import qualified Buffet.Ir.Ir as Ir
@@ -22,16 +21,16 @@ import Prelude
   , uncurry
   )
 
-get :: Configuration.Configuration -> Ir.Buffet -> [Ir.DockerfilePart]
-get configuration buffet =
+get :: Ir.Buffet -> [Ir.DockerfilePart]
+get buffet =
   concat
-    [ [[fromInstruction configuration]]
-    , dishesInstructions configuration buffet
-    , [[workdirInstruction configuration]]
+    [ [[fromInstruction buffet]]
+    , dishesInstructions buffet
+    , [[workdirInstruction buffet]]
     ]
 
-fromInstruction :: Configuration.Configuration -> Docker.Instruction T.Text
-fromInstruction configuration =
+fromInstruction :: Ir.Buffet -> Docker.Instruction T.Text
+fromInstruction buffet =
   Docker.From
     Docker.BaseImage
       { Docker.image =
@@ -40,7 +39,7 @@ fromInstruction configuration =
             , Docker.imageName =
                 mconcat
                   [ T.pack "\"${"
-                  , Ir.option $ Configuration.baseImageOption configuration
+                  , Ir.option $ Ir.baseImageOption buffet
                   , T.pack "}\""
                   ]
             }
@@ -50,16 +49,14 @@ fromInstruction configuration =
       , Docker.platform = Nothing
       }
 
-dishesInstructions ::
-     Configuration.Configuration -> Ir.Buffet -> [Ir.DockerfilePart]
-dishesInstructions configuration =
-  optimize configuration .
-  fmap (uncurry dishInstructions) . Map.toAscList . Ir.optionToDish
+dishesInstructions :: Ir.Buffet -> [Ir.DockerfilePart]
+dishesInstructions buffet =
+  optimize buffet . fmap (uncurry dishInstructions) . Map.toAscList $
+  Ir.optionToDish buffet
 
-optimize ::
-     Configuration.Configuration -> [Ir.DockerfilePart] -> [Ir.DockerfilePart]
-optimize configuration =
-  if Configuration.optimize configuration
+optimize :: Ir.Buffet -> [Ir.DockerfilePart] -> [Ir.DockerfilePart]
+optimize buffet =
+  if Ir.optimize buffet
     then pure . ScheduleParallelInstructions.get
     else id
 
@@ -69,5 +66,5 @@ dishInstructions option =
   PrepareOptionArgInstruction.get option .
   Ir.globalBuildStage . Ir.instructionPartition
 
-workdirInstruction :: Configuration.Configuration -> Docker.Instruction T.Text
-workdirInstruction = Docker.Workdir . T.pack . Configuration.workdir
+workdirInstruction :: Ir.Buffet -> Docker.Instruction T.Text
+workdirInstruction = Docker.Workdir . T.pack . Ir.workdir

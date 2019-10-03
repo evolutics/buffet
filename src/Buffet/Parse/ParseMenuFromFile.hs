@@ -23,7 +23,7 @@ get menu = do
   unresolvedOptionToDish <-
     ExceptionTools.eitherThrow (Exception menu) $ Yaml.decodeFileEither menu
   pure
-    Menu.Menu
+    Menu.defaultMenu
       { Menu.optionToDish =
           fmap (FilePath.combine folder) unresolvedOptionToDish
       }
