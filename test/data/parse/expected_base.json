@@ -1,4 +1,8 @@
 {
+  "base_image_option": "base_image",
+  "base_image_default": "alpine:3.9.4",
+  "workdir": "/workdir",
+  "optimize": true,
   "option_to_dish": {
     "example": {
       "metadata": { "title": "", "url": "", "tags": {} },

@@ -13,11 +13,15 @@ import qualified Data.Text as T
 import qualified Data.Text.Lazy as Lazy
 import qualified GHC.Generics as Generics
 import qualified Language.Docker as Docker
-import Prelude (Eq, Maybe, Ord, Show, ($), (.), (<$>), fmap)
+import Prelude (Bool, Eq, FilePath, Maybe, Ord, Show, ($), (.), (<$>), fmap)
 
-newtype Buffet =
+data Buffet =
   Buffet
-    { optionToDish :: Map.Map Ir.Option Dish
+    { baseImageOption :: Ir.Option
+    , baseImageDefault :: T.Text
+    , workdir :: FilePath
+    , optimize :: Bool
+    , optionToDish :: Map.Map Ir.Option Dish
     }
   deriving (Eq, Generics.Generic, Ord, Show)
 
@@ -64,7 +68,13 @@ get = TextTools.decodeUtf8 . Aeson.encode . transformBuffet
 
 transformBuffet :: Ir.Buffet -> Buffet
 transformBuffet buffet =
-  Buffet {optionToDish = transformDish <$> Ir.optionToDish buffet}
+  Buffet
+    { baseImageOption = Ir.baseImageOption buffet
+    , baseImageDefault = Ir.baseImageDefault buffet
+    , workdir = Ir.workdir buffet
+    , optimize = Ir.optimize buffet
+    , optionToDish = transformDish <$> Ir.optionToDish buffet
+    }
 
 transformDish :: Ir.Dish -> Dish
 transformDish dish =
