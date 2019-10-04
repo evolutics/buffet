@@ -22,7 +22,7 @@ main :: IO ()
 main = Options.execParser (Options.info parser mempty) >>= Facade.get
 
 parser :: Options.Parser Facade.Command
-parser = Options.helper <*> versionOption <*> raw
+parser = helpOption <*> versionOption <*> raw
   where
     raw =
       Options.hsubparser $
@@ -32,6 +32,16 @@ parser = Options.helper <*> versionOption <*> raw
         , Options.command "parse" (Options.info parseParser mempty)
         , Options.command "test" (Options.info testParser mempty)
         ]
+
+helpOption :: Options.Parser (a -> a)
+helpOption =
+  Options.abortOption Options.ShowHelpText $
+  mconcat
+    [ Options.long "help"
+    , Options.short 'h'
+    , Options.help "Prints this help text on stdout and exits successfully."
+    , Options.hidden
+    ]
 
 versionOption :: Options.Parser (a -> a)
 versionOption =
