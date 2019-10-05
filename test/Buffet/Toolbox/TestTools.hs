@@ -4,7 +4,6 @@ module Buffet.Toolbox.TestTools
   , folderBasedTests
   ) where
 
-import qualified Buffet.Toolbox.JsonTools as JsonTools
 import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Control.Monad as Monad
 import qualified Data.Aeson as Aeson
@@ -13,16 +12,22 @@ import qualified Data.HashMap.Strict as HashMap
 import qualified Data.HashSet as Set
 import qualified Data.List as List
 import qualified Data.Text as T
+import qualified Data.Text.Encoding as Encoding
 import qualified Data.Vector as Vector
 import Prelude
-  ( FilePath
+  ( Either
+  , FilePath
   , IO
   , String
   , ($)
   , (.)
+  , (<$>)
   , (<>)
+  , either
+  , error
   , fmap
   , fst
+  , id
   , sequence_
   , show
   , snd
@@ -47,10 +52,13 @@ assertJsonFileIsSubstructureOfText ::
      Tasty.TestName -> FilePath -> IO T.Text -> Tasty.TestTree
 assertJsonFileIsSubstructureOfText name rawExpected rawActualAction =
   HUnit.testCase name $ do
-    expected <- JsonTools.decodeFile rawExpected
+    expected <- get <$> Aeson.eitherDecodeFileStrict rawExpected
     rawActual <- rawActualAction
-    let actual = JsonTools.decodeText rawActual
+    let actual = get . Aeson.eitherDecodeStrict $ Encoding.encodeUtf8 rawActual
     assertJsonIsSubstructure expected actual
+  where
+    get :: Either String Aeson.Value -> Aeson.Value
+    get = either error id
 
 assertJsonIsSubstructure :: Aeson.Value -> Aeson.Value -> HUnit.Assertion
 assertJsonIsSubstructure = assert []
