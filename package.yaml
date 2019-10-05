@@ -71,3 +71,4 @@ tests:
       - text
       - typed-process
       - unordered-containers
+      - vector

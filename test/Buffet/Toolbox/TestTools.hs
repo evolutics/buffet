@@ -1,6 +1,6 @@
 module Buffet.Toolbox.TestTools
   ( assertFileEqualsText
-  , assertJsonComposedFileEqualsText
+  , assertJsonFileIsSubstructureOfText
   , folderBasedTests
   ) where
 
@@ -8,9 +8,26 @@ import qualified Buffet.Toolbox.JsonTools as JsonTools
 import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Control.Monad as Monad
 import qualified Data.Aeson as Aeson
+import qualified Data.Function as Function
+import qualified Data.HashMap.Strict as HashMap
+import qualified Data.HashSet as Set
 import qualified Data.List as List
 import qualified Data.Text as T
-import Prelude (FilePath, IO, ($), (.), fmap, traverse)
+import qualified Data.Vector as Vector
+import Prelude
+  ( FilePath
+  , IO
+  , String
+  , ($)
+  , (.)
+  , (<>)
+  , fmap
+  , fst
+  , sequence_
+  , show
+  , snd
+  , traverse
+  )
 import qualified System.Directory as Directory
 import qualified System.FilePath as FilePath
 import qualified Test.Tasty as Tasty
@@ -26,15 +43,45 @@ assertFileEqualsText name expected actualAction =
       ["diff", "--unified", expectedFile, actualFile]
     actualBinaryAction = fmap TextTools.encodeUtf8 actualAction
 
-assertJsonComposedFileEqualsText ::
-     Tasty.TestName -> Aeson.Value -> FilePath -> IO T.Text -> Tasty.TestTree
-assertJsonComposedFileEqualsText name expectedBase rawExpectedOverride rawActualAction =
+assertJsonFileIsSubstructureOfText ::
+     Tasty.TestName -> FilePath -> IO T.Text -> Tasty.TestTree
+assertJsonFileIsSubstructureOfText name rawExpected rawActualAction =
   HUnit.testCase name $ do
-    expectedOverride <- JsonTools.decodeFile rawExpectedOverride
-    let expected = JsonTools.merge expectedBase expectedOverride
+    expected <- JsonTools.decodeFile rawExpected
     rawActual <- rawActualAction
     let actual = JsonTools.decodeText rawActual
-    HUnit.assertEqual "" expected actual
+    assertJsonIsSubstructure expected actual
+
+assertJsonIsSubstructure :: Aeson.Value -> Aeson.Value -> HUnit.Assertion
+assertJsonIsSubstructure = assert []
+  where
+    assert path (Aeson.Object expected) (Aeson.Object actual) = do
+      let missingKeys =
+            List.sort . Set.toList $
+            Function.on Set.difference HashMap.keysSet expected actual
+      HUnit.assertEqual (message path) [] missingKeys
+      let asserts =
+            fmap snd . List.sortOn fst . HashMap.toList $
+            HashMap.intersectionWithKey
+              (\key -> assert $ path <> [key])
+              expected
+              actual
+      sequence_ asserts
+    assert path (Aeson.Array expected) (Aeson.Array actual) = do
+      Function.on
+        (HUnit.assertEqual $ message path)
+        Vector.length
+        expected
+        actual
+      sequence_ $
+        Vector.izipWith
+          (\index -> assert (path <> [T.pack $ show index]))
+          expected
+          actual
+    assert path expected actual =
+      HUnit.assertEqual (message path) expected actual
+    message :: [T.Text] -> String
+    message = T.unpack . TextTools.decodeUtf8 . Aeson.encode
 
 folderBasedTests ::
      (Tasty.TestName -> FilePath -> IO Tasty.TestTree)
