@@ -40,7 +40,7 @@ buildTests = TestTools.folderBasedTests assert
   where
     assert name path =
       pure . TestTools.assertFileEqualsText name (expected path) $ actual path
-    expected path = FilePath.combine path "expected.Dockerfile"
+    expected path = FilePath.combine path "stdout.Dockerfile"
     actual path = build [path]
 
 build :: [String] -> IO T.Text
@@ -58,9 +58,9 @@ documentTests = TestTools.folderBasedTests assert
       hasCustomTemplate <- Directory.doesFileExist customTemplate
       let (expected, actual) =
             if hasCustomTemplate
-              then ( FilePath.combine path "expected.md"
+              then ( FilePath.combine path "stdout.md"
                    , document ["--template", customTemplate, path])
-              else (FilePath.combine path "expected.json", document [path])
+              else (FilePath.combine path "stdout.json", document [path])
       pure $ TestTools.assertFileEqualsText name expected actual
       where
         customTemplate = FilePath.combine path "template.md.mustache"
@@ -76,7 +76,7 @@ parseTests = TestTools.folderBasedTests assert
     assert name path =
       pure . TestTools.assertJsonFileIsSubstructureOfText name (expected path) $
       actual path
-    expected path = FilePath.combine path "expected.json"
+    expected path = FilePath.combine path "stdout.json"
     actual path = parse [path]
 
 parse :: [String] -> IO T.Text
@@ -96,7 +96,7 @@ testTests = TestTools.folderBasedTests assert
       pure $ TestTools.assertFileEqualsText name expected actual
       where
         customArguments = FilePath.combine path "arguments.yaml"
-        expected = FilePath.combine path "expected.json"
+        expected = FilePath.combine path "stdout.json"
 
 test :: [String] -> IO T.Text
 test =
