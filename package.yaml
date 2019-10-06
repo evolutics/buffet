@@ -1,10 +1,10 @@
 name: buffet
-version: "0.1.0"
-github: "evolutics/buffet"
+version: 0.1.0
+github: evolutics/buffet
 license: MIT
-author: "Benjamin Fischer"
-maintainer: "benjamin.fischer@evolutics.info"
-copyright: "2019 Benjamin Fischer"
+author: Benjamin Fischer
+maintainer: benjamin.fischer@evolutics.info
+copyright: 2019 Benjamin Fischer
 extra-source-files:
   - README.md
 # Metadata used when publishing your package

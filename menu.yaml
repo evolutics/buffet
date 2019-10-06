@@ -1,4 +1,4 @@
-base_image_default: "alpine:3.9.4"
+base_image_default: alpine:3.9.4
 option_to_dish:
   brittany: dockerfiles/brittany/Dockerfile
   git: dockerfiles/git/Dockerfile
