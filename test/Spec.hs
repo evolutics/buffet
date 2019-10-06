@@ -16,6 +16,7 @@ tests =
     , Tasty.testGroup "Document" <$> documentTests "test/data/document"
     , Tasty.testGroup "Parse" <$> parseTests "test/data/parse"
     , Tasty.testGroup "Test" <$> testTests "test/data/test"
+    , versionTest "test/data/version"
     , mainTest "test/data/main"
     ]
 
@@ -47,6 +48,9 @@ parseTests = TestTools.folderBasedTests $ assert configuration
 
 testTests :: FilePath -> IO [Tasty.TestTree]
 testTests = TestTools.folderBasedTests $ assert defaultConfiguration
+
+versionTest :: FilePath -> IO Tasty.TestTree
+versionTest = assert defaultConfiguration "Version"
 
 mainTest :: FilePath -> IO Tasty.TestTree
 mainTest = assert defaultConfiguration "Main"
