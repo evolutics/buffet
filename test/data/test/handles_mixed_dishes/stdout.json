@@ -8,6 +8,10 @@
     "option_value": "0.1.0"
   },
   "foo": {
+    "health_check_passed": false,
+    "option_value": "3.2.1"
+  },
+  "foobar": {
     "health_check_passed": null,
     "option_value": ""
   }
