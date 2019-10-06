@@ -58,23 +58,7 @@ executable :: FilePath
 executable = "buffet-exe"
 
 documentTests :: FilePath -> IO [Tasty.TestTree]
-documentTests = TestTools.folderBasedTests assert
-  where
-    assert name path = do
-      hasCustomTemplate <- Directory.doesFileExist customTemplate
-      let (expected, actual) =
-            if hasCustomTemplate
-              then ( FilePath.combine path "stdout.md"
-                   , document ["--template", customTemplate, path])
-              else (FilePath.combine path "stdout.json", document [path])
-      pure $ TestTools.assertFileEqualsText name expected actual
-      where
-        customTemplate = FilePath.combine path "template.md.mustache"
-
-document :: [String] -> IO T.Text
-document =
-  fmap TextTools.decodeUtf8 .
-  Process.readProcessStdout_ . Process.proc executable . ("document" :)
+documentTests = TestTools.folderBasedTests $ defaultAssert defaultConfiguration
 
 parseTests :: FilePath -> IO [Tasty.TestTree]
 parseTests = TestTools.folderBasedTests assert
