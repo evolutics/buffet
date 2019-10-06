@@ -1,22 +1,7 @@
 import qualified Buffet.Toolbox.TestTools as TestTools
 import qualified Buffet.Toolbox.TestUtility as TestUtility
-import qualified Buffet.Toolbox.TextTools as TextTools
-import qualified Data.Text as T
-import Prelude
-  ( FilePath
-  , IO
-  , String
-  , ($)
-  , (.)
-  , (<$>)
-  , (>>=)
-  , flip
-  , fmap
-  , pure
-  , sequenceA
-  )
+import Prelude (FilePath, IO, ($), (.), (<$>), (>>=), flip, fmap, sequenceA)
 import qualified System.FilePath as FilePath
-import qualified System.Process.Typed as Process
 import qualified Test.Tasty as Tasty
 import qualified Test.Tasty.HUnit as HUnit
 
@@ -31,11 +16,8 @@ tests =
     , Tasty.testGroup "Document" <$> documentTests "test/data/document"
     , Tasty.testGroup "Parse" <$> parseTests "test/data/parse"
     , Tasty.testGroup "Test" <$> testTests "test/data/test"
-    , pure mainDockerfileTest
+    , mainTest "test/data/main"
     ]
-  where
-    mainDockerfileTest =
-      TestTools.assertFileEqualsText "Main" "Dockerfile" $ build ["menu.yaml"]
 
 buildTests :: FilePath -> IO [Tasty.TestTree]
 buildTests = TestTools.folderBasedTests $ assert defaultConfiguration
@@ -51,10 +33,7 @@ assert configuration name =
     testSource = flip FilePath.combine "test.yaml"
 
 defaultConfiguration :: TestUtility.Configuration
-defaultConfiguration = TestUtility.defaultConfiguration executable
-
-executable :: FilePath
-executable = "buffet-exe"
+defaultConfiguration = TestUtility.defaultConfiguration "buffet-exe"
 
 documentTests :: FilePath -> IO [Tasty.TestTree]
 documentTests = TestTools.folderBasedTests $ assert defaultConfiguration
@@ -69,7 +48,5 @@ parseTests = TestTools.folderBasedTests $ assert configuration
 testTests :: FilePath -> IO [Tasty.TestTree]
 testTests = TestTools.folderBasedTests $ assert defaultConfiguration
 
-build :: [String] -> IO T.Text
-build =
-  fmap TextTools.decodeUtf8 .
-  Process.readProcessStdout_ . Process.proc executable . ("build" :)
+mainTest :: FilePath -> IO Tasty.TestTree
+mainTest = assert defaultConfiguration "Main"

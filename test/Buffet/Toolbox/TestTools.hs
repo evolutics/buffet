@@ -1,6 +1,5 @@
 module Buffet.Toolbox.TestTools
-  ( assertFileEqualsText
-  , assertJsonIsSubstructure
+  ( assertJsonIsSubstructure
   , folderBasedTests
   ) where
 
@@ -34,17 +33,7 @@ import Prelude
 import qualified System.Directory as Directory
 import qualified System.FilePath as FilePath
 import qualified Test.Tasty as Tasty
-import qualified Test.Tasty.Golden as Golden
 import qualified Test.Tasty.HUnit as HUnit
-
-assertFileEqualsText ::
-     Tasty.TestName -> FilePath -> IO T.Text -> Tasty.TestTree
-assertFileEqualsText name expected actualAction =
-  Golden.goldenVsStringDiff name diff expected actualBinaryAction
-  where
-    diff expectedFile actualFile =
-      ["diff", "--unified", expectedFile, actualFile]
-    actualBinaryAction = fmap TextTools.encodeUtf8 actualAction
 
 assertJsonIsSubstructure :: T.Text -> T.Text -> HUnit.Assertion
 assertJsonIsSubstructure = Function.on (assert []) getJson

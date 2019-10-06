@@ -67,7 +67,6 @@ tests:
       - directory
       - filepath
       - tasty
-      - tasty-golden
       - tasty-hunit
       - text
       - typed-process

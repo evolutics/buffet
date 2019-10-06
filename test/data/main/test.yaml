@@ -1,0 +1,5 @@
+arguments:
+  - build
+  - ["..", "..", "..", "menu.yaml"]
+stdout: ["..", "..", "..", Dockerfile]
+is_exit_status_success: true
