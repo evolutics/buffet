@@ -61,18 +61,11 @@ documentTests :: FilePath -> IO [Tasty.TestTree]
 documentTests = TestTools.folderBasedTests $ defaultAssert defaultConfiguration
 
 parseTests :: FilePath -> IO [Tasty.TestTree]
-parseTests = TestTools.folderBasedTests assert
+parseTests = TestTools.folderBasedTests $ defaultAssert configuration
   where
-    assert name path =
-      pure . TestTools.assertJsonFileIsSubstructureOfText name (expected path) $
-      actual path
-    expected path = FilePath.combine path "stdout.json"
-    actual path = parse [path]
-
-parse :: [String] -> IO T.Text
-parse =
-  fmap TextTools.decodeUtf8 .
-  Process.readProcessStdout_ . Process.proc executable . ("parse" :)
+    configuration =
+      defaultConfiguration
+        {TestUtility.assertStdout = TestTools.assertJsonIsSubstructure}
 
 testTests :: FilePath -> IO [Tasty.TestTree]
 testTests = TestTools.folderBasedTests assert

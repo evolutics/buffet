@@ -1,6 +1,6 @@
 module Buffet.Toolbox.TestTools
   ( assertFileEqualsText
-  , assertJsonFileIsSubstructureOfText
+  , assertJsonIsSubstructure
   , folderBasedTests
   ) where
 
@@ -15,13 +15,11 @@ import qualified Data.Text as T
 import qualified Data.Text.Encoding as Encoding
 import qualified Data.Vector as Vector
 import Prelude
-  ( Either
-  , FilePath
+  ( FilePath
   , IO
   , String
   , ($)
   , (.)
-  , (<$>)
   , (<>)
   , either
   , error
@@ -48,20 +46,8 @@ assertFileEqualsText name expected actualAction =
       ["diff", "--unified", expectedFile, actualFile]
     actualBinaryAction = fmap TextTools.encodeUtf8 actualAction
 
-assertJsonFileIsSubstructureOfText ::
-     Tasty.TestName -> FilePath -> IO T.Text -> Tasty.TestTree
-assertJsonFileIsSubstructureOfText name rawExpected rawActualAction =
-  HUnit.testCase name $ do
-    expected <- get <$> Aeson.eitherDecodeFileStrict rawExpected
-    rawActual <- rawActualAction
-    let actual = get . Aeson.eitherDecodeStrict $ Encoding.encodeUtf8 rawActual
-    assertJsonIsSubstructure expected actual
-  where
-    get :: Either String Aeson.Value -> Aeson.Value
-    get = either error id
-
-assertJsonIsSubstructure :: Aeson.Value -> Aeson.Value -> HUnit.Assertion
-assertJsonIsSubstructure = assert []
+assertJsonIsSubstructure :: T.Text -> T.Text -> HUnit.Assertion
+assertJsonIsSubstructure = Function.on (assert []) getJson
   where
     assert path (Aeson.Object expected) (Aeson.Object actual) = do
       let missingKeys =
@@ -90,6 +76,8 @@ assertJsonIsSubstructure = assert []
       HUnit.assertEqual (message path) expected actual
     message :: [T.Text] -> String
     message = T.unpack . TextTools.decodeUtf8 . Aeson.encode
+    getJson :: T.Text -> Aeson.Value
+    getJson = either error id . Aeson.eitherDecodeStrict . Encoding.encodeUtf8
 
 folderBasedTests ::
      (Tasty.TestName -> FilePath -> IO Tasty.TestTree)
