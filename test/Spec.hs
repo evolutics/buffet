@@ -1,4 +1,5 @@
 import qualified Buffet.Toolbox.TestTools as TestTools
+import qualified Buffet.Toolbox.TestUtility as TestUtility
 import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Data.Text as T
 import Prelude
@@ -9,6 +10,7 @@ import Prelude
   , (.)
   , (<$>)
   , (>>=)
+  , flip
   , fmap
   , pure
   , sequenceA
@@ -17,6 +19,7 @@ import qualified System.Directory as Directory
 import qualified System.FilePath as FilePath
 import qualified System.Process.Typed as Process
 import qualified Test.Tasty as Tasty
+import qualified Test.Tasty.HUnit as HUnit
 
 main :: IO ()
 main = tests >>= Tasty.defaultMain
@@ -36,17 +39,20 @@ tests =
       TestTools.assertFileEqualsText "Main" "Dockerfile" $ build ["menu.yaml"]
 
 buildTests :: FilePath -> IO [Tasty.TestTree]
-buildTests = TestTools.folderBasedTests assert
-  where
-    assert name path =
-      pure . TestTools.assertFileEqualsText name (expected path) $ actual path
-    expected path = FilePath.combine path "stdout.Dockerfile"
-    actual path = build [path]
+buildTests = TestTools.folderBasedTests $ defaultAssert defaultConfiguration
 
-build :: [String] -> IO T.Text
-build =
-  fmap TextTools.decodeUtf8 .
-  Process.readProcessStdout_ . Process.proc executable . ("build" :)
+defaultAssert ::
+     TestUtility.Configuration
+  -> Tasty.TestName
+  -> FilePath
+  -> IO Tasty.TestTree
+defaultAssert configuration name =
+  fmap (HUnit.testCase name) . TestUtility.get configuration . testSource
+  where
+    testSource = flip FilePath.combine "test.yaml"
+
+defaultConfiguration :: TestUtility.Configuration
+defaultConfiguration = TestUtility.defaultConfiguration executable
 
 executable :: FilePath
 executable = "buffet-exe"
@@ -102,3 +108,8 @@ test :: [String] -> IO T.Text
 test =
   fmap TextTools.decodeUtf8 .
   Process.readProcessStdout_ . Process.proc executable . ("test" :)
+
+build :: [String] -> IO T.Text
+build =
+  fmap TextTools.decodeUtf8 .
+  Process.readProcessStdout_ . Process.proc executable . ("build" :)
