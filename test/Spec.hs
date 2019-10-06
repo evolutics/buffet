@@ -15,7 +15,6 @@ import Prelude
   , pure
   , sequenceA
   )
-import qualified System.Directory as Directory
 import qualified System.FilePath as FilePath
 import qualified System.Process.Typed as Process
 import qualified Test.Tasty as Tasty
@@ -39,14 +38,14 @@ tests =
       TestTools.assertFileEqualsText "Main" "Dockerfile" $ build ["menu.yaml"]
 
 buildTests :: FilePath -> IO [Tasty.TestTree]
-buildTests = TestTools.folderBasedTests $ defaultAssert defaultConfiguration
+buildTests = TestTools.folderBasedTests $ assert defaultConfiguration
 
-defaultAssert ::
+assert ::
      TestUtility.Configuration
   -> Tasty.TestName
   -> FilePath
   -> IO Tasty.TestTree
-defaultAssert configuration name =
+assert configuration name =
   fmap (HUnit.testCase name) . TestUtility.get configuration . testSource
   where
     testSource = flip FilePath.combine "test.yaml"
@@ -58,33 +57,17 @@ executable :: FilePath
 executable = "buffet-exe"
 
 documentTests :: FilePath -> IO [Tasty.TestTree]
-documentTests = TestTools.folderBasedTests $ defaultAssert defaultConfiguration
+documentTests = TestTools.folderBasedTests $ assert defaultConfiguration
 
 parseTests :: FilePath -> IO [Tasty.TestTree]
-parseTests = TestTools.folderBasedTests $ defaultAssert configuration
+parseTests = TestTools.folderBasedTests $ assert configuration
   where
     configuration =
       defaultConfiguration
         {TestUtility.assertStdout = TestTools.assertJsonIsSubstructure}
 
 testTests :: FilePath -> IO [Tasty.TestTree]
-testTests = TestTools.folderBasedTests assert
-  where
-    assert name path = do
-      hasCustomArguments <- Directory.doesFileExist customArguments
-      let actual =
-            if hasCustomArguments
-              then test ["--arguments", customArguments, path]
-              else test [path]
-      pure $ TestTools.assertFileEqualsText name expected actual
-      where
-        customArguments = FilePath.combine path "arguments.yaml"
-        expected = FilePath.combine path "stdout.json"
-
-test :: [String] -> IO T.Text
-test =
-  fmap TextTools.decodeUtf8 .
-  Process.readProcessStdout_ . Process.proc executable . ("test" :)
+testTests = TestTools.folderBasedTests $ assert defaultConfiguration
 
 build :: [String] -> IO T.Text
 build =
