@@ -1,8 +1,8 @@
+ARG _base_image='alpine:latest'
 ARG bar=''
-ARG base_image='alpine:latest'
 ARG foo=''
 
-FROM "${base_image}"
+FROM "${_base_image}"
 
 ARG bar
 ARG foo

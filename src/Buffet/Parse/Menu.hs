@@ -21,7 +21,7 @@ data Menu =
 defaultMenu :: Menu
 defaultMenu =
   Menu
-    { baseImageOption = Ir.Option $ T.pack "base_image"
+    { baseImageOption = Ir.Option $ T.pack "_base_image"
     , baseImageDefault = T.pack "alpine:latest"
     , workdir = "/workdir"
     , optimize = True

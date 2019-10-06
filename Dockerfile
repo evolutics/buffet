@@ -1,4 +1,4 @@
-ARG base_image='alpine:3.9.4'
+ARG _base_image='alpine:3.9.4'
 ARG brittany=''
 ARG git=''
 ARG gitlint=''
@@ -14,7 +14,7 @@ RUN if [[ -n "${hindent}" ]]; then \
       "hindent-${hindent}" \
   ; fi
 
-FROM "${base_image}"
+FROM "${_base_image}"
 
 ARG brittany
 ARG git

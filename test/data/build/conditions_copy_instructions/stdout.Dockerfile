@@ -1,4 +1,4 @@
-ARG base_image='alpine:latest'
+ARG _base_image='alpine:latest'
 ARG example=''
 
 FROM alpine AS example
@@ -7,7 +7,7 @@ RUN if [[ -n "${example}" ]]; then \
     touch /root/example \
   ; fi
 
-FROM "${base_image}"
+FROM "${_base_image}"
 
 ARG example
 COPY --from=example /root/example* /var/empty /usr/local/bin/
