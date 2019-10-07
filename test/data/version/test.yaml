@@ -1,5 +1,5 @@
 arguments:
   - --version
-stdout: "Buffet 0.1.0\n"
+stdout: [.., .., .., package.yaml]
 stderr: ""
 is_exit_status_success: true

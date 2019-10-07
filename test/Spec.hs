@@ -1,5 +1,6 @@
 import qualified Buffet.Toolbox.TestTools as TestTools
 import qualified Buffet.Toolbox.TestUtility as TestUtility
+import qualified Buffet.Toolbox.TestVersion as TestVersion
 import Prelude (FilePath, IO, ($), (.), (<$>), (>>=), flip, fmap, sequenceA)
 import qualified System.FilePath as FilePath
 import qualified Test.Tasty as Tasty
@@ -50,7 +51,10 @@ testTests :: FilePath -> IO [Tasty.TestTree]
 testTests = TestTools.folderBasedTests $ assert defaultConfiguration
 
 versionTest :: FilePath -> IO Tasty.TestTree
-versionTest = assert defaultConfiguration "Version"
+versionTest = assert configuration "Version"
+  where
+    configuration =
+      defaultConfiguration {TestUtility.assertStdout = TestVersion.get}
 
 mainTest :: FilePath -> IO Tasty.TestTree
 mainTest = assert defaultConfiguration "Main"
