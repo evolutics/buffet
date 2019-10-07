@@ -1,7 +1,7 @@
 import qualified Buffet.Toolbox.TestTools as TestTools
 import qualified Buffet.Toolbox.TestUtility as TestUtility
 import qualified Buffet.Toolbox.TestVersion as TestVersion
-import Prelude (FilePath, IO, ($), (.), (<$>), (>>=), flip, fmap, sequenceA)
+import Prelude (FilePath, IO, ($), (.), (<$>), (>>=), flip, pure, sequenceA)
 import qualified System.FilePath as FilePath
 import qualified Test.Tasty as Tasty
 import qualified Test.Tasty.HUnit as HUnit
@@ -17,20 +17,17 @@ tests =
     , Tasty.testGroup "Document" <$> documentTests "test/data/document"
     , Tasty.testGroup "Parse" <$> parseTests "test/data/parse"
     , Tasty.testGroup "Test" <$> testTests "test/data/test"
-    , versionTest "test/data/version"
-    , mainTest "test/data/main"
+    , pure $ versionTest "test/data/version"
+    , pure $ mainTest "test/data/main"
     ]
 
 buildTests :: FilePath -> IO [Tasty.TestTree]
 buildTests = TestTools.folderBasedTests $ assert defaultConfiguration
 
 assert ::
-     TestUtility.Configuration
-  -> Tasty.TestName
-  -> FilePath
-  -> IO Tasty.TestTree
+     TestUtility.Configuration -> Tasty.TestName -> FilePath -> Tasty.TestTree
 assert configuration name =
-  fmap (HUnit.testCase name) . TestUtility.get configuration . testSource
+  HUnit.testCase name . TestUtility.get configuration . testSource
   where
     testSource = flip FilePath.combine "test.yaml"
 
@@ -50,11 +47,11 @@ parseTests = TestTools.folderBasedTests $ assert configuration
 testTests :: FilePath -> IO [Tasty.TestTree]
 testTests = TestTools.folderBasedTests $ assert defaultConfiguration
 
-versionTest :: FilePath -> IO Tasty.TestTree
+versionTest :: FilePath -> Tasty.TestTree
 versionTest = assert configuration "Version"
   where
     configuration =
       defaultConfiguration {TestUtility.assertStdout = TestVersion.get}
 
-mainTest :: FilePath -> IO Tasty.TestTree
+mainTest :: FilePath -> Tasty.TestTree
 mainTest = assert defaultConfiguration "Main"

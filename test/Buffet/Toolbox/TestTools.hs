@@ -25,10 +25,10 @@ import Prelude
   , fmap
   , fst
   , id
+  , pure
   , sequence_
   , show
   , snd
-  , traverse
   )
 import qualified System.Directory as Directory
 import qualified System.FilePath as FilePath
@@ -69,7 +69,7 @@ assertJsonIsSubstructure = Function.on (assert []) getJson
     getJson = either error id . Aeson.eitherDecodeStrict . Encoding.encodeUtf8
 
 folderBasedTests ::
-     (Tasty.TestName -> FilePath -> IO Tasty.TestTree)
+     (Tasty.TestName -> FilePath -> Tasty.TestTree)
   -> FilePath
   -> IO [Tasty.TestTree]
 folderBasedTests assert folder = do
@@ -78,7 +78,7 @@ folderBasedTests assert folder = do
     Monad.filterM
       (Directory.doesDirectoryExist . FilePath.combine folder)
       folderEntries
-  traverse assertSubfolder $ List.sort subfolders
+  pure . fmap assertSubfolder $ List.sort subfolders
   where
     assertSubfolder subfolder =
       assert subfolder $ FilePath.combine folder subfolder

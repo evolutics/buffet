@@ -8,6 +8,7 @@ module Buffet.Toolbox.TestUtility
   ) where
 
 import qualified Buffet.Toolbox.TextTools as TextTools
+import qualified Control.Monad as Monad
 import qualified Data.Aeson as Aeson
 import qualified Data.ByteString as ByteString
 import qualified Data.Foldable as Foldable
@@ -87,8 +88,31 @@ defaultConfiguration utility' =
     , assertStderr = HUnit.assertEqual "Stderr"
     }
 
-get :: Configuration -> FilePath -> IO HUnit.Assertion
-get configuration = fmap (assert configuration) . parse
+get :: Configuration -> FilePath -> HUnit.Assertion
+get configuration = parse Monad.>=> assert configuration
+
+parse :: FilePath -> IO Test
+parse test = do
+  raw <- Yaml.decodeFileThrow test
+  stdin' <- traverse getStream $ stdin raw
+  stdout' <- traverse getStream $ stdout raw
+  stderr' <- traverse getStream $ stderr raw
+  pure
+    Test
+      { givenArguments = fmap getArgument . Foldable.fold $ arguments raw
+      , givenStdin = stdin'
+      , isExpectedExitStatusSuccess = isExitStatusSuccess raw
+      , expectedStdout = stdout'
+      , expectedStderr = stderr'
+      }
+  where
+    getStream (Literal literal) = pure literal
+    getStream (Path path) = readFileUtf8 $ resolvePath path
+    readFileUtf8 = fmap Encoding.decodeUtf8 . ByteString.readFile
+    resolvePath path = FilePath.joinPath $ folder : fmap T.unpack path
+    folder = FilePath.takeDirectory test
+    getArgument (Literal literal) = literal
+    getArgument (Path path) = T.pack $ resolvePath path
 
 assert :: Configuration -> Test -> HUnit.Assertion
 assert configuration test = do
@@ -113,26 +137,3 @@ assert configuration test = do
     textInput = Process.byteStringInput . TextTools.encodeUtf8
     whenJust :: Maybe a -> (a -> IO ()) -> IO ()
     whenJust = flip . maybe $ pure ()
-
-parse :: FilePath -> IO Test
-parse test = do
-  raw <- Yaml.decodeFileThrow test
-  stdin' <- traverse getStream $ stdin raw
-  stdout' <- traverse getStream $ stdout raw
-  stderr' <- traverse getStream $ stderr raw
-  pure
-    Test
-      { givenArguments = fmap getArgument . Foldable.fold $ arguments raw
-      , givenStdin = stdin'
-      , isExpectedExitStatusSuccess = isExitStatusSuccess raw
-      , expectedStdout = stdout'
-      , expectedStderr = stderr'
-      }
-  where
-    getStream (Literal literal) = pure literal
-    getStream (Path path) = readFileUtf8 $ resolvePath path
-    readFileUtf8 = fmap Encoding.decodeUtf8 . ByteString.readFile
-    resolvePath path = FilePath.joinPath $ folder : fmap T.unpack path
-    folder = FilePath.takeDirectory test
-    getArgument (Literal literal) = literal
-    getArgument (Path path) = T.pack $ resolvePath path
