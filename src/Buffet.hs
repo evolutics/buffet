@@ -5,24 +5,14 @@ module Buffet
 import qualified Buffet.Facade as Facade
 import qualified Control.Applicative as Applicative
 import qualified Options.Applicative as Options
-import Prelude
-  ( FilePath
-  , IO
-  , ($)
-  , (<$>)
-  , (<*>)
-  , (<>)
-  , (>>=)
-  , fmap
-  , mconcat
-  , mempty
-  )
+import Prelude (FilePath, IO, ($), (<$>), (<*>), (<>), (>>=), fmap, mconcat)
 
 main :: IO ()
 main = Options.execParser root >>= Facade.get
 
 root :: Options.ParserInfo Facade.Command
-root = Options.info parser mempty
+root =
+  Options.info parser $ Options.progDesc "Assembles many Dockerfiles in one."
   where
     parser = helpOption <*> versionOption <*> raw
     raw =
@@ -59,7 +49,9 @@ versionOption =
     ]
 
 build :: Options.ParserInfo Facade.Command
-build = Options.info parser mempty
+build =
+  Options.info parser $
+  Options.progDesc "Assembles a Dockerfile from a list of Dockerfiles."
   where
     parser = fmap Facade.Build $ Facade.BuildArguments <$> menuOperand
 
@@ -67,7 +59,7 @@ menuOperand :: Options.Parser FilePath
 menuOperand = Options.argument Options.str (Options.metavar "menu")
 
 document :: Options.ParserInfo Facade.Command
-document = Options.info parser mempty
+document = Options.info parser $ Options.progDesc "Generates documentation."
   where
     parser =
       fmap Facade.Document $
@@ -78,12 +70,14 @@ document = Options.info parser mempty
       menuOperand
 
 parse :: Options.ParserInfo Facade.Command
-parse = Options.info parser mempty
+parse =
+  Options.info parser $
+  Options.progDesc "Prints an intermediate representation for API usage."
   where
     parser = fmap Facade.Parse $ Facade.ParseArguments <$> menuOperand
 
 test :: Options.ParserInfo Facade.Command
-test = Options.info parser mempty
+test = Options.info parser $ Options.progDesc "Performs health checks."
   where
     parser =
       fmap Facade.Test $
