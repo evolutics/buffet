@@ -19,18 +19,19 @@ import Prelude
   )
 
 main :: IO ()
-main = Options.execParser (Options.info parser mempty) >>= Facade.get
+main = Options.execParser root >>= Facade.get
 
-parser :: Options.Parser Facade.Command
-parser = helpOption <*> versionOption <*> raw
+root :: Options.ParserInfo Facade.Command
+root = Options.info parser mempty
   where
+    parser = helpOption <*> versionOption <*> raw
     raw =
       Options.hsubparser $
       mconcat
-        [ Options.command "build" (Options.info buildParser mempty)
-        , Options.command "document" (Options.info documentParser mempty)
-        , Options.command "parse" (Options.info parseParser mempty)
-        , Options.command "test" (Options.info testParser mempty)
+        [ Options.command "build" build
+        , Options.command "document" document
+        , Options.command "parse" parse
+        , Options.command "test" test
         ]
 
 helpOption :: Options.Parser (a -> a)
@@ -57,29 +58,38 @@ versionOption =
     , Options.hidden
     ]
 
-buildParser :: Options.Parser Facade.Command
-buildParser = fmap Facade.Build $ Facade.BuildArguments <$> menuOperand
+build :: Options.ParserInfo Facade.Command
+build = Options.info parser mempty
+  where
+    parser = fmap Facade.Build $ Facade.BuildArguments <$> menuOperand
 
 menuOperand :: Options.Parser FilePath
 menuOperand =
   Options.argument Options.str (Options.metavar "menu_yaml_file_or_folder")
 
-documentParser :: Options.Parser Facade.Command
-documentParser =
-  fmap Facade.Document $
-  Facade.DocumentArguments <$>
-  Applicative.optional
-    (Options.strOption
-       (Options.long "template" <> Options.metavar "mustache_file")) <*>
-  menuOperand
+document :: Options.ParserInfo Facade.Command
+document = Options.info parser mempty
+  where
+    parser =
+      fmap Facade.Document $
+      Facade.DocumentArguments <$>
+      Applicative.optional
+        (Options.strOption
+           (Options.long "template" <> Options.metavar "mustache_file")) <*>
+      menuOperand
 
-parseParser :: Options.Parser Facade.Command
-parseParser = fmap Facade.Parse $ Facade.ParseArguments <$> menuOperand
+parse :: Options.ParserInfo Facade.Command
+parse = Options.info parser mempty
+  where
+    parser = fmap Facade.Parse $ Facade.ParseArguments <$> menuOperand
 
-testParser :: Options.Parser Facade.Command
-testParser =
-  fmap Facade.Test $
-  Facade.TestArguments <$>
-  Applicative.optional
-    (Options.strOption (Options.long "arguments" <> Options.metavar "yaml_file")) <*>
-  menuOperand
+test :: Options.ParserInfo Facade.Command
+test = Options.info parser mempty
+  where
+    parser =
+      fmap Facade.Test $
+      Facade.TestArguments <$>
+      Applicative.optional
+        (Options.strOption
+           (Options.long "arguments" <> Options.metavar "yaml_file")) <*>
+      menuOperand
