@@ -64,8 +64,7 @@ build = Options.info parser mempty
     parser = fmap Facade.Build $ Facade.BuildArguments <$> menuOperand
 
 menuOperand :: Options.Parser FilePath
-menuOperand =
-  Options.argument Options.str (Options.metavar "menu_yaml_file_or_folder")
+menuOperand = Options.argument Options.str (Options.metavar "menu")
 
 document :: Options.ParserInfo Facade.Command
 document = Options.info parser mempty
