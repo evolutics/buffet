@@ -64,7 +64,7 @@ instance Aeson.ToJSON InstructionPartition where
 type DockerfilePart = [T.Text]
 
 get :: Ir.Buffet -> T.Text
-get = TextTools.decodeUtf8 . Aeson.encode . transformBuffet
+get = TextTools.prettyPrintJson . transformBuffet
 
 transformBuffet :: Ir.Buffet -> Buffet
 transformBuffet buffet =
