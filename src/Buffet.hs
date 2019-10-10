@@ -75,7 +75,7 @@ build =
 menuOperand :: Options.Parser FilePath
 menuOperand =
   Options.argument Options.str $
-  mconcat [Options.metavar "menu", Options.helpDoc $ Just menuHelp]
+  mconcat [Options.metavar "menu_path", Options.helpDoc $ Just menuHelp]
 
 menuHelp :: Pretty.Doc
 menuHelp =
