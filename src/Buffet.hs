@@ -16,7 +16,6 @@ import Prelude
   , (.)
   , (<$>)
   , (<*>)
-  , (<>)
   , (>>=)
   , concatMap
   , fmap
@@ -162,8 +161,8 @@ document = Options.info parser $ Options.progDesc "Generates documentation."
       fmap Facade.Document $
       Facade.DocumentArguments <$>
       Applicative.optional
-        (Options.strOption
-           (Options.long "template" <> Options.metavar "mustache_file")) <*>
+        (Options.strOption $
+         mconcat [Options.long "template", Options.metavar "mustache_file"]) <*>
       menuOperand
 
 parse :: Options.ParserInfo Facade.Command
@@ -180,6 +179,6 @@ test = Options.info parser $ Options.progDesc "Performs health checks."
       fmap Facade.Test $
       Facade.TestArguments <$>
       Applicative.optional
-        (Options.strOption
-           (Options.long "arguments" <> Options.metavar "yaml_file")) <*>
+        (Options.strOption $
+         mconcat [Options.long "arguments", Options.metavar "yaml_file"]) <*>
       menuOperand
