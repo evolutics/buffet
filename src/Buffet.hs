@@ -148,11 +148,21 @@ document = Options.info parser $ Options.progDesc "Generates documentation."
   where
     parser =
       fmap Facade.Document $
-      Facade.DocumentArguments <$>
+      Facade.DocumentArguments <$> templateOption <*> menuOperand
+    templateOption :: Options.Parser (Maybe FilePath)
+    templateOption =
       Applicative.optional
         (Options.strOption $
-         mconcat [Options.long "template", Options.metavar "mustache_file"]) <*>
-      menuOperand
+         mconcat
+           [ Options.long "template"
+           , Options.metavar "mustache_file"
+           , Options.helpDoc $ Just templateHelp
+           ])
+    templateHelp =
+      paragraph
+        [ "Mustache template to render (see https://mustache.github.io)."
+        , "To print the template context instead, omit this option."
+        ]
 
 parse :: Options.ParserInfo Facade.Command
 parse =
