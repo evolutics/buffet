@@ -4,8 +4,25 @@ module Buffet
 
 import qualified Buffet.Facade as Facade
 import qualified Control.Applicative as Applicative
+import qualified Data.Foldable as Foldable
 import qualified Options.Applicative as Options
-import Prelude (FilePath, IO, ($), (<$>), (<*>), (<>), (>>=), fmap, mconcat)
+import qualified Options.Applicative.Help.Pretty as Pretty
+import Prelude
+  ( FilePath
+  , IO
+  , Maybe(Just)
+  , String
+  , ($)
+  , (.)
+  , (<$>)
+  , (<*>)
+  , (<>)
+  , (>>=)
+  , concatMap
+  , fmap
+  , mconcat
+  , words
+  )
 
 main :: IO ()
 main = Options.execParser root >>= Facade.get
@@ -56,7 +73,87 @@ build =
     parser = fmap Facade.Build $ Facade.BuildArguments <$> menuOperand
 
 menuOperand :: Options.Parser FilePath
-menuOperand = Options.argument Options.str (Options.metavar "menu")
+menuOperand =
+  Options.argument Options.str $
+  mconcat [Options.metavar "menu", Options.helpDoc $ Just menuHelp]
+
+menuHelp :: Pretty.Doc
+menuHelp =
+  paragraphs
+    [ paragraph
+        [ "File or folder that"
+        , "lists the input Dockerfiles and"
+        , "configures the output Dockerfile."
+        ]
+    , paragraph
+        [ "If the path is a file,"
+        , "then it is a JSON or YAML file"
+        , "with the following entries:"
+        ]
+    , list
+        [ paragraphs
+            [ paragraph ["`base_image_option`:"]
+            , paragraph
+                [ "Name of the `ARG` variable"
+                , "used as a base image for the last build stage."
+                , "Default: \"_base_image\""
+                ]
+            ]
+        , paragraphs
+            [ paragraph ["`base_image_default`:"]
+            , paragraph
+                [ "`ARG` default value for the `base_image_option`."
+                , "Default: \"alpine:latest\""
+                ]
+            ]
+        , paragraphs
+            [ paragraph ["`workdir`:"]
+            , paragraph
+                [ "Working directory set by the `WORKDIR` instruction."
+                , "Default: \"/workdir\""
+                ]
+            ]
+        , paragraphs
+            [ paragraph ["`optimize`:"]
+            , paragraph
+                [ "Whether to optimize"
+                , "for faster Docker builds,"
+                , "at the cost of convoluted code."
+                , "Default: true"
+                ]
+            ]
+        , paragraphs
+            [ paragraph ["`option_to_dish`:"]
+            , paragraph
+                [ "Map from `ARG` variable name to Dockerfile path."
+                , "These Dockerfiles are assembled,"
+                , "with their instructions conditioned"
+                , "on the respective variable being nonempty."
+                , "Default: {}"
+                ]
+            ]
+        ]
+    , paragraph
+        [ "If the path is a folder,"
+        , "then the behavior is as if a file is given"
+        , "with above defaults except for the following."
+        , "`option_to_dish` is a map based on the path subfolders:"
+        , "for each subfolder `x`, the map has an entry"
+        , "with key `x` and value `x/Dockerfile`."
+        ]
+    ]
+
+paragraphs :: [Pretty.Doc] -> Pretty.Doc
+paragraphs = Pretty.vsep
+
+paragraph :: [String] -> Pretty.Doc
+paragraph =
+  Foldable.foldr (Pretty.</>) Pretty.empty . fmap Pretty.text . concatMap words
+
+list :: [Pretty.Doc] -> Pretty.Doc
+list =
+  paragraphs .
+  fmap (\element -> Pretty.char '-' Pretty.<+> Pretty.align element)
 
 document :: Options.ParserInfo Facade.Command
 document = Options.info parser $ Options.progDesc "Generates documentation."
