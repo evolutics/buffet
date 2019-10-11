@@ -30,7 +30,7 @@ root :: Options.ParserInfo Facade.Command
 root =
   Options.info parser $ Options.progDesc "Assembles many Dockerfiles in one."
   where
-    parser = Options.helper <*> versionOption <*> raw
+    parser = versionOption <*> Options.helper <*> raw
     raw =
       Options.hsubparser $
       mconcat
