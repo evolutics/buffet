@@ -147,7 +147,7 @@ paragraphs = Pretty.vsep
 
 paragraph :: [String] -> Pretty.Doc
 paragraph =
-  Foldable.foldr (Pretty.</>) Pretty.empty . fmap Pretty.text . concatMap words
+  Foldable.foldr (Pretty.</>) Pretty.line . fmap Pretty.text . concatMap words
 
 list :: [Pretty.Doc] -> Pretty.Doc
 list =
