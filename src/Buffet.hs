@@ -30,7 +30,7 @@ root :: Options.ParserInfo Facade.Command
 root =
   Options.info parser $ Options.progDesc "Assembles many Dockerfiles in one."
   where
-    parser = helpOption <*> versionOption <*> raw
+    parser = Options.helper <*> versionOption <*> raw
     raw =
       Options.hsubparser $
       mconcat
@@ -39,16 +39,6 @@ root =
         , Options.command "parse" parse
         , Options.command "test" test
         ]
-
-helpOption :: Options.Parser (a -> a)
-helpOption =
-  Options.abortOption Options.ShowHelpText $
-  mconcat
-    [ Options.long "help"
-    , Options.short 'h'
-    , Options.help "Prints this help text on stdout and exits successfully."
-    , Options.hidden
-    ]
 
 versionOption :: Options.Parser (a -> a)
 versionOption =
