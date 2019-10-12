@@ -7,7 +7,7 @@ set -o pipefail
 check_code() {
   local -r code_checkers="$(code_checkers_name)"
   build_code_checkers "${code_checkers}"
-  docker run --volume "$(pwd)":/workdir "${code_checkers}" ci/check.sh
+  docker run --rm --volume "$(pwd)":/workdir "${code_checkers}" ci/check.sh
 }
 
 code_checkers_name() {
