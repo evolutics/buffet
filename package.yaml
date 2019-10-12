@@ -7,13 +7,9 @@ maintainer: benjamin.fischer@evolutics.info
 copyright: 2019 Benjamin Fischer
 extra-source-files:
   - README.md
-# Metadata used when publishing your package
-# synopsis:            Short description of your package
-# category:            Development
-# To avoid duplicated efforts in documentation and dealing with the
-# complications of embedding Haddock markup inside cabal files, it is
-# common to point users to the README.md file.
-description: Please see the README on GitHub at <https://github.com/evolutics/buffet#readme>
+synopsis: Assembles many Dockerfiles in one.
+category: Development
+description: See https://github.com/evolutics/buffet
 dependencies:
   - base >= 4.7 && < 5
 _ghc-options: &ghc-options

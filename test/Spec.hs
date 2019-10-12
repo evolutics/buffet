@@ -1,3 +1,4 @@
+import qualified Buffet.Toolbox.TestHelp as TestHelp
 import qualified Buffet.Toolbox.TestTools as TestTools
 import qualified Buffet.Toolbox.TestUtility as TestUtility
 import qualified Buffet.Toolbox.TestVersion as TestVersion
@@ -13,7 +14,8 @@ tests :: IO Tasty.TestTree
 tests =
   Tasty.testGroup "Tests" <$>
   sequenceA
-    [ pure $ versionTest "Version" "test/data/version"
+    [ pure $ helpTest "Help" "test/data/help"
+    , pure $ versionTest "Version" "test/data/version"
     , Tasty.testGroup "Build" <$> buildTests "test/data/build"
     , Tasty.testGroup "Document" <$> documentTests "test/data/document"
     , Tasty.testGroup "Parse" <$> parseTests "test/data/parse"
@@ -21,11 +23,11 @@ tests =
     , pure $ mainTest "Main" "test/data/main"
     ]
 
-versionTest :: Tasty.TestName -> FilePath -> Tasty.TestTree
-versionTest = assert configuration
+helpTest :: Tasty.TestName -> FilePath -> Tasty.TestTree
+helpTest = assert configuration
   where
     configuration =
-      defaultConfiguration {TestUtility.assertStdout = TestVersion.get}
+      defaultConfiguration {TestUtility.assertStdout = TestHelp.get}
 
 assert ::
      TestUtility.Configuration -> Tasty.TestName -> FilePath -> Tasty.TestTree
@@ -36,6 +38,12 @@ assert configuration name =
 
 defaultConfiguration :: TestUtility.Configuration
 defaultConfiguration = TestUtility.defaultConfiguration "buffet-exe"
+
+versionTest :: Tasty.TestName -> FilePath -> Tasty.TestTree
+versionTest = assert configuration
+  where
+    configuration =
+      defaultConfiguration {TestUtility.assertStdout = TestVersion.get}
 
 buildTests :: FilePath -> IO [Tasty.TestTree]
 buildTests = TestTools.folderBasedTests $ assert defaultConfiguration

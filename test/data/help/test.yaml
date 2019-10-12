@@ -1,0 +1,5 @@
+arguments:
+  - --help
+stdout: [.., .., .., package.yaml]
+stderr: ""
+is_exit_status_success: true
