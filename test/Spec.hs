@@ -13,16 +13,19 @@ tests :: IO Tasty.TestTree
 tests =
   Tasty.testGroup "Tests" <$>
   sequenceA
-    [ Tasty.testGroup "Build" <$> buildTests "test/data/build"
+    [ pure $ versionTest "Version" "test/data/version"
+    , Tasty.testGroup "Build" <$> buildTests "test/data/build"
     , Tasty.testGroup "Document" <$> documentTests "test/data/document"
     , Tasty.testGroup "Parse" <$> parseTests "test/data/parse"
     , Tasty.testGroup "Test" <$> testTests "test/data/test"
-    , pure $ versionTest "Version" "test/data/version"
     , pure $ mainTest "Main" "test/data/main"
     ]
 
-buildTests :: FilePath -> IO [Tasty.TestTree]
-buildTests = TestTools.folderBasedTests $ assert defaultConfiguration
+versionTest :: Tasty.TestName -> FilePath -> Tasty.TestTree
+versionTest = assert configuration
+  where
+    configuration =
+      defaultConfiguration {TestUtility.assertStdout = TestVersion.get}
 
 assert ::
      TestUtility.Configuration -> Tasty.TestName -> FilePath -> Tasty.TestTree
@@ -33,6 +36,9 @@ assert configuration name =
 
 defaultConfiguration :: TestUtility.Configuration
 defaultConfiguration = TestUtility.defaultConfiguration "buffet-exe"
+
+buildTests :: FilePath -> IO [Tasty.TestTree]
+buildTests = TestTools.folderBasedTests $ assert defaultConfiguration
 
 documentTests :: FilePath -> IO [Tasty.TestTree]
 documentTests = TestTools.folderBasedTests $ assert defaultConfiguration
@@ -46,12 +52,6 @@ parseTests = TestTools.folderBasedTests $ assert configuration
 
 testTests :: FilePath -> IO [Tasty.TestTree]
 testTests = TestTools.folderBasedTests $ assert defaultConfiguration
-
-versionTest :: Tasty.TestName -> FilePath -> Tasty.TestTree
-versionTest = assert configuration
-  where
-    configuration =
-      defaultConfiguration {TestUtility.assertStdout = TestVersion.get}
 
 mainTest :: Tasty.TestName -> FilePath -> Tasty.TestTree
 mainTest = assert defaultConfiguration
