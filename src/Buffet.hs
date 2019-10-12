@@ -44,15 +44,14 @@ versionOption :: Options.Parser (a -> a)
 versionOption =
   Options.infoOption "Buffet 0.1.0" $
   mconcat
-    [ Options.long "version"
-    , Options.help $
-      mconcat
-        [ "Prints the program name with version on stdout "
-        , "and exits successfully "
+    [Options.long "version", Options.helpDoc $ Just versionHelp, Options.hidden]
+  where
+    versionHelp =
+      paragraph
+        [ "Prints the program name with version on stdout"
+        , "and exits successfully"
         , "according to the GNU coding standards."
         ]
-    , Options.hidden
-    ]
 
 build :: Options.ParserInfo Facade.Command
 build =
