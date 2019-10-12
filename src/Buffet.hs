@@ -176,8 +176,19 @@ test = Options.info parser $ Options.progDesc "Performs health checks."
   where
     parser =
       fmap Facade.Test $
-      Facade.TestArguments <$>
+      Facade.TestArguments <$> argumentsOption <*> menuOperand
+    argumentsOption :: Options.Parser (Maybe FilePath)
+    argumentsOption =
       Applicative.optional
         (Options.strOption $
-         mconcat [Options.long "arguments", Options.metavar "yaml_file"]) <*>
-      menuOperand
+         mconcat
+           [ Options.long "arguments"
+           , Options.metavar "yaml_file"
+           , Options.helpDoc $ Just argumentsHelp
+           ])
+    argumentsHelp =
+      paragraph
+        [ "JSON or YAML file with a map that"
+        , "sets the Docker build arguments."
+        , "Health checks are only done for dishes in this map."
+        ]
