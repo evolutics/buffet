@@ -1,8 +1,0 @@
-option_to_dish:
-  brittany: dockerfiles/brittany/Dockerfile
-  git: dockerfiles/git/Dockerfile
-  gitlint: dockerfiles/gitlint/Dockerfile
-  hindent: dockerfiles/hindent/Dockerfile
-  hlint: dockerfiles/hlint/Dockerfile
-  hunspell: dockerfiles/hunspell/Dockerfile
-  prettier: dockerfiles/prettier/Dockerfile
