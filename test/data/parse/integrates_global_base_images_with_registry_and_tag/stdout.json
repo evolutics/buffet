@@ -1,7 +1,7 @@
 {
   "option_to_dish": {
     "example": {
-      "base_image": "foo",
+      "base_image": "foo/bar:baz",
       "global_build_stage": []
     }
   }

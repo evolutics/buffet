@@ -1,1 +1,1 @@
-FROM foo/bar:baz
+FROM foo
