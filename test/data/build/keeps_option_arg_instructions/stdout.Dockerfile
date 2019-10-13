@@ -7,5 +7,3 @@ ARG example
 RUN if [[ -n "${example}" ]]; then \
     echo "${example}" \
   ; fi
-
-WORKDIR /workdir

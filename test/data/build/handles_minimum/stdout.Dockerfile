@@ -4,5 +4,3 @@ ARG example=''
 FROM "${_base_image}"
 
 ARG example
-
-WORKDIR /workdir

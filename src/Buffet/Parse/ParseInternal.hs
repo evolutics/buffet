@@ -8,6 +8,7 @@ import qualified Buffet.Parse.ParseHealthCheck as ParseHealthCheck
 import qualified Buffet.Parse.ParseInstructionPartition as ParseInstructionPartition
 import qualified Buffet.Parse.ParseMenu as ParseMenu
 import qualified Buffet.Parse.ParseMetadata as ParseMetadata
+import qualified Buffet.Parse.ParseWorkdir as ParseWorkdir
 import qualified Buffet.Toolbox.ExceptionTools as ExceptionTools
 import qualified Control.Exception as Exception
 import qualified Control.Monad as Monad
@@ -35,7 +36,6 @@ parseBuffet menu = do
     Ir.Buffet
       { Ir.baseImageOption = Menu.baseImageOption menu
       , Ir.baseImageDefault = Menu.baseImageDefault menu
-      , Ir.workdir = Menu.workdir menu
       , Ir.optimize = Menu.optimize menu
       , Ir.optionToDish = fmap parseDish optionToDish
       }
@@ -48,5 +48,6 @@ parseDish dockerfile =
   Ir.Dish
     { Ir.metadata = ParseMetadata.get dockerfile
     , Ir.instructionPartition = ParseInstructionPartition.get dockerfile
+    , Ir.workdir = ParseWorkdir.get dockerfile
     , Ir.healthCheck = ParseHealthCheck.get dockerfile
     }

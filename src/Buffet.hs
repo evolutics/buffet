@@ -95,13 +95,6 @@ menuHelp =
                 ]
             ]
         , paragraphs
-            [ paragraph ["`workdir`:"]
-            , paragraph
-                [ "Working directory set by the `WORKDIR` instruction."
-                , "Default: \"/workdir\""
-                ]
-            ]
-        , paragraphs
             [ paragraph ["`optimize`:"]
             , paragraph
                 [ "Whether to optimize"

@@ -24,7 +24,6 @@ data Buffet =
   Buffet
     { baseImageOption :: Option
     , baseImageDefault :: T.Text
-    , workdir :: FilePath
     , optimize :: Bool
     , optionToDish :: Map.Map Option Dish
     }
@@ -55,6 +54,7 @@ data Dish =
   Dish
     { metadata :: Metadata
     , instructionPartition :: InstructionPartition
+    , workdir :: Maybe FilePath
     , healthCheck :: Maybe T.Text
     }
   deriving (Eq, Ord, Show)

@@ -17,5 +17,3 @@ RUN if [[ -n "${bar}" ]]; then \
   && if [[ -n "${foo}" ]]; then \
     echo 'foo' \
   ; fi
-
-WORKDIR /workdir

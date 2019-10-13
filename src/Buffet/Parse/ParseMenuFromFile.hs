@@ -46,7 +46,6 @@ data RawMenu =
   RawMenu
     { baseImageOption :: Maybe Ir.Option
     , baseImageDefault :: Maybe T.Text
-    , workdir :: Maybe FilePath
     , optimize :: Maybe Bool
     , optionToDish :: Maybe (Map.Map Ir.Option FilePath)
     }
@@ -66,8 +65,6 @@ get menu = do
       , Menu.baseImageDefault =
           Maybe.fromMaybe (Menu.baseImageDefault Menu.defaultMenu) $
           baseImageDefault raw
-      , Menu.workdir =
-          Maybe.fromMaybe (Menu.workdir Menu.defaultMenu) $ workdir raw
       , Menu.optimize =
           Maybe.fromMaybe (Menu.optimize Menu.defaultMenu) $ optimize raw
       , Menu.optionToDish =

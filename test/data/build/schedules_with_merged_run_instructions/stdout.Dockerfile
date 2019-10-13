@@ -25,5 +25,3 @@ COPY --from=alpine /var/empty* /var/empty /tmp/foo/
 RUN if [[ -n "${foo}" ]]; then \
     echo 'foo' \
   ; fi
-
-WORKDIR /workdir

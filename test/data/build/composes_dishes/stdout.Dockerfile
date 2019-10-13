@@ -12,5 +12,3 @@ RUN if [[ -n "${bar}" ]]; then \
   && if [[ -n "${foo}" ]]; then \
     ls \
   ; fi
-
-WORKDIR /workdir

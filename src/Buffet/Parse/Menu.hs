@@ -12,7 +12,6 @@ data Menu =
   Menu
     { baseImageOption :: Ir.Option
     , baseImageDefault :: T.Text
-    , workdir :: FilePath
     , optimize :: Bool
     , optionToDish :: Map.Map Ir.Option FilePath
     }
@@ -23,7 +22,6 @@ defaultMenu =
   Menu
     { baseImageOption = Ir.Option $ T.pack "_base_image"
     , baseImageDefault = T.pack "alpine:latest"
-    , workdir = "/workdir"
     , optimize = True
     , optionToDish = Map.empty
     }

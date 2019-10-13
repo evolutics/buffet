@@ -11,5 +11,3 @@ FROM "${_base_image}"
 
 ARG example
 COPY --from=example /root/example* /var/empty /usr/local/bin/
-
-WORKDIR /workdir

@@ -7,17 +7,21 @@ import qualified Buffet.Build.PrepareOptionArgInstruction as PrepareOptionArgIns
 import qualified Buffet.Build.ScheduleParallelInstructions as ScheduleParallelInstructions
 import qualified Buffet.Ir.Ir as Ir
 import qualified Data.Map.Strict as Map
+import qualified Data.Maybe as Maybe
 import qualified Data.Text as T
 import qualified Language.Docker as Docker hiding (sourcePaths)
 import Prelude
   ( Maybe(Nothing)
   , ($)
   , (.)
+  , (<$>)
   , concat
   , fmap
   , id
+  , maybe
   , mconcat
   , pure
+  , snd
   , uncurry
   )
 
@@ -26,8 +30,11 @@ get buffet =
   concat
     [ [[fromInstruction buffet]]
     , dishesInstructions buffet
-    , [[workdirInstruction buffet]]
+    , maybePart $ workdirInstruction buffet
     ]
+  where
+    maybePart :: Maybe (Docker.Instruction T.Text) -> [Ir.DockerfilePart]
+    maybePart = maybe [] $ pure . pure
 
 fromInstruction :: Ir.Buffet -> Docker.Instruction T.Text
 fromInstruction buffet =
@@ -66,5 +73,9 @@ dishInstructions option =
   PrepareOptionArgInstruction.get option .
   Ir.globalBuildStage . Ir.instructionPartition
 
-workdirInstruction :: Ir.Buffet -> Docker.Instruction T.Text
-workdirInstruction = Docker.Workdir . T.pack . Ir.workdir
+workdirInstruction :: Ir.Buffet -> Maybe (Docker.Instruction T.Text)
+workdirInstruction buffet = Docker.Workdir . T.pack <$> firstWorkdir
+  where
+    firstWorkdir = Maybe.listToMaybe workdirs
+    workdirs = Maybe.mapMaybe Ir.workdir dishes
+    dishes = fmap snd . Map.toAscList $ Ir.optionToDish buffet

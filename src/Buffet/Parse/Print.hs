@@ -19,7 +19,6 @@ data Buffet =
   Buffet
     { baseImageOption :: Ir.Option
     , baseImageDefault :: T.Text
-    , workdir :: FilePath
     , optimize :: Bool
     , optionToDish :: Map.Map Ir.Option Dish
     }
@@ -32,6 +31,7 @@ data Dish =
   Dish
     { metadata :: Metadata
     , instructionPartition :: InstructionPartition
+    , workdir :: Maybe FilePath
     , healthCheck :: Maybe T.Text
     }
   deriving (Eq, Generics.Generic, Ord, Show)
@@ -71,7 +71,6 @@ transformBuffet buffet =
   Buffet
     { baseImageOption = Ir.baseImageOption buffet
     , baseImageDefault = Ir.baseImageDefault buffet
-    , workdir = Ir.workdir buffet
     , optimize = Ir.optimize buffet
     , optionToDish = transformDish <$> Ir.optionToDish buffet
     }
@@ -82,6 +81,7 @@ transformDish dish =
     { metadata = transformMetadata $ Ir.metadata dish
     , instructionPartition =
         transformInstructionPartition $ Ir.instructionPartition dish
+    , workdir = Ir.workdir dish
     , healthCheck = Ir.healthCheck dish
     }
 
