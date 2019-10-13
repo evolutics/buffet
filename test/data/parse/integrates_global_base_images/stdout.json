@@ -1,8 +1,7 @@
 {
   "option_to_dish": {
     "example": {
-      "base_image": "foo",
-      "global_build_stage": []
+      "base_image": "foo"
     }
   }
 }

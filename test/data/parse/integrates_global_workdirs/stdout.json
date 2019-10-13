@@ -1,7 +1,6 @@
 {
   "option_to_dish": {
     "example": {
-      "global_build_stage": [],
       "workdir": "/foo/bar"
     }
   }

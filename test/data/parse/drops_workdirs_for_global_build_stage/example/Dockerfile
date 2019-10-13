@@ -1,0 +1,2 @@
+FROM foo
+WORKDIR /bar

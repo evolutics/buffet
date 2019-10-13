@@ -1,0 +1,2 @@
+FROM foo
+HEALTHCHECK CMD bar
