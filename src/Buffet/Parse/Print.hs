@@ -28,8 +28,10 @@ instance Aeson.ToJSON Buffet where
 data Dish =
   Dish
     { metadata :: Metadata
+    , beforeFirstBuildStage :: DockerfilePart
+    , localBuildStages :: [DockerfilePart]
     , baseImage :: T.Text
-    , instructionPartition :: InstructionPartition
+    , globalBuildStage :: DockerfilePart
     , workdir :: Maybe FilePath
     , healthCheck :: Maybe T.Text
     }
@@ -49,17 +51,6 @@ data Metadata =
 instance Aeson.ToJSON Metadata where
   toJSON = Aeson.genericToJSON TextTools.defaultJsonOptions
 
-data InstructionPartition =
-  InstructionPartition
-    { beforeFirstBuildStage :: DockerfilePart
-    , localBuildStages :: [DockerfilePart]
-    , globalBuildStage :: DockerfilePart
-    }
-  deriving (Eq, Generics.Generic, Ord, Show)
-
-instance Aeson.ToJSON InstructionPartition where
-  toJSON = Aeson.genericToJSON TextTools.defaultJsonOptions
-
 type DockerfilePart = [T.Text]
 
 get :: Ir.Buffet -> T.Text
@@ -76,9 +67,11 @@ transformDish :: Ir.Dish -> Dish
 transformDish dish =
   Dish
     { metadata = transformMetadata $ Ir.metadata dish
+    , beforeFirstBuildStage =
+        transformDockerfilePart $ Ir.beforeFirstBuildStage dish
+    , localBuildStages = transformDockerfilePart <$> Ir.localBuildStages dish
     , baseImage = Ir.baseImage dish
-    , instructionPartition =
-        transformInstructionPartition $ Ir.instructionPartition dish
+    , globalBuildStage = transformDockerfilePart $ Ir.globalBuildStage dish
     , workdir = Ir.workdir dish
     , healthCheck = Ir.healthCheck dish
     }
@@ -86,16 +79,6 @@ transformDish dish =
 transformMetadata :: Ir.Metadata -> Metadata
 transformMetadata meta =
   Metadata {title = Ir.title meta, url = Ir.url meta, tags = Ir.tags meta}
-
-transformInstructionPartition :: Ir.InstructionPartition -> InstructionPartition
-transformInstructionPartition partition =
-  InstructionPartition
-    { beforeFirstBuildStage =
-        transformDockerfilePart $ Ir.beforeFirstBuildStage partition
-    , localBuildStages =
-        transformDockerfilePart <$> Ir.localBuildStages partition
-    , globalBuildStage = transformDockerfilePart $ Ir.globalBuildStage partition
-    }
 
 transformDockerfilePart :: Ir.DockerfilePart -> DockerfilePart
 transformDockerfilePart = fmap transformInstruction

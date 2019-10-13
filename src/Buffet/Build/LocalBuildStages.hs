@@ -12,8 +12,7 @@ get :: Ir.Buffet -> [Ir.DockerfilePart]
 get = concatMap (uncurry dishBuildStages) . Map.toAscList . Ir.optionToDish
 
 dishBuildStages :: Ir.Option -> Ir.Dish -> [Ir.DockerfilePart]
-dishBuildStages option =
-  fmap (dishBuildStage option) . Ir.localBuildStages . Ir.instructionPartition
+dishBuildStages option = fmap (dishBuildStage option) . Ir.localBuildStages
 
 dishBuildStage :: Ir.Option -> Ir.DockerfilePart -> Ir.DockerfilePart
 dishBuildStage option =

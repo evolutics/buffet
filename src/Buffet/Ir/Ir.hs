@@ -2,7 +2,6 @@ module Buffet.Ir.Ir
   ( Buffet(..)
   , Dish(..)
   , DockerfilePart
-  , InstructionPartition(..)
   , Metadata(..)
   , Option(..)
   , TagKey(..)
@@ -51,8 +50,10 @@ instance Types.FromJSONKey Option where
 data Dish =
   Dish
     { metadata :: Metadata
+    , beforeFirstBuildStage :: DockerfilePart
+    , localBuildStages :: [DockerfilePart]
     , baseImage :: T.Text
-    , instructionPartition :: InstructionPartition
+    , globalBuildStage :: DockerfilePart
     , workdir :: Maybe FilePath
     , healthCheck :: Maybe T.Text
     }
@@ -95,13 +96,5 @@ instance Aeson.ToJSON TagValue where
 
 instance Aeson.ToJSONKey TagValue where
   toJSONKey = Types.toJSONKeyText tagValue
-
-data InstructionPartition =
-  InstructionPartition
-    { beforeFirstBuildStage :: DockerfilePart
-    , localBuildStages :: [DockerfilePart]
-    , globalBuildStage :: DockerfilePart
-    }
-  deriving (Eq, Ord, Show)
 
 type DockerfilePart = [Docker.Instruction T.Text]

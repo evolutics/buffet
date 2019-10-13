@@ -1,9 +1,7 @@
 {
   "option_to_dish": {
     "example": {
-      "instruction_partition": {
-        "before_first_build_stage": ["ARG example"]
-      }
+      "before_first_build_stage": ["ARG example"]
     }
   }
 }

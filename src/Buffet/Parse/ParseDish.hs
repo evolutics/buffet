@@ -31,13 +31,10 @@ parseDish :: Docker.Dockerfile -> Ir.Dish
 parseDish dockerfile =
   Ir.Dish
     { Ir.metadata = ParseMetadata.get globalStage
+    , Ir.beforeFirstBuildStage = dropPositions beforeFirstStage
+    , Ir.localBuildStages = fmap dropPositions localStages
     , Ir.baseImage = ParseBaseImage.get globalStage
-    , Ir.instructionPartition =
-        Ir.InstructionPartition
-          { Ir.beforeFirstBuildStage = dropPositions beforeFirstStage
-          , Ir.localBuildStages = fmap dropPositions localStages
-          , Ir.globalBuildStage = ParseGlobalBuildStage.get globalStage
-          }
+    , Ir.globalBuildStage = ParseGlobalBuildStage.get globalStage
     , Ir.workdir = ParseWorkdir.get globalStage
     , Ir.healthCheck = ParseHealthCheck.get globalStage
     }

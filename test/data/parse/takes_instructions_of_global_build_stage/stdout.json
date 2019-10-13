@@ -1,9 +1,7 @@
 {
   "option_to_dish": {
     "example": {
-      "instruction_partition": {
-        "global_build_stage": ["RUN ls"]
-      }
+      "global_build_stage": ["RUN ls"]
     }
   }
 }

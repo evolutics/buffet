@@ -21,4 +21,4 @@ dishInstructions option dish =
   Set.insert optionArg $ Set.fromList givenInstructions
   where
     optionArg = Docker.Arg (Ir.option option) (Just $ T.pack "''")
-    givenInstructions = Ir.beforeFirstBuildStage $ Ir.instructionPartition dish
+    givenInstructions = Ir.beforeFirstBuildStage dish

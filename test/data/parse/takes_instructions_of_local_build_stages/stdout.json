@@ -1,9 +1,7 @@
 {
   "option_to_dish": {
     "example": {
-      "instruction_partition": {
-        "local_build_stages": [["FROM alpine AS example", "RUN ls"]]
-      }
+      "local_build_stages": [["FROM alpine AS example", "RUN ls"]]
     }
   }
 }

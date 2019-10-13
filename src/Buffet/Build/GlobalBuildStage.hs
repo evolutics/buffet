@@ -66,8 +66,7 @@ optimize buffet =
 dishInstructions :: Ir.Option -> Ir.Dish -> Ir.DockerfilePart
 dishInstructions option =
   ConditionInstructions.get option .
-  PrepareOptionArgInstruction.get option .
-  Ir.globalBuildStage . Ir.instructionPartition
+  PrepareOptionArgInstruction.get option . Ir.globalBuildStage
 
 workdirInstruction :: Ir.Buffet -> Maybe (Docker.Instruction T.Text)
 workdirInstruction buffet = Docker.Workdir . T.pack <$> firstWorkdir
