@@ -1,8 +1,7 @@
-ARG _base_image='alpine:latest'
 ARG bar=''
 ARG foo=''
 
-FROM "${_base_image}"
+FROM alpine:latest
 
 ARG bar
 ARG foo

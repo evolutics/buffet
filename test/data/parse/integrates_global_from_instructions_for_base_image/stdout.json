@@ -1,0 +1,10 @@
+{
+  "option_to_dish": {
+    "example": {
+      "base_image": "foo/bar:baz",
+      "instruction_partition": {
+        "global_build_stage": []
+      }
+    }
+  }
+}

@@ -80,21 +80,6 @@ menuHelp =
         ]
     , list
         [ paragraphs
-            [ paragraph ["`base_image_option`:"]
-            , paragraph
-                [ "Name of the `ARG` variable"
-                , "used as a base image for the last build stage."
-                , "Default: \"_base_image\""
-                ]
-            ]
-        , paragraphs
-            [ paragraph ["`base_image_default`:"]
-            , paragraph
-                [ "`ARG` default value for the `base_image_option`."
-                , "Default: \"alpine:latest\""
-                ]
-            ]
-        , paragraphs
             [ paragraph ["`optimize`:"]
             , paragraph
                 [ "Whether to optimize"

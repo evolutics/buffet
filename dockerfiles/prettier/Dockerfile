@@ -1,4 +1,6 @@
-FROM alpine
+ARG _base_image='alpine:3.9.4'
+
+FROM "${_base_image}"
 ARG prettier
 
 LABEL org.opencontainers.image.title='Prettier'

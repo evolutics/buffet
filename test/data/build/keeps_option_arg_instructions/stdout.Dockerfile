@@ -1,7 +1,6 @@
-ARG _base_image='alpine:latest'
 ARG example=''
 
-FROM "${_base_image}"
+FROM alpine:latest
 
 ARG example
 RUN if [[ -n "${example}" ]]; then \

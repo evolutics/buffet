@@ -1,2 +1,2 @@
 ARG example
-FROM alpine
+FROM alpine:latest

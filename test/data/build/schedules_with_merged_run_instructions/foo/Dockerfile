@@ -1,4 +1,4 @@
-FROM alpine
+FROM alpine:latest
 RUN echo 'far'
 COPY --from=alpine /var/empty /tmp/far/
 COPY --from=alpine /var/empty /tmp/faz/

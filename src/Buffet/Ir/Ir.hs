@@ -22,9 +22,7 @@ import Prelude (Bool, Eq, FilePath, Maybe, Ord, Show, (.), fmap)
 
 data Buffet =
   Buffet
-    { baseImageOption :: Option
-    , baseImageDefault :: T.Text
-    , optimize :: Bool
+    { optimize :: Bool
     , optionToDish :: Map.Map Option Dish
     }
   deriving (Eq, Ord, Show)
@@ -53,6 +51,7 @@ instance Types.FromJSONKey Option where
 data Dish =
   Dish
     { metadata :: Metadata
+    , baseImage :: T.Text
     , instructionPartition :: InstructionPartition
     , workdir :: Maybe FilePath
     , healthCheck :: Maybe T.Text

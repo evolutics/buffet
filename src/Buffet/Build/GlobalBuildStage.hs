@@ -19,7 +19,6 @@ import Prelude
   , fmap
   , id
   , maybe
-  , mconcat
   , pure
   , snd
   , uncurry
@@ -28,7 +27,7 @@ import Prelude
 get :: Ir.Buffet -> [Ir.DockerfilePart]
 get buffet =
   concat
-    [ [[fromInstruction buffet]]
+    [ maybePart $ fromInstruction buffet
     , dishesInstructions buffet
     , maybePart $ workdirInstruction buffet
     ]
@@ -36,25 +35,22 @@ get buffet =
     maybePart :: Maybe (Docker.Instruction T.Text) -> [Ir.DockerfilePart]
     maybePart = maybe [] $ pure . pure
 
-fromInstruction :: Ir.Buffet -> Docker.Instruction T.Text
-fromInstruction buffet =
-  Docker.From
-    Docker.BaseImage
-      { Docker.image =
-          Docker.Image
-            { Docker.registryName = Nothing
-            , Docker.imageName =
-                mconcat
-                  [ T.pack "\"${"
-                  , Ir.option $ Ir.baseImageOption buffet
-                  , T.pack "}\""
-                  ]
-            }
-      , Docker.tag = Nothing
-      , Docker.digest = Nothing
-      , Docker.alias = Nothing
-      , Docker.platform = Nothing
-      }
+fromInstruction :: Ir.Buffet -> Maybe (Docker.Instruction T.Text)
+fromInstruction buffet = fmap instruction firstBaseImage
+  where
+    instruction image =
+      Docker.From
+        Docker.BaseImage
+          { Docker.image =
+              Docker.Image
+                {Docker.registryName = Nothing, Docker.imageName = image}
+          , Docker.tag = Nothing
+          , Docker.digest = Nothing
+          , Docker.alias = Nothing
+          , Docker.platform = Nothing
+          }
+    firstBaseImage = Maybe.listToMaybe $ fmap Ir.baseImage dishes
+    dishes = fmap snd . Map.toAscList $ Ir.optionToDish buffet
 
 dishesInstructions :: Ir.Buffet -> [Ir.DockerfilePart]
 dishesInstructions buffet =

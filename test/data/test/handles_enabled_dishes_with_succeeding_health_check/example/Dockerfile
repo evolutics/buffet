@@ -1,3 +1,3 @@
-FROM alpine
+FROM alpine:latest
 
 HEALTHCHECK CMD true

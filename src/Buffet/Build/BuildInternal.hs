@@ -2,7 +2,7 @@ module Buffet.Build.BuildInternal
   ( get
   ) where
 
-import qualified Buffet.Build.ArgInstructions as ArgInstructions
+import qualified Buffet.Build.BeforeFirstBuildStage as BeforeFirstBuildStage
 import qualified Buffet.Build.GlobalBuildStage as GlobalBuildStage
 import qualified Buffet.Build.LocalBuildStages as LocalBuildStages
 import qualified Buffet.Ir.Ir as Ir
@@ -17,7 +17,7 @@ get :: Ir.Buffet -> T.Text
 get buffet =
   printDockerfileParts $
   concat
-    [ ArgInstructions.get buffet
+    [ BeforeFirstBuildStage.get buffet
     , LocalBuildStages.get buffet
     , GlobalBuildStage.get buffet
     ]

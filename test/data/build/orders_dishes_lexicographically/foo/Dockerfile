@@ -1,2 +1,2 @@
-FROM alpine
+FROM alpine:latest
 RUN echo 'foo'

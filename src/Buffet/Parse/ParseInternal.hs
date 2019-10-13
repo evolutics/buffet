@@ -4,6 +4,7 @@ module Buffet.Parse.ParseInternal
 
 import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Parse.Menu as Menu
+import qualified Buffet.Parse.ParseBaseImage as ParseBaseImage
 import qualified Buffet.Parse.ParseHealthCheck as ParseHealthCheck
 import qualified Buffet.Parse.ParseInstructionPartition as ParseInstructionPartition
 import qualified Buffet.Parse.ParseMenu as ParseMenu
@@ -34,9 +35,7 @@ parseBuffet menu = do
     Menu.optionToDish menu
   pure
     Ir.Buffet
-      { Ir.baseImageOption = Menu.baseImageOption menu
-      , Ir.baseImageDefault = Menu.baseImageDefault menu
-      , Ir.optimize = Menu.optimize menu
+      { Ir.optimize = Menu.optimize menu
       , Ir.optionToDish = fmap parseDish optionToDish
       }
 
@@ -47,6 +46,7 @@ parseDish :: Docker.Dockerfile -> Ir.Dish
 parseDish dockerfile =
   Ir.Dish
     { Ir.metadata = ParseMetadata.get dockerfile
+    , Ir.baseImage = ParseBaseImage.get dockerfile
     , Ir.instructionPartition = ParseInstructionPartition.get dockerfile
     , Ir.workdir = ParseWorkdir.get dockerfile
     , Ir.healthCheck = ParseHealthCheck.get dockerfile

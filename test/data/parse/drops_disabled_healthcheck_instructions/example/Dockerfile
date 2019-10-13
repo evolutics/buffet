@@ -1,2 +1,2 @@
-FROM alpine
+FROM alpine:latest
 HEALTHCHECK NONE

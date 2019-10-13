@@ -1,9 +1,11 @@
+ARG _base_image='alpine:3.9.4'
+
 FROM evolutics/haskell-stack AS hindent
 ARG hindent
 RUN stack --jobs "$(nproc)" install --ghc-options='-fPIC -optl-static' \
     "hindent-${hindent}"
 
-FROM alpine
+FROM "${_base_image}"
 ARG hindent
 
 LABEL org.opencontainers.image.title='hindent'

@@ -17,9 +17,7 @@ import Prelude (Bool, Eq, FilePath, Maybe, Ord, Show, ($), (.), (<$>), fmap)
 
 data Buffet =
   Buffet
-    { baseImageOption :: Ir.Option
-    , baseImageDefault :: T.Text
-    , optimize :: Bool
+    { optimize :: Bool
     , optionToDish :: Map.Map Ir.Option Dish
     }
   deriving (Eq, Generics.Generic, Ord, Show)
@@ -30,6 +28,7 @@ instance Aeson.ToJSON Buffet where
 data Dish =
   Dish
     { metadata :: Metadata
+    , baseImage :: T.Text
     , instructionPartition :: InstructionPartition
     , workdir :: Maybe FilePath
     , healthCheck :: Maybe T.Text
@@ -69,9 +68,7 @@ get = TextTools.prettyPrintJson . transformBuffet
 transformBuffet :: Ir.Buffet -> Buffet
 transformBuffet buffet =
   Buffet
-    { baseImageOption = Ir.baseImageOption buffet
-    , baseImageDefault = Ir.baseImageDefault buffet
-    , optimize = Ir.optimize buffet
+    { optimize = Ir.optimize buffet
     , optionToDish = transformDish <$> Ir.optionToDish buffet
     }
 
@@ -79,6 +76,7 @@ transformDish :: Ir.Dish -> Dish
 transformDish dish =
   Dish
     { metadata = transformMetadata $ Ir.metadata dish
+    , baseImage = Ir.baseImage dish
     , instructionPartition =
         transformInstructionPartition $ Ir.instructionPartition dish
     , workdir = Ir.workdir dish
