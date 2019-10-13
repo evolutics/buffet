@@ -3,7 +3,6 @@ module Buffet.Parse.ParseMetadata
   ) where
 
 import qualified Buffet.Ir.Ir as Ir
-import qualified Buffet.Parse.ParseTools as ParseTools
 import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Data.Csv as Csv
 import qualified Data.Map.Strict as Map
@@ -25,7 +24,7 @@ import Prelude
   )
 
 get :: Docker.Dockerfile -> Ir.Metadata
-get dockerfile =
+get stage =
   Ir.Metadata
     { Ir.title = Map.findWithDefault mempty titleKey labels
     , Ir.url = Map.findWithDefault mempty urlKey labels
@@ -33,20 +32,15 @@ get dockerfile =
     }
   where
     titleKey = T.pack "org.opencontainers.image.title"
-    labels = globalLabels dockerfile
+    labels = parseLabels stage
     urlKey = T.pack "org.opencontainers.image.url"
     tagLabels = Map.withoutKeys labels $ Set.fromList [titleKey, urlKey]
 
-globalLabels :: Docker.Dockerfile -> Map.Map T.Text T.Text
-globalLabels = Map.fromList . concatMap labelBindings . globalStage
+parseLabels :: Docker.Dockerfile -> Map.Map T.Text T.Text
+parseLabels = Map.fromList . concatMap labelBindings
   where
     labelBindings (Docker.InstructionPos (Docker.Label pairs) _ _) = pairs
     labelBindings _ = []
-
-globalStage :: Docker.Dockerfile -> Docker.Dockerfile
-globalStage dockerfile = stage
-  where
-    (_, _, stage) = ParseTools.buildStages dockerfile
 
 parseTags :: Map.Map T.Text T.Text -> Map.Map Ir.TagKey [Ir.TagValue]
 parseTags = fmap parseTagValues . Map.mapKeys Ir.TagKey

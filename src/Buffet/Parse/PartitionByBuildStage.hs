@@ -1,16 +1,15 @@
-module Buffet.Parse.ParseTools
-  ( buildStages
-  , isFrom
+module Buffet.Parse.PartitionByBuildStage
+  ( get
   ) where
 
 import qualified Data.List.Split as Split
 import qualified Language.Docker as Docker
 import Prelude (Bool(False, True), ($), concat, length, pred, splitAt)
 
-buildStages ::
+get ::
      Docker.Dockerfile
   -> (Docker.Dockerfile, [Docker.Dockerfile], Docker.Dockerfile)
-buildStages dockerfile = (beforeFirstStage, localStages, globalStage)
+get dockerfile = (beforeFirstStage, localStages, globalStage)
   where
     (beforeFirstStage, stages) =
       case parts of

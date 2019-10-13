@@ -2,14 +2,13 @@ module Buffet.Parse.ParseBaseImage
   ( get
   ) where
 
-import qualified Buffet.Parse.ParseTools as ParseTools
 import qualified Data.Maybe as Maybe
 import qualified Data.Text as T
 import qualified Language.Docker as Docker
 import Prelude (Maybe(Just, Nothing), ($), (.), (<>), maybe, mconcat, mempty)
 
 get :: Docker.Dockerfile -> T.Text
-get = maybe mempty imageIdentifier . firstBaseImage . globalStage
+get = maybe mempty imageIdentifier . firstBaseImage
 
 imageIdentifier :: Docker.BaseImage -> T.Text
 imageIdentifier baseImage =
@@ -33,8 +32,3 @@ firstBaseImage = Maybe.listToMaybe . Maybe.mapMaybe maybeBaseImage
     maybeBaseImage (Docker.InstructionPos (Docker.From baseImage) _ _) =
       Just baseImage
     maybeBaseImage _ = Nothing
-
-globalStage :: Docker.Dockerfile -> Docker.Dockerfile
-globalStage dockerfile = stage
-  where
-    (_, _, stage) = ParseTools.buildStages dockerfile

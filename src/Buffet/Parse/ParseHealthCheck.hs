@@ -9,8 +9,8 @@ import qualified Language.Docker.Syntax as Syntax
 import Prelude (Maybe(Just, Nothing), ($), (.), reverse)
 
 get :: Docker.Dockerfile -> Maybe T.Text
-get dockerfile =
-  case lastHealthcheck dockerfile of
+get stage =
+  case lastHealthcheck stage of
     Just (Docker.Check checkArguments) ->
       Just . argumentsText $ Docker.checkCommand checkArguments
     _ -> Nothing
