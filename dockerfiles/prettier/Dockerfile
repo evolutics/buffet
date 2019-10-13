@@ -7,3 +7,5 @@ LABEL info.evolutics.buffet.help='prettier'
 
 RUN apk add --no-cache yarn \
   && yarn global add "prettier@${prettier}"
+
+WORKDIR /workdir

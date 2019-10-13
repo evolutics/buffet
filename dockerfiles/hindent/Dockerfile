@@ -12,3 +12,5 @@ LABEL info.evolutics.buffet.help='hindent --help'
 
 RUN apk add --no-cache gmp-dev
 COPY --from=hindent /root/.local/bin/hindent /usr/local/bin/
+
+WORKDIR /workdir

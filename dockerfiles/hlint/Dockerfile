@@ -14,3 +14,5 @@ RUN apk add --no-cache cabal ghc gmp libffi musl-dev ncurses-dev wget \
   && find "${HOME}/.cabal" ! -name hlint.yaml -delete \
   \
   && apk del cabal ghc
+
+WORKDIR /workdir

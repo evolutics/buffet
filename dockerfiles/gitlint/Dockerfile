@@ -7,3 +7,5 @@ LABEL info.evolutics.buffet.help='gitlint --help'
 
 RUN apk add --no-cache git python3 \
   && pip3 install "gitlint==${gitlint}"
+
+WORKDIR /workdir

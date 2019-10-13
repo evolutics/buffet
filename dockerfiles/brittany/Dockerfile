@@ -13,3 +13,5 @@ RUN apk add --no-cache cabal ghc gmp libffi musl-dev ncurses-dev wget \
   && rm -r "${HOME}/.cabal" \
   \
   && apk del cabal ghc
+
+WORKDIR /workdir
