@@ -4,7 +4,7 @@ module Buffet.Build.PrepareOptionArgInstruction
 
 import qualified Buffet.Ir.Ir as Ir
 import qualified Data.List as List
-import qualified Language.Docker as Docker hiding (sourcePaths)
+import qualified Language.Docker as Docker
 import Prelude (Bool(False, True), Maybe(Nothing), (<>), span)
 
 get :: Ir.Option -> Ir.DockerfilePart -> Ir.DockerfilePart

@@ -9,7 +9,7 @@ import qualified Buffet.Ir.Ir as Ir
 import qualified Data.Map.Strict as Map
 import qualified Data.Maybe as Maybe
 import qualified Data.Text as T
-import qualified Language.Docker as Docker hiding (sourcePaths)
+import qualified Language.Docker as Docker
 import Prelude
   ( Maybe(Nothing)
   , ($)

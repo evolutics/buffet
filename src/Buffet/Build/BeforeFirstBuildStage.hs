@@ -6,7 +6,7 @@ import qualified Buffet.Ir.Ir as Ir
 import qualified Data.Map.Strict as Map
 import qualified Data.Set as Set
 import qualified Data.Text as T
-import qualified Language.Docker as Docker hiding (sourcePaths)
+import qualified Language.Docker as Docker
 import Prelude (Maybe(Just), ($), (.), fmap, pure, uncurry)
 
 get :: Ir.Buffet -> [Ir.DockerfilePart]
