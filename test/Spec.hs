@@ -2,7 +2,7 @@ import qualified Buffet.Toolbox.TestHelp as TestHelp
 import qualified Buffet.Toolbox.TestTools as TestTools
 import qualified Buffet.Toolbox.TestUtility as TestUtility
 import qualified Buffet.Toolbox.TestVersion as TestVersion
-import Prelude (FilePath, IO, ($), (.), (<$>), (>>=), flip, pure, sequenceA)
+import Prelude (FilePath, IO, ($), (.), (<$>), (>>=), flip, sequenceA)
 import qualified System.FilePath as FilePath
 import qualified Test.Tasty as Tasty
 import qualified Test.Tasty.HUnit as HUnit
@@ -14,17 +14,17 @@ tests :: IO Tasty.TestTree
 tests =
   Tasty.testGroup "Tests" <$>
   sequenceA
-    [ pure $ helpTest "Help" "test/data/help"
-    , pure $ versionTest "Version" "test/data/version"
-    , Tasty.testGroup "Build" <$> buildTests "test/data/build"
-    , Tasty.testGroup "Document" <$> documentTests "test/data/document"
-    , Tasty.testGroup "Parse" <$> parseTests "test/data/parse"
-    , Tasty.testGroup "Test" <$> testTests "test/data/test"
-    , pure $ mainTest "Main" "test/data/main"
+    [ helpTests "test/data/help"
+    , versionTests "test/data/version"
+    , buildTests "test/data/build"
+    , documentTests "test/data/document"
+    , parseTests "test/data/parse"
+    , testTests "test/data/test"
+    , mainTests "test/data/main"
     ]
 
-helpTest :: Tasty.TestName -> FilePath -> Tasty.TestTree
-helpTest = assert configuration
+helpTests :: FilePath -> IO Tasty.TestTree
+helpTests = TestTools.folderBasedTests $ assert configuration
   where
     configuration =
       defaultConfiguration {TestUtility.assertStdout = TestHelp.get}
@@ -39,27 +39,27 @@ assert configuration name =
 defaultConfiguration :: TestUtility.Configuration
 defaultConfiguration = TestUtility.defaultConfiguration "buffet-exe"
 
-versionTest :: Tasty.TestName -> FilePath -> Tasty.TestTree
-versionTest = assert configuration
+versionTests :: FilePath -> IO Tasty.TestTree
+versionTests = TestTools.folderBasedTests $ assert configuration
   where
     configuration =
       defaultConfiguration {TestUtility.assertStdout = TestVersion.get}
 
-buildTests :: FilePath -> IO [Tasty.TestTree]
+buildTests :: FilePath -> IO Tasty.TestTree
 buildTests = TestTools.folderBasedTests $ assert defaultConfiguration
 
-documentTests :: FilePath -> IO [Tasty.TestTree]
+documentTests :: FilePath -> IO Tasty.TestTree
 documentTests = TestTools.folderBasedTests $ assert defaultConfiguration
 
-parseTests :: FilePath -> IO [Tasty.TestTree]
+parseTests :: FilePath -> IO Tasty.TestTree
 parseTests = TestTools.folderBasedTests $ assert configuration
   where
     configuration =
       defaultConfiguration
         {TestUtility.assertStdout = TestTools.assertJsonIsSubstructure}
 
-testTests :: FilePath -> IO [Tasty.TestTree]
+testTests :: FilePath -> IO Tasty.TestTree
 testTests = TestTools.folderBasedTests $ assert defaultConfiguration
 
-mainTest :: Tasty.TestName -> FilePath -> Tasty.TestTree
-mainTest = assert defaultConfiguration
+mainTests :: FilePath -> IO Tasty.TestTree
+mainTests = TestTools.folderBasedTests $ assert defaultConfiguration

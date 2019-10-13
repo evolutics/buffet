@@ -19,16 +19,19 @@ import Prelude
   , String
   , ($)
   , (.)
+  , (<)
   , (<>)
   , either
   , error
   , fmap
   , fst
   , id
+  , length
   , pure
   , sequence_
   , show
   , snd
+  , traverse
   )
 import qualified System.Directory as Directory
 import qualified System.FilePath as FilePath
@@ -71,14 +74,19 @@ assertJsonIsSubstructure = Function.on (assert []) getJson
 folderBasedTests ::
      (Tasty.TestName -> FilePath -> Tasty.TestTree)
   -> FilePath
-  -> IO [Tasty.TestTree]
+  -> IO Tasty.TestTree
 folderBasedTests assert folder = do
   folderEntries <- Directory.listDirectory folder
   subfolders <-
     Monad.filterM
       (Directory.doesDirectoryExist . FilePath.combine folder)
       folderEntries
-  pure . fmap assertSubfolder $ List.sort subfolders
+  let hasMoreThanJustFolders = length subfolders < length folderEntries
+  if hasMoreThanJustFolders
+    then pure $ assert name folder
+    else do
+      tests <- traverse assertSubfolder $ List.sort subfolders
+      pure $ Tasty.testGroup name tests
   where
-    assertSubfolder subfolder =
-      assert subfolder $ FilePath.combine folder subfolder
+    name = FilePath.takeFileName $ FilePath.dropTrailingPathSeparator folder
+    assertSubfolder = folderBasedTests assert . FilePath.combine folder
