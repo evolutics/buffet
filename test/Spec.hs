@@ -37,7 +37,7 @@ assert configuration name =
     testSource = flip FilePath.combine "test.yaml"
 
 defaultConfiguration :: TestUtility.Configuration
-defaultConfiguration = TestUtility.defaultConfiguration "buffet-exe"
+defaultConfiguration = TestUtility.defaultConfiguration "buffet"
 
 versionTests :: FilePath -> IO Tasty.TestTree
 versionTests = TestTools.folderBasedTests $ assert configuration

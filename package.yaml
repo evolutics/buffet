@@ -45,7 +45,7 @@ internal-libraries:
       - vector
       - yaml
 executables:
-  buffet-exe:
+  buffet:
     main: Main.hs
     source-dirs: app
     ghc-options: *ghc-options
