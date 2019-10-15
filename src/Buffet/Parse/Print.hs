@@ -27,7 +27,8 @@ instance Aeson.ToJSON Buffet where
 
 data Dish =
   Dish
-    { metadata :: Metadata
+    { dockerfilePath :: FilePath
+    , metadata :: Metadata
     , beforeFirstBuildStage :: DockerfilePart
     , localBuildStages :: [DockerfilePart]
     , baseImage :: T.Text
@@ -66,7 +67,8 @@ transformBuffet buffet =
 transformDish :: Ir.Dish -> Dish
 transformDish dish =
   Dish
-    { metadata = transformMetadata $ Ir.metadata dish
+    { dockerfilePath = Ir.dockerfilePath dish
+    , metadata = transformMetadata $ Ir.metadata dish
     , beforeFirstBuildStage =
         transformDockerfilePart $ Ir.beforeFirstBuildStage dish
     , localBuildStages = transformDockerfilePart <$> Ir.localBuildStages dish

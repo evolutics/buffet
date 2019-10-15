@@ -1,0 +1,7 @@
+{
+  "option_to_dish": {
+    "example": {
+      "dockerfile_path": "test/data/parse/dockerfile_path/integrates_dockerfile_paths/example/Dockerfile"
+    }
+  }
+}

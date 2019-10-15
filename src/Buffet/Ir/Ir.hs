@@ -49,7 +49,8 @@ instance Types.FromJSONKey Option where
 
 data Dish =
   Dish
-    { metadata :: Metadata
+    { dockerfilePath :: FilePath
+    , metadata :: Metadata
     , beforeFirstBuildStage :: DockerfilePart
     , localBuildStages :: [DockerfilePart]
     , baseImage :: T.Text

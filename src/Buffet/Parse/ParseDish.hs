@@ -14,7 +14,7 @@ import qualified Control.Exception as Exception
 import qualified Data.Text as T
 import qualified Language.Docker as Docker
 import qualified Language.Docker.Parser as Parser
-import Prelude (FilePath, IO, Show, ($), (.), fmap, show)
+import Prelude (FilePath, IO, Show, ($), (.), fmap, pure, show)
 
 newtype Exception =
   Exception Parser.Error
@@ -25,12 +25,18 @@ instance Show Exception where
 instance Exception.Exception Exception
 
 get :: FilePath -> IO Ir.Dish
-get = fmap (parseDish . patchDockerfile) . parseDockerfile
+get dockerfilePath = do
+  dockerfile <- parseDockerfile dockerfilePath
+  pure . parseDish dockerfilePath $ patchDockerfile dockerfile
 
-parseDish :: Docker.Dockerfile -> Ir.Dish
-parseDish dockerfile =
+parseDockerfile :: FilePath -> IO Docker.Dockerfile
+parseDockerfile = ExceptionTools.eitherThrow Exception . Docker.parseFile
+
+parseDish :: FilePath -> Docker.Dockerfile -> Ir.Dish
+parseDish dockerfilePath dockerfile =
   Ir.Dish
-    { Ir.metadata = ParseMetadata.get globalStage
+    { Ir.dockerfilePath = dockerfilePath
+    , Ir.metadata = ParseMetadata.get globalStage
     , Ir.beforeFirstBuildStage = dropPositions beforeFirstStage
     , Ir.localBuildStages = fmap dropPositions localStages
     , Ir.baseImage = ParseBaseImage.get globalStage
@@ -51,6 +57,3 @@ patchDockerfile = fmap $ fmap reviveLineBreaks
     reviveLineBreaks = reviveSimpleLineBreak . reviveBlankLine
     reviveSimpleLineBreak = T.replace (T.pack "   ") $ T.pack " \\\n  "
     reviveBlankLine = T.replace (T.pack "     && ") $ T.pack " \\\n  \\\n  && "
-
-parseDockerfile :: FilePath -> IO Docker.Dockerfile
-parseDockerfile = ExceptionTools.eitherThrow Exception . Docker.parseFile
