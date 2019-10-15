@@ -9,7 +9,7 @@ ARG prettier=''
 
 FROM evolutics/haskell-stack AS hindent
 ARG hindent
-RUN if [[ -n "${hindent}" ]]; then \
+RUN if [ -n "${hindent}" ]; then \
     stack --jobs "$(nproc)" install --ghc-options='-fPIC -optl-static' \
       "hindent-${hindent}" \
   ; fi
@@ -23,7 +23,7 @@ ARG hindent
 ARG hlint
 ARG hunspell
 ARG prettier
-RUN if [[ -n "${brittany}" ]]; then \
+RUN if [ -n "${brittany}" ]; then \
     apk add --no-cache cabal ghc gmp libffi musl-dev ncurses-dev wget \
     && cabal update \
     \
@@ -33,17 +33,17 @@ RUN if [[ -n "${brittany}" ]]; then \
     \
     && apk del cabal ghc \
   ; fi \
-  && if [[ -n "${git}" ]]; then \
+  && if [ -n "${git}" ]; then \
     apk add --no-cache "git==${git}" \
   ; fi \
-  && if [[ -n "${gitlint}" ]]; then \
+  && if [ -n "${gitlint}" ]; then \
     apk add --no-cache git python3 \
     && pip3 install "gitlint==${gitlint}" \
   ; fi \
-  && if [[ -n "${hindent}" ]]; then \
+  && if [ -n "${hindent}" ]; then \
     apk add --no-cache gmp-dev \
   ; fi \
-  && if [[ -n "${hlint}" ]]; then \
+  && if [ -n "${hlint}" ]; then \
     apk add --no-cache cabal ghc gmp libffi musl-dev ncurses-dev wget \
     && cabal update \
     \
@@ -54,10 +54,10 @@ RUN if [[ -n "${brittany}" ]]; then \
     \
     && apk del cabal ghc \
   ; fi \
-  && if [[ -n "${hunspell}" ]]; then \
+  && if [ -n "${hunspell}" ]; then \
     apk add --no-cache "hunspell==${hunspell}" hunspell-en \
   ; fi \
-  && if [[ -n "${prettier}" ]]; then \
+  && if [ -n "${prettier}" ]; then \
     apk add --no-cache yarn \
     && yarn global add "prettier@${prettier}" \
   ; fi

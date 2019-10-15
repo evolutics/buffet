@@ -9,6 +9,7 @@ HLint
 JSON
 LTS
 monoid
+POSIX
 stderr
 stdout
 whitespace

@@ -33,7 +33,7 @@ optionConditionalRunInstruction ::
      Ir.Option -> T.Text -> Docker.Instruction T.Text
 optionConditionalRunInstruction option = conditionalRunInstruction condition
   where
-    condition = mconcat [T.pack "[[ -n \"${", Ir.option option, T.pack "}\" ]]"]
+    condition = mconcat [T.pack "[ -n \"${", Ir.option option, T.pack "}\" ]"]
 
 conditionalRunInstruction :: T.Text -> T.Text -> Docker.Instruction T.Text
 conditionalRunInstruction condition thenPart =

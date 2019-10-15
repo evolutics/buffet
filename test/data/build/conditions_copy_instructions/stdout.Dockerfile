@@ -2,7 +2,7 @@ ARG example=''
 
 FROM alpine AS example
 ARG example
-RUN if [[ -n "${example}" ]]; then \
+RUN if [ -n "${example}" ]; then \
     touch /root/example \
   ; fi
 
