@@ -2,4 +2,5 @@ arguments:
   - build
   - []
 stdout: [stdout.Dockerfile]
+stderr: ""
 is_exit_status_success: true

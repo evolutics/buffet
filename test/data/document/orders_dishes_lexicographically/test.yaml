@@ -4,4 +4,5 @@ arguments:
   - [template.md.mustache]
   - []
 stdout: [stdout.md]
+stderr: ""
 is_exit_status_success: true
