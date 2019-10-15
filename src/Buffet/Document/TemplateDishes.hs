@@ -12,11 +12,12 @@ import qualified Data.Aeson as Aeson
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import qualified GHC.Generics as Generics
-import Prelude (Eq, Ord, Show, ($), (.), fmap, uncurry)
+import Prelude (Eq, FilePath, Ord, Show, ($), (.), fmap, uncurry)
 
 data Dish =
   Dish
     { option :: Ir.Option
+    , dockerfilePath :: FilePath
     , title :: T.Text
     , url :: T.Text
     , tags :: Map.Map Ir.TagKey [Ir.TagValue]
@@ -33,6 +34,7 @@ transformDish :: Ir.Option -> Ir.Dish -> Dish
 transformDish option' dish =
   Dish
     { option = option'
+    , dockerfilePath = Ir.dockerfilePath dish
     , title = Ir.title $ Ir.metadata dish
     , url = Ir.url $ Ir.metadata dish
     , tags = Ir.tags $ Ir.metadata dish

@@ -1,12 +1,14 @@
 {
   "dishes": [
     {
+      "dockerfile_path": "test/data/document/allows_default_template/bar/Dockerfile",
       "option": "bar",
       "tags": {},
       "title": "Bar",
       "url": "https://example.com/bar"
     },
     {
+      "dockerfile_path": "test/data/document/allows_default_template/foo/Dockerfile",
       "option": "foo",
       "tags": {},
       "title": "Foo",
