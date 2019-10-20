@@ -1,0 +1,7 @@
+{
+  "option_to_dish": {
+    "example": {
+      "base_image": "alpine:3.10.2"
+    }
+  }
+}
