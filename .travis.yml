@@ -9,7 +9,9 @@ services:
   - docker
 
 install:
-  - curl --silent --show-error --location https://get.haskellstack.org | sh
+  - >
+    curl --fail --location --show-error --silent https://get.haskellstack.org
+    | sh
   - stack --version
 
 script:
