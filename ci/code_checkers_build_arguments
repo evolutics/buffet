@@ -1,7 +1,8 @@
 --build-arg git=2.22.0
 --build-arg gitlint=0.12.0
+--build-arg hadolint=1.17.2
 --build-arg hindent=5.3.1
 --build-arg hlint=2.2.3
 --build-arg hunspell=1.7.0
 --build-arg prettier=1.18.2
-https://github.com/evolutics/code-cleaner-buffet.git#6427c6c8130ba757f68de77794f45c015aa11f8e
+https://github.com/evolutics/code-cleaner-buffet.git#0.1.0

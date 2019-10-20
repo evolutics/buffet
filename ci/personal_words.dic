@@ -4,6 +4,7 @@ Dockerfile/file
 GHC
 Gitlint
 GMP
+hadolint
 hindent
 HLint
 JSON
