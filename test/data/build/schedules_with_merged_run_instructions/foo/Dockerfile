@@ -1,7 +1,9 @@
-FROM alpine:latest
+FROM alpine:3.10.2 AS foo
+
+FROM alpine:3.10.2
 RUN echo 'far'
-COPY --from=alpine /var/empty /tmp/far/
-COPY --from=alpine /var/empty /tmp/faz/
+COPY --from=foo /var/empty /tmp/far/
+COPY --from=foo /var/empty /tmp/faz/
 RUN echo 'faz'
-COPY --from=alpine /var/empty /tmp/foo/
+COPY --from=foo /var/empty /tmp/foo/
 RUN echo 'foo'

@@ -1,3 +1,3 @@
-FROM alpine:latest
+FROM alpine:3.10.2
 LABEL org.opencontainers.image.authors='Baz'
 LABEL org.opencontainers.image.version=''

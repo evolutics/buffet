@@ -1,4 +1,4 @@
-FROM alpine AS example
+FROM alpine:3.10.2 AS example
 RUN ls
 
-FROM alpine:latest
+FROM alpine:3.10.2

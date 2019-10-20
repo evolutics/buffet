@@ -1,7 +1,7 @@
 {
   "option_to_dish": {
     "example": {
-      "local_build_stages": [["FROM alpine AS example", "RUN ls"]]
+      "local_build_stages": [["FROM alpine:3.10.2 AS example", "RUN ls"]]
     }
   }
 }
