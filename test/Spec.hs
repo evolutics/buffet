@@ -20,7 +20,6 @@ tests =
     , documentTests "test/data/document"
     , parseTests "test/data/parse"
     , testTests "test/data/test"
-    , mainTests "test/data/main"
     ]
 
 helpTests :: FilePath -> IO Tasty.TestTree
@@ -60,6 +59,3 @@ parseTests = TestTools.folderBasedTests $ assert configuration
 
 testTests :: FilePath -> IO Tasty.TestTree
 testTests = TestTools.folderBasedTests $ assert defaultConfiguration
-
-mainTests :: FilePath -> IO Tasty.TestTree
-mainTests = TestTools.folderBasedTests $ assert defaultConfiguration

@@ -31,7 +31,7 @@ mergeConsecutiveRuns :: Ir.DockerfilePart -> Ir.DockerfilePart
 mergeConsecutiveRuns = foldr process []
   where
     process (Docker.Run first) (Docker.Run second:rest) =
-      (Docker.Run $ mergeRuns first second) : rest
+      Docker.Run (mergeRuns first second) : rest
     process first rest = first : rest
 
 mergeRuns ::

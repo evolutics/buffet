@@ -5,6 +5,7 @@ module Buffet.Document.TemplateContext
 import qualified Buffet.Document.TemplateBuffet as TemplateBuffet
 import qualified Buffet.Ir.Ir as Ir
 import qualified Data.Aeson as Aeson
+import qualified Data.Bifunctor as Bifunctor
 import qualified Data.HashMap.Strict as HashMap
 import qualified Data.Text as T
 import Prelude (($), (.), fmap)
@@ -20,7 +21,6 @@ mapKeys function (Aeson.Array array) =
   Aeson.Array $ fmap (mapKeys function) array
 mapKeys function (Aeson.Object object) =
   Aeson.Object .
-  HashMap.fromList .
-  fmap (\(key, value) -> (function key, mapKeys function value)) $
+  HashMap.fromList . fmap (Bifunctor.bimap function $ mapKeys function) $
   HashMap.toList object
 mapKeys _ value = value

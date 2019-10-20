@@ -11,9 +11,8 @@ check_code() {
 }
 
 code_checkers_name() {
-  local -r code_checkers_tag="$(sha256sum \
-    ci/code_checkers_build_arguments Dockerfile \
-    | sha256sum | cut --characters -16)"
+  local -r code_checkers_tag="$(sha256sum ci/code_checkers_build_arguments \
+    | cut --characters -16)"
   echo "evolutics/buffet-code-checkers:${code_checkers_tag}"
 }
 
