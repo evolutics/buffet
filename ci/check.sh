@@ -12,6 +12,11 @@ check_with_gitlint() {
   gitlint --config ci/.gitlint
 }
 
+check_with_hadolint() {
+  git ls-files -z -- '*/Dockerfile' Dockerfile '*.Dockerfile' \
+    | xargs -0 hadolint
+}
+
 check_with_hindent() {
   git ls-files -z '*.hs' | xargs -0 hindent --sort-imports --validate
 }
@@ -33,6 +38,7 @@ check_with_prettier() {
 main() {
   check_with_git
   check_with_gitlint
+  check_with_hadolint
   check_with_hindent
   check_with_hlint
   check_with_hunspell
