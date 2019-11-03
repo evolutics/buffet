@@ -51,7 +51,22 @@ scheduleStep queues =
     result:_ -> result
   where
     results = fmap ($ queues) strategies
-    strategies = [scheduleRunInstructions, scheduleNextInstructionEach]
+    strategies =
+      [ scheduleCopyInstructions
+      , scheduleRunInstructions
+      , scheduleNextInstructionEach
+      ]
+
+scheduleCopyInstructions :: ScheduleStep
+scheduleCopyInstructions = spanInstructions isCopy
+  where
+    isCopy (Docker.Copy _) = True
+    isCopy _ = False
+
+spanInstructions :: (Docker.Instruction T.Text -> Bool) -> ScheduleStep
+spanInstructions isRelevant queues = (mconcat spans, queues')
+  where
+    (spans, queues') = unzip $ fmap (span isRelevant) queues
 
 scheduleRunInstructions :: ScheduleStep
 scheduleRunInstructions queues =
@@ -60,11 +75,6 @@ scheduleRunInstructions queues =
     (runs, queues') = spanInstructions isRun queues
     isRun (Docker.Run _) = True
     isRun _ = False
-
-spanInstructions :: (Docker.Instruction T.Text -> Bool) -> ScheduleStep
-spanInstructions isRelevant queues = (mconcat spans, queues')
-  where
-    (spans, queues') = unzip $ fmap (span isRelevant) queues
 
 scheduleNextInstructionEach :: ScheduleStep
 scheduleNextInstructionEach queues = (mconcat nexts, queues')
