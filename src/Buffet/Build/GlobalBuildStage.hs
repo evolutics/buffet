@@ -17,7 +17,6 @@ import Prelude
   , (<$>)
   , concat
   , fmap
-  , id
   , maybe
   , pure
   , snd
@@ -54,14 +53,9 @@ fromInstruction buffet = fmap instruction firstBaseImage
 
 dishesInstructions :: Ir.Buffet -> [Ir.DockerfilePart]
 dishesInstructions buffet =
-  optimize buffet . fmap (uncurry dishInstructions) . Map.toAscList $
+  ScheduleParallelInstructions.get buffet .
+  fmap (uncurry dishInstructions) . Map.toAscList $
   Ir.optionToDish buffet
-
-optimize :: Ir.Buffet -> [Ir.DockerfilePart] -> [Ir.DockerfilePart]
-optimize buffet =
-  if Ir.optimize buffet
-    then pure . ScheduleParallelInstructions.get
-    else id
 
 dishInstructions :: Ir.Option -> Ir.Dish -> Ir.DockerfilePart
 dishInstructions option =

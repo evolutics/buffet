@@ -17,15 +17,23 @@ import Prelude
   , fmap
   , foldr
   , fst
+  , id
   , mconcat
   , not
   , null
+  , pure
   , snd
   , span
   )
 
-get :: [Ir.DockerfilePart] -> Ir.DockerfilePart
-get = mergeConsecutiveRuns . scheduleWithSpannedRuns
+get :: Ir.Buffet -> [Ir.DockerfilePart] -> [Ir.DockerfilePart]
+get buffet =
+  if Ir.optimize buffet
+    then optimizedSchedule
+    else unoptimizedSchedule
+
+optimizedSchedule :: [Ir.DockerfilePart] -> [Ir.DockerfilePart]
+optimizedSchedule = pure . mergeConsecutiveRuns . scheduleWithSpannedRuns
 
 mergeConsecutiveRuns :: Ir.DockerfilePart -> Ir.DockerfilePart
 mergeConsecutiveRuns = foldr process []
@@ -61,3 +69,6 @@ scheduleWithSpannedRuns = scheduleNextPhase False []
 isRun :: Docker.Instruction T.Text -> Bool
 isRun (Docker.Run _) = True
 isRun _ = False
+
+unoptimizedSchedule :: [Ir.DockerfilePart] -> [Ir.DockerfilePart]
+unoptimizedSchedule = id
