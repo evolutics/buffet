@@ -4,8 +4,8 @@ ARG foo=''
 
 FROM alpine:3.10.2
 
-ARG bar
 ARG Foo
+ARG bar
 ARG foo
 RUN if [ -n "${bar}" ]; then \
     echo 'bar' \

@@ -4,23 +4,30 @@ module Buffet.Build.ScheduleParallelInstructions
 
 import qualified Buffet.Build.JoinConsecutiveRunInstructions as JoinConsecutiveRunInstructions
 import qualified Buffet.Ir.Ir as Ir
+import qualified Data.List.NonEmpty as NonEmpty
 import qualified Data.Text as T
 import qualified Language.Docker as Docker
 import Prelude
   ( Bool(False, True)
+  , Maybe(Just, Nothing)
   , ($)
   , (.)
   , (/=)
   , (<>)
+  , (==)
   , all
+  , concatMap
+  , dropWhile
   , filter
   , fmap
   , id
   , mconcat
+  , minimum
   , null
   , pure
   , span
   , splitAt
+  , take
   , unzip
   )
 
@@ -52,10 +59,28 @@ scheduleStep queues =
   where
     results = fmap ($ queues) strategies
     strategies =
-      [ scheduleCopyInstructions
+      [ scheduleArgInstructions
+      , scheduleCopyInstructions
       , scheduleRunInstructions
       , scheduleNextInstructionEach
       ]
+
+scheduleArgInstructions :: ScheduleStep
+scheduleArgInstructions = unifyInstructions isArg
+  where
+    isArg (Docker.Arg _ _) = True
+    isArg _ = False
+
+unifyInstructions :: (Docker.Instruction T.Text -> Bool) -> ScheduleStep
+unifyInstructions isRelevant queues =
+  case minimumInstruction of
+    Nothing -> ([], queues)
+    Just instruction ->
+      ([instruction], fmap (dropWhile (== instruction)) queues)
+  where
+    minimumInstruction =
+      fmap minimum . NonEmpty.nonEmpty $ nextInstructionsIfRelevant
+    nextInstructionsIfRelevant = concatMap (filter isRelevant . take 1) queues
 
 scheduleCopyInstructions :: ScheduleStep
 scheduleCopyInstructions = spanInstructions isCopy
