@@ -19,7 +19,6 @@ RUN if [ -n "${bar}" ]; then \
   ; fi
 COPY --from=bar /var/empty* /var/empty /tmp/bar/
 COPY --from=foo /var/empty* /var/empty /tmp/far/
-COPY --from=foo /var/empty* /var/empty /tmp/faz/
 RUN if [ -n "${bar}" ]; then \
     echo 'baz' \
   ; fi \
