@@ -2,23 +2,26 @@ module Buffet.Build.BeforeFirstBuildStage
   ( get
   ) where
 
+import qualified Buffet.Build.ScheduleParallelInstructions as ScheduleParallelInstructions
 import qualified Buffet.Ir.Ir as Ir
+import qualified Data.List as List
 import qualified Data.Map.Strict as Map
-import qualified Data.Set as Set
 import qualified Data.Text as T
 import qualified Language.Docker as Docker
-import Prelude (Maybe(Just), ($), (.), fmap, pure, uncurry)
+import Prelude (Maybe(Just), ($), (.), elem, fmap, uncurry)
 
 get :: Ir.Buffet -> [Ir.DockerfilePart]
-get = pure . Set.toAscList . dishesInstructions
+get buffet = ScheduleParallelInstructions.get buffet $ dishesInstructions buffet
 
-dishesInstructions :: Ir.Buffet -> Set.Set (Docker.Instruction T.Text)
+dishesInstructions :: Ir.Buffet -> [Ir.DockerfilePart]
 dishesInstructions =
-  Set.unions . fmap (uncurry dishInstructions) . Map.toList . Ir.optionToDish
+  fmap (uncurry dishInstructions) . Map.toList . Ir.optionToDish
 
-dishInstructions :: Ir.Option -> Ir.Dish -> Set.Set (Docker.Instruction T.Text)
+dishInstructions :: Ir.Option -> Ir.Dish -> Ir.DockerfilePart
 dishInstructions option dish =
-  Set.insert optionArg $ Set.fromList givenInstructions
+  if optionArg `elem` givenInstructions
+    then givenInstructions
+    else List.insert optionArg givenInstructions
   where
     optionArg = Docker.Arg (Ir.option option) (Just $ T.pack "''")
     givenInstructions = Ir.beforeFirstBuildStage dish
