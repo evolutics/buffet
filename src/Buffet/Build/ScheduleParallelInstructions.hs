@@ -2,23 +2,20 @@ module Buffet.Build.ScheduleParallelInstructions
   ( get
   ) where
 
+import qualified Buffet.Build.JoinConsecutiveRunInstructions as JoinConsecutiveRunInstructions
 import qualified Buffet.Ir.Ir as Ir
 import qualified Data.Text as T
 import qualified Language.Docker as Docker
-import qualified Language.Docker.Syntax as Syntax
 import Prelude
   ( Bool(False, True)
-  , ($)
   , (.)
   , (<>)
   , (==)
   , all
   , concatMap
   , fmap
-  , foldr
   , fst
   , id
-  , mconcat
   , not
   , null
   , pure
@@ -33,25 +30,8 @@ get buffet =
     else unoptimizedSchedule
 
 optimizedSchedule :: [Ir.DockerfilePart] -> [Ir.DockerfilePart]
-optimizedSchedule = pure . joinConsecutiveRuns . scheduleWithSpannedRuns
-
-joinConsecutiveRuns :: Ir.DockerfilePart -> Ir.DockerfilePart
-joinConsecutiveRuns = foldr process []
-  where
-    process (Docker.Run first) (Docker.Run second:rest) =
-      Docker.Run (joinRuns first second) : rest
-    process first rest = first : rest
-
-joinRuns ::
-     Docker.Arguments T.Text
-  -> Docker.Arguments T.Text
-  -> Docker.Arguments T.Text
-joinRuns first second =
-  Syntax.ArgumentsText $
-  mconcat [command first, T.pack " \\\n  && ", command second]
-  where
-    command (Syntax.ArgumentsText shell) = shell
-    command (Syntax.ArgumentsList exec) = exec
+optimizedSchedule =
+  pure . JoinConsecutiveRunInstructions.get . scheduleWithSpannedRuns
 
 scheduleWithSpannedRuns :: [Ir.DockerfilePart] -> Ir.DockerfilePart
 scheduleWithSpannedRuns = scheduleNextPhase False []
