@@ -33,20 +33,20 @@ get buffet =
     else unoptimizedSchedule
 
 optimizedSchedule :: [Ir.DockerfilePart] -> [Ir.DockerfilePart]
-optimizedSchedule = pure . mergeConsecutiveRuns . scheduleWithSpannedRuns
+optimizedSchedule = pure . joinConsecutiveRuns . scheduleWithSpannedRuns
 
-mergeConsecutiveRuns :: Ir.DockerfilePart -> Ir.DockerfilePart
-mergeConsecutiveRuns = foldr process []
+joinConsecutiveRuns :: Ir.DockerfilePart -> Ir.DockerfilePart
+joinConsecutiveRuns = foldr process []
   where
     process (Docker.Run first) (Docker.Run second:rest) =
-      Docker.Run (mergeRuns first second) : rest
+      Docker.Run (joinRuns first second) : rest
     process first rest = first : rest
 
-mergeRuns ::
+joinRuns ::
      Docker.Arguments T.Text
   -> Docker.Arguments T.Text
   -> Docker.Arguments T.Text
-mergeRuns first second =
+joinRuns first second =
   Syntax.ArgumentsText $
   mconcat [command first, T.pack " \\\n  && ", command second]
   where
