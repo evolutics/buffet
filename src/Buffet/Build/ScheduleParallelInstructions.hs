@@ -64,6 +64,7 @@ scheduleStep queues =
       , scheduleShellInstructions
       , scheduleCopyInstructions
       , scheduleRunInstructions
+      , scheduleWorkdirInstructions
       , scheduleNextInstructionEach
       ]
 
@@ -114,6 +115,12 @@ scheduleRunInstructions queues =
     (runs, queues') = spanInstructions isRun queues
     isRun (Docker.Run _) = True
     isRun _ = False
+
+scheduleWorkdirInstructions :: ScheduleStep
+scheduleWorkdirInstructions = unifyInstructions isWorkdir
+  where
+    isWorkdir (Docker.Workdir _) = True
+    isWorkdir _ = False
 
 scheduleNextInstructionEach :: ScheduleStep
 scheduleNextInstructionEach queues = (mconcat nexts, queues')

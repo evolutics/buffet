@@ -32,7 +32,6 @@ data Dish =
     , beforeFirstBuildStage :: DockerfilePart
     , localBuildStages :: [DockerfilePart]
     , globalBuildStage :: DockerfilePart
-    , workdir :: Maybe FilePath
     , healthCheck :: Maybe T.Text
     }
   deriving (Eq, Generics.Generic, Ord, Show)
@@ -72,7 +71,6 @@ transformDish dish =
         transformDockerfilePart $ Ir.beforeFirstBuildStage dish
     , localBuildStages = transformDockerfilePart <$> Ir.localBuildStages dish
     , globalBuildStage = transformDockerfilePart $ Ir.globalBuildStage dish
-    , workdir = Ir.workdir dish
     , healthCheck = Ir.healthCheck dish
     }
 

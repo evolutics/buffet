@@ -54,7 +54,6 @@ data Dish =
     , beforeFirstBuildStage :: DockerfilePart
     , localBuildStages :: [DockerfilePart]
     , globalBuildStage :: DockerfilePart
-    , workdir :: Maybe FilePath
     , healthCheck :: Maybe T.Text
     }
   deriving (Eq, Ord, Show)
