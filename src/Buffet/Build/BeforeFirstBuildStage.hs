@@ -15,7 +15,7 @@ get buffet = ScheduleParallelInstructions.get buffet $ dishesInstructions buffet
 
 dishesInstructions :: Ir.Buffet -> [Ir.DockerfilePart]
 dishesInstructions =
-  fmap (uncurry dishInstructions) . Map.toList . Ir.optionToDish
+  fmap (uncurry dishInstructions) . Map.toAscList . Ir.optionToDish
 
 dishInstructions :: Ir.Option -> Ir.Dish -> Ir.DockerfilePart
 dishInstructions option dish =
