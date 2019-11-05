@@ -10,46 +10,13 @@ import qualified Data.Map.Strict as Map
 import qualified Data.Maybe as Maybe
 import qualified Data.Text as T
 import qualified Language.Docker as Docker
-import Prelude
-  ( Maybe(Nothing)
-  , ($)
-  , (.)
-  , (<$>)
-  , concat
-  , fmap
-  , maybe
-  , pure
-  , snd
-  , uncurry
-  )
+import Prelude (Maybe, ($), (.), (<$>), (<>), fmap, maybe, pure, snd, uncurry)
 
 get :: Ir.Buffet -> [Ir.DockerfilePart]
-get buffet =
-  concat
-    [ maybePart $ fromInstruction buffet
-    , dishesInstructions buffet
-    , maybePart $ workdirInstruction buffet
-    ]
+get buffet = dishesInstructions buffet <> maybePart (workdirInstruction buffet)
   where
     maybePart :: Maybe (Docker.Instruction T.Text) -> [Ir.DockerfilePart]
     maybePart = maybe [] $ pure . pure
-
-fromInstruction :: Ir.Buffet -> Maybe (Docker.Instruction T.Text)
-fromInstruction buffet = fmap instruction firstBaseImage
-  where
-    instruction image =
-      Docker.From
-        Docker.BaseImage
-          { Docker.image =
-              Docker.Image
-                {Docker.registryName = Nothing, Docker.imageName = image}
-          , Docker.tag = Nothing
-          , Docker.digest = Nothing
-          , Docker.alias = Nothing
-          , Docker.platform = Nothing
-          }
-    firstBaseImage = Maybe.listToMaybe $ fmap Ir.baseImage dishes
-    dishes = fmap snd . Map.toAscList $ Ir.optionToDish buffet
 
 dishesInstructions :: Ir.Buffet -> [Ir.DockerfilePart]
 dishesInstructions buffet =

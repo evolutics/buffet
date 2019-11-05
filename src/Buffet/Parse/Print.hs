@@ -31,7 +31,6 @@ data Dish =
     , metadata :: Metadata
     , beforeFirstBuildStage :: DockerfilePart
     , localBuildStages :: [DockerfilePart]
-    , baseImage :: T.Text
     , globalBuildStage :: DockerfilePart
     , workdir :: Maybe FilePath
     , healthCheck :: Maybe T.Text
@@ -72,7 +71,6 @@ transformDish dish =
     , beforeFirstBuildStage =
         transformDockerfilePart $ Ir.beforeFirstBuildStage dish
     , localBuildStages = transformDockerfilePart <$> Ir.localBuildStages dish
-    , baseImage = Ir.baseImage dish
     , globalBuildStage = transformDockerfilePart $ Ir.globalBuildStage dish
     , workdir = Ir.workdir dish
     , healthCheck = Ir.healthCheck dish

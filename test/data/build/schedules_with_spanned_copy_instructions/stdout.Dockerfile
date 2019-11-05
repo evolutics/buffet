@@ -8,7 +8,6 @@ FROM alpine:3.10.2 AS foo
 ARG foo
 
 FROM alpine:3.10.2
-
 ARG bar
 ARG foo
 COPY --from=bar /var/empty* /var/empty /tmp/bar/

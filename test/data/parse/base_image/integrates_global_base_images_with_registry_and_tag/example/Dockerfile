@@ -1,1 +1,0 @@
-FROM foo/bar:baz

@@ -53,7 +53,6 @@ data Dish =
     , metadata :: Metadata
     , beforeFirstBuildStage :: DockerfilePart
     , localBuildStages :: [DockerfilePart]
-    , baseImage :: T.Text
     , globalBuildStage :: DockerfilePart
     , workdir :: Maybe FilePath
     , healthCheck :: Maybe T.Text

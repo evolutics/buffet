@@ -7,6 +7,5 @@ RUN if [ -n "${example}" ]; then \
   ; fi
 
 FROM alpine:3.10.2
-
 ARG example
 COPY --from=example /root/example* /var/empty /usr/local/bin/

@@ -3,7 +3,6 @@ module Buffet.Parse.ParseDish
   ) where
 
 import qualified Buffet.Ir.Ir as Ir
-import qualified Buffet.Parse.ParseBaseImage as ParseBaseImage
 import qualified Buffet.Parse.ParseGlobalBuildStage as ParseGlobalBuildStage
 import qualified Buffet.Parse.ParseHealthCheck as ParseHealthCheck
 import qualified Buffet.Parse.ParseMetadata as ParseMetadata
@@ -39,7 +38,6 @@ parseDish dockerfilePath dockerfile =
     , Ir.metadata = ParseMetadata.get globalStage
     , Ir.beforeFirstBuildStage = dropPositions beforeFirstStage
     , Ir.localBuildStages = fmap dropPositions localStages
-    , Ir.baseImage = ParseBaseImage.get globalStage
     , Ir.globalBuildStage = ParseGlobalBuildStage.get globalStage
     , Ir.workdir = ParseWorkdir.get globalStage
     , Ir.healthCheck = ParseHealthCheck.get globalStage

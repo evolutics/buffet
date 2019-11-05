@@ -59,18 +59,19 @@ scheduleStep queues =
   where
     results = fmap ($ queues) strategies
     strategies =
-      [ scheduleArgInstructions
+      [ scheduleFromInstructions
+      , scheduleArgInstructions
       , scheduleShellInstructions
       , scheduleCopyInstructions
       , scheduleRunInstructions
       , scheduleNextInstructionEach
       ]
 
-scheduleArgInstructions :: ScheduleStep
-scheduleArgInstructions = unifyInstructions isArg
+scheduleFromInstructions :: ScheduleStep
+scheduleFromInstructions = unifyInstructions isFrom
   where
-    isArg (Docker.Arg _ _) = True
-    isArg _ = False
+    isFrom (Docker.From _) = True
+    isFrom _ = False
 
 unifyInstructions :: (Docker.Instruction T.Text -> Bool) -> ScheduleStep
 unifyInstructions isRelevant queues =
@@ -82,6 +83,12 @@ unifyInstructions isRelevant queues =
     minimumInstruction =
       fmap minimum . NonEmpty.nonEmpty $ nextInstructionsIfRelevant
     nextInstructionsIfRelevant = concatMap (filter isRelevant . take 1) queues
+
+scheduleArgInstructions :: ScheduleStep
+scheduleArgInstructions = unifyInstructions isArg
+  where
+    isArg (Docker.Arg _ _) = True
+    isArg _ = False
 
 scheduleShellInstructions :: ScheduleStep
 scheduleShellInstructions = unifyInstructions isShell

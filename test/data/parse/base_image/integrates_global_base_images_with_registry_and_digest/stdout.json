@@ -1,7 +1,0 @@
-{
-  "option_to_dish": {
-    "example": {
-      "base_image": "foo/bar@sha256:baz"
-    }
-  }
-}
