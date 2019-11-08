@@ -29,5 +29,4 @@ parseBuffet menu = do
   optionToDish <-
     ExceptionTools.sequenceAccumulatingExceptions . fmap ParseDish.get $
     Menu.optionToDish menu
-  pure
-    Ir.Buffet {Ir.optimize = Menu.optimize menu, Ir.optionToDish = optionToDish}
+  pure Ir.Buffet {Ir.optionToDish = optionToDish}

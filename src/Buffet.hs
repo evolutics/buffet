@@ -80,15 +80,6 @@ menuHelp =
         ]
     , list
         [ paragraphs
-            [ paragraph ["`optimize`:"]
-            , paragraph
-                [ "Whether to optimize"
-                , "for faster Docker builds,"
-                , "at the cost of convoluted code."
-                , "Default: true"
-                ]
-            ]
-        , paragraphs
             [ paragraph ["`option_to_dish`:"]
             , paragraph
                 [ "Map from `ARG` variable name to Dockerfile path."

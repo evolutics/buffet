@@ -5,14 +5,13 @@ module Buffet.Parse.Menu
 
 import qualified Buffet.Ir.Ir as Ir
 import qualified Data.Map.Strict as Map
-import Prelude (Bool(True), Eq, FilePath, Ord, Show)
+import Prelude (Eq, FilePath, Ord, Show)
 
-data Menu =
+newtype Menu =
   Menu
-    { optimize :: Bool
-    , optionToDish :: Map.Map Ir.Option FilePath
+    { optionToDish :: Map.Map Ir.Option FilePath
     }
   deriving (Eq, Ord, Show)
 
 defaultMenu :: Menu
-defaultMenu = Menu {optimize = True, optionToDish = Map.empty}
+defaultMenu = Menu {optionToDish = Map.empty}

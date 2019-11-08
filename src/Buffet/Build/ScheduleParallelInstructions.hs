@@ -20,7 +20,6 @@ import Prelude
   , dropWhile
   , filter
   , fmap
-  , id
   , mconcat
   , minimum
   , null
@@ -34,14 +33,8 @@ import Prelude
 type ScheduleStep
    = [Ir.DockerfilePart] -> (Ir.DockerfilePart, [Ir.DockerfilePart])
 
-get :: Ir.Buffet -> [Ir.DockerfilePart] -> [Ir.DockerfilePart]
-get buffet =
-  if Ir.optimize buffet
-    then optimizedSchedule
-    else unoptimizedSchedule
-
-optimizedSchedule :: [Ir.DockerfilePart] -> [Ir.DockerfilePart]
-optimizedSchedule = pure . schedule []
+get :: [Ir.DockerfilePart] -> [Ir.DockerfilePart]
+get = pure . schedule []
   where
     schedule timetable queues =
       if all null queues
@@ -126,6 +119,3 @@ scheduleNextInstructionEach :: ScheduleStep
 scheduleNextInstructionEach queues = (mconcat nexts, queues')
   where
     (nexts, queues') = unzip $ fmap (splitAt 1) queues
-
-unoptimizedSchedule :: [Ir.DockerfilePart] -> [Ir.DockerfilePart]
-unoptimizedSchedule = id

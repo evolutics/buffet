@@ -11,7 +11,7 @@ import qualified Language.Docker as Docker
 import Prelude (Maybe(Just), ($), (.), elem, fmap, uncurry)
 
 get :: Ir.Buffet -> [Ir.DockerfilePart]
-get buffet = ScheduleParallelInstructions.get buffet $ dishesInstructions buffet
+get = ScheduleParallelInstructions.get . dishesInstructions
 
 dishesInstructions :: Ir.Buffet -> [Ir.DockerfilePart]
 dishesInstructions =

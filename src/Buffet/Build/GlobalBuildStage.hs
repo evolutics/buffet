@@ -7,10 +7,10 @@ import qualified Buffet.Build.PrepareOptionArgInstruction as PrepareOptionArgIns
 import qualified Buffet.Build.ScheduleParallelInstructions as ScheduleParallelInstructions
 import qualified Buffet.Ir.Ir as Ir
 import qualified Data.Map.Strict as Map
-import Prelude (($), (.), fmap, uncurry)
+import Prelude ((.), fmap, uncurry)
 
 get :: Ir.Buffet -> [Ir.DockerfilePart]
-get buffet = ScheduleParallelInstructions.get buffet $ dishesInstructions buffet
+get = ScheduleParallelInstructions.get . dishesInstructions
 
 dishesInstructions :: Ir.Buffet -> [Ir.DockerfilePart]
 dishesInstructions =
