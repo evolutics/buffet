@@ -6,11 +6,11 @@ module Buffet.Parse.Print
   ) where
 
 import qualified Buffet.Ir.Ir as Ir
+import qualified Buffet.Toolbox.DockerTools as DockerTools
 import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Data.Aeson as Aeson
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
-import qualified Data.Text.Lazy as Lazy
 import qualified GHC.Generics as Generics
 import qualified Language.Docker as Docker
 import Prelude (Eq, FilePath, Maybe, Ord, Show, ($), (.), (<$>), fmap)
@@ -78,6 +78,4 @@ transformDockerfilePart :: Ir.DockerfilePart -> DockerfilePart
 transformDockerfilePart = fmap transformInstruction
 
 transformInstruction :: Docker.Instruction T.Text -> T.Text
-transformInstruction instruction =
-  T.stripEnd . Lazy.toStrict $
-  Docker.prettyPrint [Docker.instructionPos instruction]
+transformInstruction = T.stripEnd . DockerTools.printInstruction
