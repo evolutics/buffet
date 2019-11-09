@@ -12,6 +12,8 @@ import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Control.Exception as Exception
 import qualified Data.Aeson as Aeson
 import qualified Data.Map.Strict as Map
+import qualified Data.Maybe as Maybe
+import qualified Data.Text as T
 import qualified Data.Yaml as Yaml
 import qualified GHC.Generics as Generics
 import Prelude
@@ -39,9 +41,10 @@ instance Show Exception where
 
 instance Exception.Exception Exception
 
-newtype RawMenu =
+data RawMenu =
   RawMenu
-    { optionToDish :: Maybe (Map.Map Ir.Option FilePath)
+    { copyDummySourcePath :: Maybe T.Text
+    , optionToDish :: Maybe (Map.Map Ir.Option FilePath)
     }
   deriving (Eq, Generics.Generic, Ord, Show)
 
@@ -53,7 +56,10 @@ get menu = do
   raw <- getRaw menu
   pure
     Menu.Menu
-      { Menu.optionToDish =
+      { Menu.copyDummySourcePath =
+          Maybe.fromMaybe (Menu.copyDummySourcePath Menu.defaultMenu) $
+          copyDummySourcePath raw
+      , Menu.optionToDish =
           maybe
             (Menu.optionToDish Menu.defaultMenu)
             (fmap $ FilePath.combine folder) $

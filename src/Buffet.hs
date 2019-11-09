@@ -80,6 +80,16 @@ menuHelp =
         ]
     , list
         [ paragraphs
+            [ paragraph ["`copy_dummy_source_path`:"]
+            , paragraph
+                [ "File or folder"
+                , "that is added as a source path"
+                , "to `COPY` instructions"
+                , "because at least one source must exist."
+                , "Default: \"/var/empty\""
+                ]
+            ]
+        , paragraphs
             [ paragraph ["`option_to_dish`:"]
             , paragraph
                 [ "Map from `ARG` variable name to Dockerfile path."

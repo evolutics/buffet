@@ -9,25 +9,27 @@ import qualified Language.Docker as Docker hiding (sourcePaths)
 import qualified Language.Docker.Syntax as Syntax
 import Prelude (($), (<>), fmap, mconcat, pure)
 
-get :: Ir.Option -> Ir.DockerfilePart -> Ir.DockerfilePart
-get option = fmap conditionInstruction
+get :: Ir.Buffet -> Ir.Option -> Ir.DockerfilePart -> Ir.DockerfilePart
+get buffet option = fmap conditionInstruction
   where
     conditionInstruction (Docker.Copy arguments) =
-      conditionalCopyInstruction arguments
+      conditionalCopyInstruction buffet arguments
     conditionInstruction (Docker.Run (Syntax.ArgumentsText command)) =
       optionConditionalRunInstruction option command
     conditionInstruction instruction = instruction
 
-conditionalCopyInstruction :: Docker.CopyArgs -> Docker.Instruction T.Text
-conditionalCopyInstruction arguments =
+conditionalCopyInstruction ::
+     Ir.Buffet -> Docker.CopyArgs -> Docker.Instruction T.Text
+conditionalCopyInstruction buffet arguments =
   Docker.Copy arguments {Docker.sourcePaths = conditionalSources}
   where
-    conditionalSources = fmap makePattern originalSources <> pure emptyFolder
+    conditionalSources = fmap makePattern originalSources <> pure dummy
     makePattern path =
       Docker.SourcePath
         {Docker.unSourcePath = T.snoc (Docker.unSourcePath path) '*'}
     originalSources = Docker.sourcePaths arguments
-    emptyFolder = Docker.SourcePath {Docker.unSourcePath = T.pack "/var/empty"}
+    dummy =
+      Docker.SourcePath {Docker.unSourcePath = Ir.copyDummySourcePath buffet}
 
 optionConditionalRunInstruction ::
      Ir.Option -> T.Text -> Docker.Instruction T.Text

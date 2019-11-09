@@ -15,9 +15,10 @@ import qualified GHC.Generics as Generics
 import qualified Language.Docker as Docker
 import Prelude (Eq, FilePath, Maybe, Ord, Show, ($), (.), (<$>), fmap)
 
-newtype Buffet =
+data Buffet =
   Buffet
-    { optionToDish :: Map.Map Ir.Option Dish
+    { copyDummySourcePath :: T.Text
+    , optionToDish :: Map.Map Ir.Option Dish
     }
   deriving (Eq, Generics.Generic, Ord, Show)
 
@@ -56,7 +57,10 @@ get = TextTools.prettyPrintJson . transformBuffet
 
 transformBuffet :: Ir.Buffet -> Buffet
 transformBuffet buffet =
-  Buffet {optionToDish = transformDish <$> Ir.optionToDish buffet}
+  Buffet
+    { copyDummySourcePath = Ir.copyDummySourcePath buffet
+    , optionToDish = transformDish <$> Ir.optionToDish buffet
+    }
 
 transformDish :: Ir.Dish -> Dish
 transformDish dish =

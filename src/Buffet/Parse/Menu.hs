@@ -5,13 +5,16 @@ module Buffet.Parse.Menu
 
 import qualified Buffet.Ir.Ir as Ir
 import qualified Data.Map.Strict as Map
+import qualified Data.Text as T
 import Prelude (Eq, FilePath, Ord, Show)
 
-newtype Menu =
+data Menu =
   Menu
-    { optionToDish :: Map.Map Ir.Option FilePath
+    { copyDummySourcePath :: T.Text
+    , optionToDish :: Map.Map Ir.Option FilePath
     }
   deriving (Eq, Ord, Show)
 
 defaultMenu :: Menu
-defaultMenu = Menu {optionToDish = Map.empty}
+defaultMenu =
+  Menu {copyDummySourcePath = T.pack "/var/empty", optionToDish = Map.empty}
