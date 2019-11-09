@@ -9,7 +9,6 @@ import qualified Buffet.Parse.ParseMetadata as ParseMetadata
 import qualified Buffet.Parse.PartitionByBuildStage as PartitionByBuildStage
 import qualified Buffet.Toolbox.ExceptionTools as ExceptionTools
 import qualified Control.Exception as Exception
-import qualified Data.Text as T
 import qualified Language.Docker as Docker
 import qualified Language.Docker.Parser as Parser
 import Prelude (FilePath, IO, Show, ($), (.), fmap, pure, show)
@@ -25,7 +24,7 @@ instance Exception.Exception Exception
 get :: FilePath -> IO Ir.Dish
 get dockerfilePath = do
   dockerfile <- parseDockerfile dockerfilePath
-  pure . parseDish dockerfilePath $ patchDockerfile dockerfile
+  pure $ parseDish dockerfilePath dockerfile
 
 parseDockerfile :: FilePath -> IO Docker.Dockerfile
 parseDockerfile = ExceptionTools.eitherThrow Exception . Docker.parseFile
@@ -46,10 +45,3 @@ parseDish dockerfilePath dockerfile =
 
 dropPositions :: Docker.Dockerfile -> Ir.DockerfilePart
 dropPositions = fmap Docker.instruction
-
-patchDockerfile :: Docker.Dockerfile -> Docker.Dockerfile
-patchDockerfile = fmap $ fmap reviveLineBreaks
-  where
-    reviveLineBreaks = reviveSimpleLineBreak . reviveBlankLine
-    reviveSimpleLineBreak = T.replace (T.pack "   ") $ T.pack " \\\n  "
-    reviveBlankLine = T.replace (T.pack "     && ") $ T.pack " \\\n  \\\n  && "
