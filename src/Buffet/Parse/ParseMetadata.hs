@@ -14,12 +14,12 @@ import Prelude
   ( Maybe(Just, Nothing)
   , ($)
   , (.)
-  , concat
   , concatMap
   , const
   , either
   , fmap
   , maybe
+  , mconcat
   , mempty
   )
 
@@ -46,7 +46,7 @@ parseTags :: Map.Map T.Text T.Text -> Map.Map Ir.TagKey [Ir.TagValue]
 parseTags = fmap parseTagValues . Map.mapKeys Ir.TagKey
 
 parseTagValues :: T.Text -> [Ir.TagValue]
-parseTagValues raw = fmap Ir.TagValue . maybe [raw] concat $ parseCsv raw
+parseTagValues raw = fmap Ir.TagValue . maybe [raw] mconcat $ parseCsv raw
 
 parseCsv :: T.Text -> Maybe [[T.Text]]
 parseCsv =

@@ -9,12 +9,12 @@ import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Toolbox.DockerTools as DockerTools
 import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Data.Text as T
-import Prelude (($), (.), concat, fmap, mconcat)
+import Prelude (($), (.), fmap, mconcat)
 
 get :: Ir.Buffet -> T.Text
 get buffet =
   printDockerfileParts $
-  concat
+  mconcat
     [ BeforeFirstBuildStage.get buffet
     , LocalBuildStages.get buffet
     , GlobalBuildStage.get buffet

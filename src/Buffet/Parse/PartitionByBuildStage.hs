@@ -4,7 +4,7 @@ module Buffet.Parse.PartitionByBuildStage
 
 import qualified Data.List.Split as Split
 import qualified Language.Docker as Docker
-import Prelude (Bool(False, True), ($), concat, length, pred, splitAt)
+import Prelude (Bool(False, True), ($), length, mconcat, pred, splitAt)
 
 get ::
      Docker.Dockerfile
@@ -19,7 +19,7 @@ get dockerfile = (beforeFirstStage, localStages, globalStage)
     splitter = Split.keepDelimsL $ Split.whenElt isFrom
     (localStages, globalStageInstructions) =
       splitAt (pred $ length stages) stages
-    globalStage = concat globalStageInstructions
+    globalStage = mconcat globalStageInstructions
 
 isFrom :: Docker.InstructionPos a -> Bool
 isFrom (Docker.InstructionPos (Docker.From _) _ _) = True
