@@ -12,7 +12,7 @@ import qualified Data.Aeson as Aeson
 import qualified Data.Map.Strict as Map
 import qualified Data.Text as T
 import qualified GHC.Generics as Generics
-import Prelude (Eq, FilePath, Ord, Show, ($), (.), fmap, uncurry)
+import Prelude (Eq, FilePath, Maybe, Ord, Show, ($), (.), fmap, uncurry)
 
 data Dish =
   Dish
@@ -21,6 +21,7 @@ data Dish =
     , title :: T.Text
     , url :: T.Text
     , tags :: Map.Map Ir.TagKey [Ir.TagValue]
+    , healthCheck :: Maybe T.Text
     }
   deriving (Eq, Generics.Generic, Ord, Show)
 
@@ -38,4 +39,5 @@ transformDish option' dish =
     , title = Ir.title $ Ir.metadata dish
     , url = Ir.url $ Ir.metadata dish
     , tags = Ir.tags $ Ir.metadata dish
+    , healthCheck = Ir.healthCheck dish
     }

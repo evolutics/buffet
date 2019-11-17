@@ -2,6 +2,7 @@
   "dishes": [
     {
       "dockerfile_path": "test/data/document/allows_default_template/bar/Dockerfile",
+      "health_check": null,
       "option": "bar",
       "tags": {},
       "title": "Bar",
@@ -9,6 +10,7 @@
     },
     {
       "dockerfile_path": "test/data/document/allows_default_template/foo/Dockerfile",
+      "health_check": "ls",
       "option": "foo",
       "tags": {},
       "title": "Foo",
