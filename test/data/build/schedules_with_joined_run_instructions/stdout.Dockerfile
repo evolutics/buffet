@@ -1,13 +1,13 @@
 ARG bar=''
 ARG foo=''
 
-FROM alpine:3.10.2 AS bar
+FROM alpine:3.10.3 AS bar
 ARG bar
 
-FROM alpine:3.10.2 AS foo
+FROM alpine:3.10.3 AS foo
 ARG foo
 
-FROM alpine:3.10.2
+FROM alpine:3.10.3
 ARG bar
 ARG foo
 RUN if [ -n "${bar}" ]; then \
