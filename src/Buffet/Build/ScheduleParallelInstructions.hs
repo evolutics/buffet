@@ -23,7 +23,6 @@ import Prelude
   , mconcat
   , minimum
   , null
-  , pure
   , span
   , splitAt
   , take
@@ -34,8 +33,10 @@ type ScheduleStep
    = [Ir.DockerfilePart] -> (Ir.DockerfilePart, [Ir.DockerfilePart])
 
 get :: [Ir.DockerfilePart] -> [Ir.DockerfilePart]
-get = pure . schedule []
+get = wrap . schedule []
   where
+    wrap [] = []
+    wrap timetable = [timetable]
     schedule timetable queues =
       if all null queues
         then timetable

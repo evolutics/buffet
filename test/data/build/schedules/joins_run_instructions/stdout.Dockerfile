@@ -1,6 +1,3 @@
-ARG bar=''
-ARG foo=''
-
 FROM alpine:3.10.3 AS bar
 ARG bar
 
