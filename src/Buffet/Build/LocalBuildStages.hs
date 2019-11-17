@@ -3,7 +3,6 @@ module Buffet.Build.LocalBuildStages
   ) where
 
 import qualified Buffet.Build.ConditionInstructions as ConditionInstructions
-import qualified Buffet.Build.InsertOptionArgInstructionUnlessPresent as InsertOptionArgInstructionUnlessPresent
 import qualified Buffet.Ir.Ir as Ir
 import qualified Data.Map.Strict as Map
 import Prelude (($), (.), concatMap, fmap, uncurry)
@@ -15,10 +14,4 @@ get buffet =
 
 dishBuildStages :: Ir.Buffet -> Ir.Option -> Ir.Dish -> [Ir.DockerfilePart]
 dishBuildStages buffet option =
-  fmap (dishBuildStage buffet option) . Ir.localBuildStages
-
-dishBuildStage ::
-     Ir.Buffet -> Ir.Option -> Ir.DockerfilePart -> Ir.DockerfilePart
-dishBuildStage buffet option =
-  ConditionInstructions.get buffet option .
-  InsertOptionArgInstructionUnlessPresent.get option
+  fmap (ConditionInstructions.get buffet option) . Ir.localBuildStages

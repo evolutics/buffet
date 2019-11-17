@@ -2,21 +2,31 @@ module Buffet.Build.ConditionInstructions
   ( get
   ) where
 
+import qualified Buffet.Build.InsertOptionArgInstructionUnlessPresent as InsertOptionArgInstructionUnlessPresent
 import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Data.Text as T
 import qualified Language.Docker as Docker hiding (sourcePaths)
 import qualified Language.Docker.Syntax as Syntax
-import Prelude (($), (<>), fmap, mconcat, pure)
+import Prelude (($), (.), (<>), fmap, mconcat, pure)
 
 get :: Ir.Buffet -> Ir.Option -> Ir.DockerfilePart -> Ir.DockerfilePart
-get buffet option = fmap conditionInstruction
+get buffet option =
+  fmap (conditionInstruction buffet option) .
+  InsertOptionArgInstructionUnlessPresent.get option
+
+conditionInstruction ::
+     Ir.Buffet
+  -> Ir.Option
+  -> Docker.Instruction T.Text
+  -> Docker.Instruction T.Text
+conditionInstruction buffet option = condition
   where
-    conditionInstruction (Docker.Copy arguments) =
+    condition (Docker.Copy arguments) =
       conditionalCopyInstruction buffet arguments
-    conditionInstruction (Docker.Run (Syntax.ArgumentsText command)) =
+    condition (Docker.Run (Syntax.ArgumentsText command)) =
       optionConditionalRunInstruction option command
-    conditionInstruction instruction = instruction
+    condition instruction = instruction
 
 conditionalCopyInstruction ::
      Ir.Buffet -> Docker.CopyArgs -> Docker.Instruction T.Text
