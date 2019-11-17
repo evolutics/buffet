@@ -7,7 +7,7 @@ import qualified Buffet.Ir.Ir as Ir
 import qualified Data.List as List
 import qualified Data.Text as T
 import qualified Language.Docker as Docker
-import Prelude (Bool(False, True), (<>), (==), any, span)
+import Prelude (Bool(False, True), ($), (<>), (==), any, span)
 
 get :: ArgInstruction.ArgInstruction -> Ir.DockerfilePart -> Ir.DockerfilePart
 get argInstruction stage = firstFroms <> preparedAfterFirstFroms
@@ -18,7 +18,7 @@ get argInstruction stage = firstFroms <> preparedAfterFirstFroms
         then afterFirstFroms
         else List.insert arg firstArgs <> afterFirstArgs
     name = ArgInstruction.name argInstruction
-    arg = Docker.Arg name (ArgInstruction.defaultValue argInstruction)
+    arg = Docker.Arg name $ ArgInstruction.defaultValue argInstruction
     (firstArgs, afterFirstArgs) = span isArg afterFirstFroms
 
 isFrom :: Docker.Instruction a -> Bool
