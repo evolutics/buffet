@@ -18,14 +18,23 @@ data Dish =
   Dish
     { option :: Ir.Option
     , dockerfilePath :: FilePath
-    , title :: T.Text
-    , url :: T.Text
-    , tags :: Map.Map Ir.TagKey [Ir.TagValue]
+    , metadata :: Metadata
     , healthCheck :: Maybe T.Text
     }
   deriving (Eq, Generics.Generic, Ord, Show)
 
 instance Aeson.ToJSON Dish where
+  toJSON = Aeson.genericToJSON TextTools.defaultJsonOptions
+
+data Metadata =
+  Metadata
+    { title :: T.Text
+    , url :: T.Text
+    , tags :: Map.Map Ir.TagKey [Ir.TagValue]
+    }
+  deriving (Eq, Generics.Generic, Ord, Show)
+
+instance Aeson.ToJSON Metadata where
   toJSON = Aeson.genericToJSON TextTools.defaultJsonOptions
 
 get :: Ir.Buffet -> [Dish]
@@ -36,8 +45,14 @@ transformDish option' dish =
   Dish
     { option = option'
     , dockerfilePath = Ir.dockerfilePath dish
-    , title = Ir.title $ Ir.metadata dish
-    , url = Ir.url $ Ir.metadata dish
-    , tags = Ir.tags $ Ir.metadata dish
+    , metadata = transformMetadata $ Ir.metadata dish
     , healthCheck = Ir.healthCheck dish
+    }
+
+transformMetadata :: Ir.Metadata -> Metadata
+transformMetadata metadata' =
+  Metadata
+    { title = Ir.title metadata'
+    , url = Ir.url metadata'
+    , tags = Ir.tags metadata'
     }

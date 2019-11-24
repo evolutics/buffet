@@ -3,18 +3,22 @@
     {
       "dockerfile_path": "test/data/document/allows_default_template/bar/Dockerfile",
       "health_check": null,
-      "option": "bar",
-      "tags": {},
-      "title": "Bar",
-      "url": "https://example.com/bar"
+      "metadata": {
+        "tags": {},
+        "title": "Bar",
+        "url": "https://example.com/bar"
+      },
+      "option": "bar"
     },
     {
       "dockerfile_path": "test/data/document/allows_default_template/foo/Dockerfile",
       "health_check": "ls",
-      "option": "foo",
-      "tags": {},
-      "title": "Foo",
-      "url": "https://example.com/foo"
+      "metadata": {
+        "tags": {},
+        "title": "Foo",
+        "url": "https://example.com/foo"
+      },
+      "option": "foo"
     }
   ],
   "tag_groups": {}
