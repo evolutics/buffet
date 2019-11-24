@@ -11,6 +11,7 @@ JSON
 LTS
 monoid
 POSIX
+readme
 stderr
 stdout
 whitespace
