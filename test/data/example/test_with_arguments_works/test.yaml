@@ -1,0 +1,7 @@
+arguments:
+  - test
+  - --arguments
+  - [.., .., .., .., example, test_arguments.yaml]
+  - [.., .., .., .., example]
+stdout: [stdout.json]
+is_exit_status_success: true

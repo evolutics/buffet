@@ -1,0 +1,10 @@
+{
+  "prettier": {
+    "health_check_passed": true,
+    "option_value": "1.19.1"
+  },
+  "tidy": {
+    "health_check_passed": null,
+    "option_value": "1"
+  }
+}
