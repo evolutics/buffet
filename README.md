@@ -2,10 +2,33 @@
 
 [![Build](https://img.shields.io/travis/evolutics/buffet)](https://travis-ci.org/evolutics/buffet)
 [![License](https://img.shields.io/github/license/evolutics/buffet)](LICENSE)
+[![Package](https://img.shields.io/hackage/v/buffet)](https://hackage.haskell.org/package/buffet)
 
 Assemble many Dockerfiles in a single Dockerfile. This gives you the convenience of one Docker image with your favorite tools while keeping the modularity of a separate Dockerfile per tool.
 
 See [Code Cleaner Buffet](https://github.com/evolutics/code-cleaner-buffet) for an application of this.
+
+## Installation
+
+Run
+
+```bash
+stack install buffet
+```
+
+or
+
+```bash
+cabal install buffet
+```
+
+You are ready when
+
+```bash
+buffet --help
+```
+
+works.
 
 ## Usage example
 
