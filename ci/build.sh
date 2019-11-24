@@ -24,7 +24,7 @@ build_code_checkers() {
 }
 
 test_code() {
-  stack --system-ghc test
+  stack --system-ghc test --ghc-options -Werror
 }
 
 main() {
