@@ -1,7 +1,7 @@
 {
   "dishes": [
     {
-      "dockerfile_path": "test/data/document/allows_default_template/bar/Dockerfile",
+      "dockerfile_path": "test/data/document/prints_template_context/bar/Dockerfile",
       "health_check": null,
       "metadata": {
         "tags": {},
@@ -11,7 +11,7 @@
       "option": "bar"
     },
     {
-      "dockerfile_path": "test/data/document/allows_default_template/foo/Dockerfile",
+      "dockerfile_path": "test/data/document/prints_template_context/foo/Dockerfile",
       "health_check": "ls",
       "metadata": {
         "tags": {},
