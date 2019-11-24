@@ -12,7 +12,7 @@ category: Development
 description: See https://github.com/evolutics/buffet
 dependencies:
   - base >= 4.7 && < 5
-_ghc-options: &ghc-options
+_ghc-options-executable: &ghc-options-executable
   - -threaded
   - -rtsopts
   - -with-rtsopts=-N
@@ -20,10 +20,15 @@ _ghc-options: &ghc-options
   - -Wno-unsafe
   - -Wno-safe
   - -Wno-missing-local-signatures
+_ghc-options-library: &ghc-options-library
+  - -Weverything
+  - -Wno-unsafe
+  - -Wno-safe
+  - -Wno-missing-local-signatures
 internal-libraries:
   buffet-internal:
     source-dirs: src
-    ghc-options: *ghc-options
+    ghc-options: *ghc-options-library
     dependencies:
       - aeson
       - aeson-pretty
@@ -47,14 +52,14 @@ executables:
   buffet:
     main: Main.hs
     source-dirs: app
-    ghc-options: *ghc-options
+    ghc-options: *ghc-options-executable
     dependencies:
       - buffet-internal
 tests:
   buffet-test:
     main: Spec.hs
     source-dirs: test
-    ghc-options: *ghc-options
+    ghc-options: *ghc-options-executable
     dependencies:
       - aeson
       - buffet-internal
