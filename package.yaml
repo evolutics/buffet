@@ -48,6 +48,8 @@ internal-libraries:
       - unordered-containers
       - vector
       - yaml
+    generated-other-modules:
+      - Paths_buffet
 executables:
   buffet:
     main: Main.hs
@@ -55,6 +57,8 @@ executables:
     ghc-options: *ghc-options-executable
     dependencies:
       - buffet-internal
+    generated-other-modules:
+      - Paths_buffet
 tests:
   buffet-test:
     main: Spec.hs
@@ -73,3 +77,5 @@ tests:
       - unordered-containers
       - vector
       - yaml
+    generated-other-modules:
+      - Paths_buffet
