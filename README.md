@@ -52,11 +52,11 @@ buffet build example
 This prints a Dockerfile based on the subfolders of `example`. From this, we can then build a Docker image `mona_linta` with
 
 ```bash
-buffet build example | docker build \
-  --build-arg prettier=1.19.1 --build-arg tidy=1 --tag mona_linta -
+buffet build example | \
+  docker build --build-arg prettier=1.19.1 --tag mona_linta -
 ```
 
-Note how we pass a `--build-arg` per tool, assigning each a nonempty value. In case of Prettier, we use this to parameterize the tool version. If we do not mention a tool in a `--build-arg`, it is not available in the image.
+Note how in case of Prettier, we pass a `--build-arg` to parameterize the tool version.
 
 ### Testing
 
