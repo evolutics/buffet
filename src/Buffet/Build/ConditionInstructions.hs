@@ -30,34 +30,34 @@ conditionInstruction ::
 conditionInstruction configuration = condition
   where
     condition (Docker.Copy arguments) =
-      conditionalCopyInstruction configuration arguments
+      conditionCopyInstruction configuration arguments
     condition (Docker.Run (Syntax.ArgumentsText command)) =
-      configuredConditionalRunInstruction configuration command
+      configuredConditionRunInstruction configuration command
     condition instruction = instruction
 
-conditionalCopyInstruction ::
+conditionCopyInstruction ::
      Configuration -> Docker.CopyArgs -> Docker.Instruction T.Text
-conditionalCopyInstruction buffet arguments =
-  Docker.Copy arguments {Docker.sourcePaths = conditionalSources}
+conditionCopyInstruction buffet arguments =
+  Docker.Copy arguments {Docker.sourcePaths = sources}
   where
-    conditionalSources = fmap makePattern originalSources <> pure dummy
+    sources = fmap makePattern originalSources <> pure dummy
     makePattern path =
       Docker.SourcePath
         {Docker.unSourcePath = T.snoc (Docker.unSourcePath path) '*'}
     originalSources = Docker.sourcePaths arguments
     dummy = Docker.SourcePath {Docker.unSourcePath = copyDummySourcePath buffet}
 
-configuredConditionalRunInstruction ::
+configuredConditionRunInstruction ::
      Configuration -> T.Text -> Docker.Instruction T.Text
-configuredConditionalRunInstruction configuration =
-  conditionalRunInstruction condition
+configuredConditionRunInstruction configuration =
+  conditionRunInstruction condition
   where
     condition =
       mconcat
         [T.pack "[ -n \"${", Ir.option $ option configuration, T.pack "}\" ]"]
 
-conditionalRunInstruction :: T.Text -> T.Text -> Docker.Instruction T.Text
-conditionalRunInstruction condition thenPart =
+conditionRunInstruction :: T.Text -> T.Text -> Docker.Instruction T.Text
+conditionRunInstruction condition thenPart =
   Docker.Run $ Syntax.ArgumentsText command
   where
     command =
