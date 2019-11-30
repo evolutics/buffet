@@ -2,7 +2,7 @@ module Buffet.Build.LocalBuildStages
   ( get
   ) where
 
-import qualified Buffet.Build.ConditionInstructions as ConditionInstructions
+import qualified Buffet.Build.ConditionInstructionsInContext as ConditionInstructionsInContext
 import qualified Buffet.Ir.Ir as Ir
 import qualified Data.Map.Strict as Map
 import Prelude (($), (.), concatMap, fmap, uncurry)
@@ -14,4 +14,4 @@ get buffet =
 
 dishBuildStages :: Ir.Buffet -> Ir.Option -> Ir.Dish -> [Ir.DockerfilePart]
 dishBuildStages buffet option =
-  fmap (ConditionInstructions.get buffet option) . Ir.localBuildStages
+  fmap (ConditionInstructionsInContext.get buffet option) . Ir.localBuildStages

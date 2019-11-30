@@ -1,5 +1,6 @@
 module Buffet.Build.ConditionInstructions
-  ( get
+  ( Configuration(..)
+  , get
   ) where
 
 import qualified Buffet.Build.InsertOptionArgInstructionUnlessPresent as InsertOptionArgInstructionUnlessPresent
@@ -8,28 +9,34 @@ import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Data.Text as T
 import qualified Language.Docker as Docker hiding (sourcePaths)
 import qualified Language.Docker.Syntax as Syntax
-import Prelude (($), (.), (<>), fmap, mconcat, pure)
+import Prelude (Eq, Ord, Show, ($), (.), (<>), fmap, mconcat, pure)
 
-get :: Ir.Buffet -> Ir.Option -> Ir.DockerfilePart -> Ir.DockerfilePart
-get buffet option =
-  fmap (conditionInstruction buffet option) .
-  InsertOptionArgInstructionUnlessPresent.get option
+data Configuration =
+  Configuration
+    { copyDummySourcePath :: T.Text
+    , option :: Ir.Option
+    }
+  deriving (Eq, Ord, Show)
+
+get :: Configuration -> Ir.DockerfilePart -> Ir.DockerfilePart
+get configuration =
+  fmap (conditionInstruction configuration) .
+  InsertOptionArgInstructionUnlessPresent.get option'
+  where
+    option' = option configuration
 
 conditionInstruction ::
-     Ir.Buffet
-  -> Ir.Option
-  -> Docker.Instruction T.Text
-  -> Docker.Instruction T.Text
-conditionInstruction buffet option = condition
+     Configuration -> Docker.Instruction T.Text -> Docker.Instruction T.Text
+conditionInstruction configuration = condition
   where
     condition (Docker.Copy arguments) =
-      conditionalCopyInstruction buffet arguments
+      conditionalCopyInstruction configuration arguments
     condition (Docker.Run (Syntax.ArgumentsText command)) =
-      optionConditionalRunInstruction option command
+      configuredConditionalRunInstruction configuration command
     condition instruction = instruction
 
 conditionalCopyInstruction ::
-     Ir.Buffet -> Docker.CopyArgs -> Docker.Instruction T.Text
+     Configuration -> Docker.CopyArgs -> Docker.Instruction T.Text
 conditionalCopyInstruction buffet arguments =
   Docker.Copy arguments {Docker.sourcePaths = conditionalSources}
   where
@@ -38,14 +45,16 @@ conditionalCopyInstruction buffet arguments =
       Docker.SourcePath
         {Docker.unSourcePath = T.snoc (Docker.unSourcePath path) '*'}
     originalSources = Docker.sourcePaths arguments
-    dummy =
-      Docker.SourcePath {Docker.unSourcePath = Ir.copyDummySourcePath buffet}
+    dummy = Docker.SourcePath {Docker.unSourcePath = copyDummySourcePath buffet}
 
-optionConditionalRunInstruction ::
-     Ir.Option -> T.Text -> Docker.Instruction T.Text
-optionConditionalRunInstruction option = conditionalRunInstruction condition
+configuredConditionalRunInstruction ::
+     Configuration -> T.Text -> Docker.Instruction T.Text
+configuredConditionalRunInstruction configuration =
+  conditionalRunInstruction condition
   where
-    condition = mconcat [T.pack "[ -n \"${", Ir.option option, T.pack "}\" ]"]
+    condition =
+      mconcat
+        [T.pack "[ -n \"${", Ir.option $ option configuration, T.pack "}\" ]"]
 
 conditionalRunInstruction :: T.Text -> T.Text -> Docker.Instruction T.Text
 conditionalRunInstruction condition thenPart =
