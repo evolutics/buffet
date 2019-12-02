@@ -74,7 +74,7 @@ To integrate a check like `prettier --version` as a test of the tool installatio
 buffet test --arguments example/test_arguments.yaml example
 ```
 
-The file [`test_arguments.yaml`](example/test_arguments.yaml) provides the `--build-arg` configuration for this test run.
+This builds a Docker image to then run the tests. The file [`test_arguments.yaml`](example/test_arguments.yaml) provides a map that is used for two things: firstly, its entries are used as `--build-arg` options when building the image, and secondly, only tests of dishes referred in this map are run.
 
 If you like, try adding a test for HTML Tidy.
 
