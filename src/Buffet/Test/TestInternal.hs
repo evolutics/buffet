@@ -24,16 +24,18 @@ get configuration buffet = do
   arguments <- ParseArguments.get configuration
   let use image = evaluateTestResults <$> sequenceA tests
         where
-          tests = Map.mapWithKey test $ Ir.optionToDish buffet
-          test option dish =
-            TestDish.get
-              TestSetup.TestSetup
-                { TestSetup.log = log
-                , TestSetup.image = image
-                , TestSetup.option = option
-                , TestSetup.optionValue = Map.lookup option arguments
-                , TestSetup.dish = dish
-                }
+          tests = Map.mapMaybeWithKey test $ Ir.optionToDish buffet
+          test option dish = testSetup <$> Map.lookup option arguments
+            where
+              testSetup optionValue =
+                TestDish.get
+                  TestSetup.TestSetup
+                    { TestSetup.log = log
+                    , TestSetup.image = image
+                    , TestSetup.option = option
+                    , TestSetup.optionValue = optionValue
+                    , TestSetup.dish = dish
+                    }
       imageConfiguration =
         UsingDockerImage.Configuration
           { UsingDockerImage.log = log

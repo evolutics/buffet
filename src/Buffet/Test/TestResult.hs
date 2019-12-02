@@ -13,7 +13,7 @@ import Prelude (Bool, Eq, Maybe, Ord, Show)
 
 data TestResult =
   TestResult
-    { optionValue :: Maybe T.Text
+    { optionValue :: T.Text
     , healthCheckPassed :: Maybe Bool
     }
   deriving (Eq, Generics.Generic, Ord, Show)
