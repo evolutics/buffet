@@ -5,7 +5,7 @@ module Buffet.Test.TestDish
 import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Test.TestResult as TestResult
 import qualified Buffet.Test.TestSetup as TestSetup
-import qualified Data.Foldable as Foldable
+import qualified Data.Maybe as Maybe
 import qualified Data.Text as T
 import Prelude (Bool, IO, Maybe(Nothing), ($), (.), (==), pure, traverse)
 import qualified System.Exit as Exit
@@ -14,7 +14,7 @@ import qualified System.Process.Typed as Process
 get :: TestSetup.TestSetup -> IO TestResult.TestResult
 get testSetup = do
   healthCheckPassed' <-
-    if T.null optionValue'
+    if Maybe.isNothing optionValue'
       then pure Nothing
       else checkHealth testSetup
   pure
@@ -23,7 +23,7 @@ get testSetup = do
       , TestResult.healthCheckPassed = healthCheckPassed'
       }
   where
-    optionValue' = Foldable.fold $ TestSetup.optionValue testSetup
+    optionValue' = TestSetup.optionValue testSetup
 
 checkHealth :: TestSetup.TestSetup -> IO (Maybe Bool)
 checkHealth testSetup = traverse run . Ir.healthCheck $ TestSetup.dish testSetup
