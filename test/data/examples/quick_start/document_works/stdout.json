@@ -1,7 +1,7 @@
 {
   "dishes": [
     {
-      "dockerfile_path": "test/data/example/document_works/../../../../example/prettier/Dockerfile",
+      "dockerfile_path": "test/data/examples/quick_start/document_works/../../../../../examples/quick_start/prettier/Dockerfile",
       "health_check": "prettier --version \\\n  && echo '<!DOCTYPE  html><title>Hi</ title>' > index.html \\\n  && prettier index.html",
       "metadata": {
         "tags": {},
@@ -11,7 +11,7 @@
       "option": "prettier"
     },
     {
-      "dockerfile_path": "test/data/example/document_works/../../../../example/tidy/Dockerfile",
+      "dockerfile_path": "test/data/examples/quick_start/document_works/../../../../../examples/quick_start/tidy/Dockerfile",
       "health_check": null,
       "metadata": {
         "tags": {},

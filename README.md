@@ -43,16 +43,16 @@ cd buffet
 
 ### Building
 
-In the subfolders of the [`example`](example) folder, you see a [Dockerfile for Prettier](example/prettier/Dockerfile) and another [Dockerfile for HTML Tidy](example/tidy/Dockerfile). These Dockerfiles (called "dishes") are the modular toy blocks, which we now automatically combine to one Dockerfile (called "buffet") by running
+In the subfolders of [`examples/quick_start`](examples/quick_start), you see a [Dockerfile for Prettier](examples/quick_start/prettier/Dockerfile) and another [Dockerfile for HTML Tidy](examples/quick_start/tidy/Dockerfile). These Dockerfiles (called "dishes") are the modular toy blocks, which we now automatically combine to one Dockerfile (called "buffet") by running
 
 ```bash
-buffet build example
+buffet build examples/quick_start
 ```
 
-This prints a Dockerfile based on the subfolders of `example`. From this, we can then build a Docker image `mona_linta` with
+This prints a Dockerfile based on the subfolders of `examples/quick_start`. From this, we can then build a Docker image `mona_linta` with
 
 ```bash
-buffet build example | \
+buffet build examples/quick_start | \
   docker build --build-arg prettier=1.19.1 --tag mona_linta -
 ```
 
@@ -68,13 +68,14 @@ prettier --version
 tidy --version
 ```
 
-To integrate a check like `prettier --version` as a test of the tool installation, add a `HEALTHCHECK` instruction as you see in the [Dockerfile for Prettier](example/prettier/Dockerfile). The exit status of such a command is then reported when you run our example test suite with
+To integrate a check like `prettier --version` as a test of the tool installation, add a `HEALTHCHECK` instruction as you see in the [Dockerfile for Prettier](examples/quick_start/prettier/Dockerfile). The exit status of such a command is then reported when you run our example test suite with
 
 ```bash
-buffet test --arguments example/test_arguments.yaml example
+buffet test --arguments examples/quick_start/test_arguments.yaml \
+  examples/quick_start
 ```
 
-This builds a Docker image to then run the tests. The file [`test_arguments.yaml`](example/test_arguments.yaml) provides a map that is used for two things: firstly, its entries are used as `--build-arg` options when building the image, and secondly, only tests of dishes referred in this map are run.
+This builds a Docker image to then run the tests. The file [`test_arguments.yaml`](examples/quick_start/test_arguments.yaml) provides a map that is used for two things: firstly, its entries are used as `--build-arg` options when building the image, and secondly, only tests of dishes referred in this map are run.
 
 If you like, try adding a test for HTML Tidy.
 
@@ -83,13 +84,14 @@ If you like, try adding a test for HTML Tidy.
 You can generate documentation with
 
 ```bash
-buffet document --template example/document_template.md.mustache example
+buffet document --template examples/quick_start/document_template.md.mustache \
+  examples/quick_start
 ```
 
-This renders the template [`document_template.md.mustache`](example/document_template.md.mustache). To print the raw template context, omit this option as in
+This renders the template [`document_template.md.mustache`](examples/quick_start/document_template.md.mustache). To print the raw template context, omit this option as in
 
 ```bash
-buffet document example
+buffet document examples/quick_start
 ```
 
 Among others, data from `LABEL` instructions is integrated in the template context.

@@ -1,6 +1,6 @@
 arguments:
   - build
-  - [.., .., .., .., example]
+  - [.., .., .., .., .., examples, quick_start]
 stdout: [stdout.Dockerfile]
 stderr: ""
 is_exit_status_success: true

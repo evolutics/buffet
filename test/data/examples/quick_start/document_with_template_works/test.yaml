@@ -1,0 +1,8 @@
+arguments:
+  - document
+  - --template
+  - [.., .., .., .., .., examples, quick_start, document_template.md.mustache]
+  - [.., .., .., .., .., examples, quick_start]
+stdout: [stdout.md]
+stderr: ""
+is_exit_status_success: true
