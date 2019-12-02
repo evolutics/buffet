@@ -12,11 +12,11 @@ import qualified System.Process.Typed as Process
 
 get :: TestSetup.TestSetup -> IO TestResult.TestResult
 get testSetup = do
-  healthCheckPassed' <- checkHealth testSetup
+  healthCheckPassed <- checkHealth testSetup
   pure
     TestResult.TestResult
       { TestResult.optionValue = TestSetup.optionValue testSetup
-      , TestResult.healthCheckPassed = healthCheckPassed'
+      , TestResult.healthCheckPassed = healthCheckPassed
       }
 
 checkHealth :: TestSetup.TestSetup -> IO (Maybe Bool)
