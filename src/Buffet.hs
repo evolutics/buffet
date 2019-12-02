@@ -34,7 +34,7 @@ root =
     raw =
       Options.hsubparser $
       mconcat
-        [ Options.command "build" build
+        [ Options.command "assemble" assemble
         , Options.command "document" document
         , Options.command "parse" parse
         , Options.command "test" test
@@ -53,12 +53,12 @@ versionOption =
         , "according to the GNU coding standards."
         ]
 
-build :: Options.ParserInfo Facade.Command
-build =
+assemble :: Options.ParserInfo Facade.Command
+assemble =
   Options.info parser $
   Options.progDesc "Assembles a Dockerfile from a list of Dockerfiles."
   where
-    parser = fmap Facade.Build $ Facade.BuildArguments <$> menuOperand
+    parser = fmap Facade.Assemble $ Facade.AssembleArguments <$> menuOperand
 
 menuOperand :: Options.Parser FilePath
 menuOperand =

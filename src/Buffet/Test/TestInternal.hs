@@ -2,7 +2,7 @@ module Buffet.Test.TestInternal
   ( get
   ) where
 
-import qualified Buffet.Build.BuildInternal as BuildInternal
+import qualified Buffet.Assemble.AssembleInternal as AssembleInternal
 import qualified Buffet.Ir.Ir as Ir
 import qualified Buffet.Test.Configuration as Configuration
 import qualified Buffet.Test.ParseArguments as ParseArguments
@@ -41,7 +41,7 @@ get configuration buffet = do
           { UsingDockerImage.log = log
           , UsingDockerImage.dockerBuild =
               UsingDockerImage.DockerBuild
-                { UsingDockerImage.dockerfile = BuildInternal.get buffet
+                { UsingDockerImage.dockerfile = AssembleInternal.get buffet
                 , UsingDockerImage.arguments = arguments
                 }
           }

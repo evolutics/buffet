@@ -16,7 +16,7 @@ tests =
   sequenceA
     [ helpTests "test/data/help"
     , versionTests "test/data/version"
-    , buildTests "test/data/build"
+    , assembleTests "test/data/assemble"
     , documentTests "test/data/document"
     , parseTests "test/data/parse"
     , testTests "test/data/test"
@@ -45,8 +45,8 @@ versionTests = TestTools.folderBasedTests $ assert configuration
     configuration =
       defaultConfiguration {TestUtility.assertStdout = TestVersion.get}
 
-buildTests :: FilePath -> IO Tasty.TestTree
-buildTests = TestTools.folderBasedTests $ assert defaultConfiguration
+assembleTests :: FilePath -> IO Tasty.TestTree
+assembleTests = TestTools.folderBasedTests $ assert defaultConfiguration
 
 documentTests :: FilePath -> IO Tasty.TestTree
 documentTests = TestTools.folderBasedTests $ assert defaultConfiguration

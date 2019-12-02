@@ -1,5 +1,5 @@
 module Buffet.Facade
-  ( BuildArguments(..)
+  ( AssembleArguments(..)
   , Command(..)
   , DocumentArguments(..)
   , ParseArguments(..)
@@ -7,7 +7,7 @@ module Buffet.Facade
   , get
   ) where
 
-import qualified Buffet.Build.Build as Build
+import qualified Buffet.Assemble.Assemble as Assemble
 import qualified Buffet.Document.Configuration as Document
 import qualified Buffet.Document.Document as Document
 import qualified Buffet.Parse.Parse as Parse
@@ -19,15 +19,15 @@ import Prelude (Bool, Eq, FilePath, IO, Maybe, Ord, Show, (>>=), uncurry)
 import qualified System.Exit as Exit
 
 data Command
-  = Build BuildArguments
+  = Assemble AssembleArguments
   | Document DocumentArguments
   | Parse ParseArguments
   | Test TestArguments
   deriving (Eq, Ord, Show)
 
-newtype BuildArguments =
-  BuildArguments
-    { buildMenu :: FilePath
+newtype AssembleArguments =
+  AssembleArguments
+    { assembleMenu :: FilePath
     }
   deriving (Eq, Ord, Show)
 
@@ -54,13 +54,13 @@ data TestArguments =
 get :: Command -> IO ()
 get command =
   case command of
-    Build arguments -> build arguments
+    Assemble arguments -> assemble arguments
     Document arguments -> document arguments
     Parse arguments -> parse arguments
     Test arguments -> test arguments
 
-build :: BuildArguments -> IO ()
-build arguments = Build.get (buildMenu arguments) >>= T.IO.putStr
+assemble :: AssembleArguments -> IO ()
+assemble arguments = Assemble.get (assembleMenu arguments) >>= T.IO.putStr
 
 document :: DocumentArguments -> IO ()
 document arguments =

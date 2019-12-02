@@ -41,18 +41,18 @@ git clone https://github.com/evolutics/buffet.git
 cd buffet
 ```
 
-### Building
+### Assembling
 
 In the subfolders of [`examples/quick_start`](examples/quick_start), you see a [Dockerfile for Prettier](examples/quick_start/prettier/Dockerfile) and another [Dockerfile for HTML Tidy](examples/quick_start/tidy/Dockerfile). These Dockerfiles (called "dishes") are the modular toy blocks, which we now automatically combine to one Dockerfile (called "buffet") by running
 
 ```bash
-buffet build examples/quick_start
+buffet assemble examples/quick_start
 ```
 
 This prints a Dockerfile based on the subfolders of `examples/quick_start`. From this, we can then build a Docker image `mona_linta` with
 
 ```bash
-buffet build examples/quick_start | \
+buffet assemble examples/quick_start | \
   docker build --build-arg prettier=1.19.1 --tag mona_linta -
 ```
 
