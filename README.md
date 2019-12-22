@@ -10,16 +10,10 @@ See [Code Cleaner Buffet](https://github.com/evolutics/code-cleaner-buffet) for 
 
 ## Installation
 
-Run
+For a quick start, use the Docker image `evolutics/buffet:0.3.0`. I recommend a Bash alias like
 
 ```bash
-stack install buffet
-```
-
-or
-
-```bash
-cabal install buffet
+alias buffet='docker run --rm --volume "$(pwd)":/workdir evolutics/buffet:0.3.0'
 ```
 
 You are ready when
@@ -29,6 +23,8 @@ buffet --help
 ```
 
 works.
+
+Alternatively, you can do a native installation with `stack install buffet` or `cabal install buffet`.
 
 ## Usage example
 
