@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
+docker build \
+  --build-arg "buffet_version=${DOCKER_TAG}" \
+  --build-arg "haskell_version=${haskell_version}" \
+  --file "${DOCKERFILE_PATH}" \
+  --tag "${IMAGE_NAME}" \
+  .
