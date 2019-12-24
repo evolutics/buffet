@@ -1,4 +1,4 @@
-FROM alpine:3.10.3
+FROM alpine:3.11.0
 HEALTHCHECK CMD ls \
   && echo 'foo' \
   && echo \

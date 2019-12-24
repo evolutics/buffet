@@ -1,4 +1,4 @@
-FROM alpine:3.10.3
+FROM alpine:3.11.0
 LABEL org.opencontainers.image.title='Foo'
 LABEL org.opencontainers.image.title='Bar' \
   org.opencontainers.image.title='Baz'

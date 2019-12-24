@@ -1,3 +1,3 @@
-FROM alpine:3.10.3
+FROM alpine:3.11.0
 ENV baz="a"
 ENV bar="b"
