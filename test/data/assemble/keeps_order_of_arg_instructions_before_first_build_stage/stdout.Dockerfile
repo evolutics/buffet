@@ -1,4 +1,4 @@
-ARG b='3.10'
-ARG a="${b}.3"
+ARG b='late'
+ARG a="${b}st"
 
 FROM alpine:"${a}"
