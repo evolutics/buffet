@@ -5,4 +5,4 @@
 --build-arg hlint=2.2.5
 --build-arg hunspell=1.7.0
 --build-arg prettier=1.19.1
-https://github.com/evolutics/code-cleaner-buffet.git#0.6.0
+https://github.com/evolutics/code-cleaner-buffet.git#0.7.0
