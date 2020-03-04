@@ -10,7 +10,7 @@ See [Code Cleaner Buffet](https://github.com/evolutics/code-cleaner-buffet) for 
 
 ## Installation
 
-For a quick start, use the Docker image `evolutics/buffet`. I recommend a Bash alias like
+For a quick start, use the Docker image [`evolutics/buffet`](https://hub.docker.com/r/evolutics/buffet). I recommend a Bash alias like
 
 ```bash
 alias buffet='docker run --rm --volume "$(pwd)":/workdir evolutics/buffet'
