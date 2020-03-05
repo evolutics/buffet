@@ -19,11 +19,13 @@ _ghc-options-executable: &ghc-options-executable
   - -Weverything
   - -Wno-unsafe
   - -Wno-safe
+  - -Wno-missing-deriving-strategies
   - -Wno-missing-local-signatures
 _ghc-options-library: &ghc-options-library
   - -Weverything
   - -Wno-unsafe
   - -Wno-safe
+  - -Wno-missing-deriving-strategies
   - -Wno-missing-local-signatures
 internal-libraries:
   buffet-internal:
