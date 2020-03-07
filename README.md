@@ -48,11 +48,8 @@ buffet assemble examples/quick_start
 This prints a Dockerfile based on the subfolders of `examples/quick_start`. From this, we can then build a Docker image `mona_linta` with
 
 ```bash
-buffet assemble examples/quick_start | \
-  docker build --build-arg prettier=1.19.1 --tag mona_linta -
+buffet assemble examples/quick_start | docker build --tag mona_linta -
 ```
-
-Note how in case of Prettier, we pass a `--build-arg` to parameterize the tool version.
 
 ### Testing
 
@@ -71,7 +68,7 @@ buffet test --arguments examples/quick_start/test_arguments.yaml \
   examples/quick_start
 ```
 
-This builds a Docker image to then run the tests. The file [`test_arguments.yaml`](examples/quick_start/test_arguments.yaml) provides a map that is used for two things: firstly, its entries are used as `--build-arg` options when building the image, and secondly, only tests of dishes referred in this map are run.
+This builds a Docker image to then run the tests. Only the dishes referred in the file [`test_arguments.yaml`](examples/quick_start/test_arguments.yaml) are tested.
 
 If you like, try adding a test for HTML Tidy.
 
