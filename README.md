@@ -72,6 +72,8 @@ buffet test --arguments examples/quick_start/test_arguments.yaml \
 
 This builds a Docker image to then run the tests. Only the dishes referred in the file [`test_arguments.yaml`](examples/quick_start/test_arguments.yaml) are tested.
 
+**Note:** As `buffet test …` executes Docker commands, a [native installation](#installation) is required here.
+
 If you like, try adding a test for HTML Tidy.
 
 ### Documenting
