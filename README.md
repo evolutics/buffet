@@ -10,7 +10,7 @@ See [Code Cleaner Buffet](https://github.com/evolutics/code-cleaner-buffet) for 
 
 ## Installation
 
-For a quick start, use the Docker image [`evolutics/buffet`](https://hub.docker.com/r/evolutics/buffet). I recommend a Bash alias like
+For a **quick start,** use the Docker image [`evolutics/buffet`](https://hub.docker.com/r/evolutics/buffet). I recommend a Bash alias like
 
 ```bash
 alias buffet='docker run --rm --volume "$(pwd)":/workdir evolutics/buffet'
@@ -24,7 +24,7 @@ buffet --help
 
 works.
 
-Alternatively, you can do a native installation with `stack install buffet` or `cabal install buffet`.
+Alternatively, you can do a **native** installation with `stack install buffet` or `cabal install buffet`.
 
 ## Usage example
 
@@ -41,7 +41,7 @@ The source code for this and other examples is in the **[`examples`](examples) f
 
 ### Assembling
 
-In the subfolders of [`examples/quick_start`](examples/quick_start), you see a [Dockerfile for Prettier](examples/quick_start/prettier/Dockerfile) and another [Dockerfile for HTML Tidy](examples/quick_start/tidy/Dockerfile). These Dockerfiles (called "dishes") are the modular toy blocks, which we now automatically combine to one Dockerfile (called "buffet") by running
+In the subfolders of [`examples/quick_start`](examples/quick_start), you see a [Dockerfile for Prettier](examples/quick_start/prettier/Dockerfile) and another [Dockerfile for HTML Tidy](examples/quick_start/tidy/Dockerfile). These Dockerfiles (called "dishes") are the modular toy blocks, which we now **automatically combine** to one Dockerfile (called "buffet") by running
 
 ```bash
 buffet assemble examples/quick_start
@@ -63,7 +63,7 @@ prettier --version
 tidy --version
 ```
 
-To integrate a check like `prettier --version` as a test of the tool installation, add a `HEALTHCHECK` instruction as you see in the [Dockerfile for Prettier](examples/quick_start/prettier/Dockerfile). The exit status of such a command is then reported when you run our example test suite with
+To integrate a check like `prettier --version` as a test of the tool installation, add a `HEALTHCHECK` instruction as you see in the [Dockerfile for Prettier](examples/quick_start/prettier/Dockerfile). The exit status of such a command is then reported when you run our example **test suite** with
 
 ```bash
 buffet test --arguments examples/quick_start/test_arguments.yaml \
@@ -83,7 +83,7 @@ buffet document --template examples/quick_start/document_template.md.mustache \
   examples/quick_start
 ```
 
-This renders the template [`document_template.md.mustache`](examples/quick_start/document_template.md.mustache). To print the raw template context, omit this option as in
+This renders the template [`document_template.md.mustache`](examples/quick_start/document_template.md.mustache). To print the raw **template context,** omit this option as in
 
 ```bash
 buffet document examples/quick_start
