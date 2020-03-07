@@ -3,7 +3,7 @@ FROM alpine:3.11.0
 LABEL org.opencontainers.image.title='Prettier'
 LABEL org.opencontainers.image.url='https://prettier.io'
 
-RUN apk add --no-cache yarn~=1.19.2 \
+RUN apk add --no-cache yarn~=1.19 \
   && yarn global add prettier@1.19.1
 
 WORKDIR /workdir
