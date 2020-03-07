@@ -37,6 +37,8 @@ git clone https://github.com/evolutics/buffet.git
 cd buffet
 ```
 
+The source code for this and other examples is in the **[`examples`](examples) folder.**
+
 ### Assembling
 
 In the subfolders of [`examples/quick_start`](examples/quick_start), you see a [Dockerfile for Prettier](examples/quick_start/prettier/Dockerfile) and another [Dockerfile for HTML Tidy](examples/quick_start/tidy/Dockerfile). These Dockerfiles (called "dishes") are the modular toy blocks, which we now automatically combine to one Dockerfile (called "buffet") by running
