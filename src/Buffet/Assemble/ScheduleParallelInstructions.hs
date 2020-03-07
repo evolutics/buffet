@@ -61,6 +61,7 @@ scheduleStep queues =
       , scheduleEnvInstructions
       , scheduleRunInstructions
       , scheduleWorkdirInstructions
+      , scheduleCommentInstructions
       , scheduleNextInstructionEach
       ]
 
@@ -125,6 +126,12 @@ scheduleWorkdirInstructions = unifyInstructions isWorkdir
   where
     isWorkdir (Docker.Workdir _) = True
     isWorkdir _ = False
+
+scheduleCommentInstructions :: ScheduleStep
+scheduleCommentInstructions = unifyInstructions isComment
+  where
+    isComment (Docker.Comment _) = True
+    isComment _ = False
 
 scheduleNextInstructionEach :: ScheduleStep
 scheduleNextInstructionEach queues = (mconcat nexts, queues')
