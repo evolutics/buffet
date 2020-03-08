@@ -7,7 +7,7 @@
 Assemble many Dockerfiles in a single Dockerfile. This gives you the convenience of one Docker image with your favorite tools while keeping a separate Dockerfile per tool.
 
 <details>
-<summary>Example</summary>
+<summary>Demo example</summary>
 
 A Dockerfile for Prettier
 
