@@ -83,11 +83,13 @@ In the subfolders of [`examples/quick_start`](examples/quick_start), you see a [
 buffet assemble examples/quick_start
 ```
 
-This prints a Dockerfile based on the subfolders of `examples/quick_start`. From this, we can then build a Docker image `mona_linta` with
+This prints a Dockerfile based on the subfolders of `examples/quick_start` to stdout. From this, we can then build a Docker image `mona_linta` with
 
 ```bash
 buffet assemble examples/quick_start | docker build --tag mona_linta -
 ```
+
+Note the hyphen `-` at the end that makes Docker read the Dockerfile from stdin.
 
 ### Testing
 
