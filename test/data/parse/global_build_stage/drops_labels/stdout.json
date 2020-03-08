@@ -1,7 +1,7 @@
 {
   "option_to_dish": {
     "example": {
-      "global_build_stage": ["FROM alpine:3.11.0"]
+      "global_build_stage": ["FROM alpine:3.11.3"]
     }
   }
 }
