@@ -8,6 +8,42 @@ Assemble many Dockerfiles in a single Dockerfile. This gives you the convenience
 
 See [Code Cleaner Buffet](https://github.com/evolutics/code-cleaner-buffet) for an application of this.
 
+<details>
+<summary>Example</summary>
+
+A Dockerfile for Prettier
+
+```dockerfile
+FROM alpine:3.11.0
+RUN apk add --no-cache yarn~=1.19 && yarn global add prettier@1.19.1
+WORKDIR /workdir
+```
+
+plus a Dockerfile for HTML Tidy
+
+```dockerfile
+FROM alpine:3.11.0
+RUN apk add --no-cache tidyhtml~=5.6
+WORKDIR /workdir
+```
+
+are automatically assembled in a single Dockerfile
+
+```dockerfile
+FROM alpine:3.11.0
+RUN apk add --no-cache yarn~=1.19 && yarn global add prettier@1.19.1 \
+  && apk add --no-cache tidyhtml~=5.6
+WORKDIR /workdir
+```
+
+You can try this yourself by running
+
+```bash
+buffet assemble examples/minimal_demonstration
+```
+
+</details>
+
 ## Installation
 
 For a **quick start,** use the Docker image [`evolutics/buffet`](https://hub.docker.com/r/evolutics/buffet). I recommend a Bash alias like
