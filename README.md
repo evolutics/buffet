@@ -131,6 +131,14 @@ buffet document examples/quick_start
 
 Among others, data from `LABEL` instructions is integrated in the template context.
 
+### API usage
+
+You may like to programmatically process the parsed source Dockerfiles. To print an intermediate representation in JSON, run
+
+```bash
+buffet parse examples/quick_start
+```
+
 ## Terminology
 
 - **Buffet:** A Dockerfile automatically assembled based on many dishes.
