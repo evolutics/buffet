@@ -1,0 +1,10 @@
+{
+  "prettier": {
+    "health_check_passed": null,
+    "option_value": ""
+  },
+  "tidy": {
+    "health_check_passed": null,
+    "option_value": ""
+  }
+}
