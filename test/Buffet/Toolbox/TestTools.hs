@@ -1,11 +1,13 @@
 module Buffet.Toolbox.TestTools
-  ( assertJsonIsSubstructure
+  ( assertIsContainedIn
+  , assertJsonIsSubstructure
   , folderBasedTests
   ) where
 
 import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Control.Monad as Monad
 import qualified Data.Aeson as Aeson
+import qualified Data.ByteString as ByteString
 import qualified Data.Function as Function
 import qualified Data.HashMap.Strict as HashMap
 import qualified Data.HashSet as Set
@@ -37,6 +39,12 @@ import qualified System.Directory as Directory
 import qualified System.FilePath as FilePath
 import qualified Test.Tasty as Tasty
 import qualified Test.Tasty.HUnit as HUnit
+
+assertIsContainedIn :: FilePath -> FilePath -> HUnit.Assertion
+assertIsContainedIn needlePath haystackPath = do
+  needle <- ByteString.readFile needlePath
+  haystack <- ByteString.readFile haystackPath
+  HUnit.assertBool "" $ ByteString.isInfixOf needle haystack
 
 assertJsonIsSubstructure :: T.Text -> T.Text -> HUnit.Assertion
 assertJsonIsSubstructure = Function.on (assert []) getJson

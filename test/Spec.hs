@@ -1,8 +1,9 @@
+import qualified Buffet.ReadmeTests as ReadmeTests
 import qualified Buffet.Toolbox.TestHelp as TestHelp
 import qualified Buffet.Toolbox.TestTools as TestTools
 import qualified Buffet.Toolbox.TestUtility as TestUtility
 import qualified Buffet.Toolbox.TestVersion as TestVersion
-import Prelude (FilePath, IO, ($), (.), (<$>), (>>=), flip, sequenceA)
+import Prelude (FilePath, IO, ($), (.), (<$>), (>>=), flip, pure, sequenceA)
 import qualified System.FilePath as FilePath
 import qualified Test.Tasty as Tasty
 import qualified Test.Tasty.HUnit as HUnit
@@ -20,6 +21,7 @@ tests =
     , documentTests "test/data/document"
     , parseTests "test/data/parse"
     , testTests "test/data/test"
+    , pure $ ReadmeTests.get "README.md"
     , examplesTests "test/data/examples"
     ]
 
