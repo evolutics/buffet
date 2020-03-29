@@ -1,7 +1,6 @@
 FROM evolutics/code-cleaner-buffet:haskell-stack-b01d57793ffe8174 AS build
 ARG buffet_version
-RUN stack --resolver 'lts-14.27' install --ghc-options='-fPIC -optl-static' \
-    "buffet-${buffet_version}"
+RUN stack install --ghc-options='-fPIC -optl-static' "buffet-${buffet_version}"
 
 FROM alpine:3.11.5
 
