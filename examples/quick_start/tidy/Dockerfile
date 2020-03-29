@@ -1,4 +1,4 @@
-FROM alpine:3.11.3
+FROM alpine:3.11.5
 
 LABEL org.opencontainers.image.title='HTML Tidy'
 LABEL org.opencontainers.image.url='http://www.html-tidy.org'

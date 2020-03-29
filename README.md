@@ -12,7 +12,7 @@ Assemble many Dockerfiles in a single Dockerfile. This gives you the convenience
 A Dockerfile for Prettier
 
 ```dockerfile
-FROM alpine:3.11.3
+FROM alpine:3.11.5
 RUN apk add --no-cache yarn~=1.19 && yarn global add prettier@2.0.2
 WORKDIR /workdir
 ```
@@ -20,7 +20,7 @@ WORKDIR /workdir
 plus a Dockerfile for HTML Tidy
 
 ```dockerfile
-FROM alpine:3.11.3
+FROM alpine:3.11.5
 RUN apk add --no-cache tidyhtml~=5.6
 WORKDIR /workdir
 ```
@@ -28,7 +28,7 @@ WORKDIR /workdir
 are automatically assembled in a single Dockerfile
 
 ```dockerfile
-FROM alpine:3.11.3
+FROM alpine:3.11.5
 RUN apk add --no-cache yarn~=1.19 && yarn global add prettier@2.0.2 \
   && apk add --no-cache tidyhtml~=5.6
 WORKDIR /workdir
