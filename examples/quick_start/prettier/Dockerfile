@@ -4,7 +4,7 @@ LABEL org.opencontainers.image.title='Prettier'
 LABEL org.opencontainers.image.url='https://prettier.io'
 
 RUN apk add --no-cache yarn~=1.19 \
-  && yarn global add prettier@1.19.1
+  && yarn global add prettier@2.0.2
 
 WORKDIR /workdir
 
