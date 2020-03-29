@@ -1,6 +1,9 @@
 FROM evolutics/code-cleaner-buffet:haskell-stack-b3b51795c96b4ebd AS build
 ARG buffet_version
-RUN stack install --ghc-options='-fPIC -optl-static' "buffet-${buffet_version}"
+WORKDIR /root/.stack/global-project
+COPY stack.yaml .
+RUN sed --in-place 's/^  - \.$/  \[\]/g' stack.yaml \
+  && stack install --ghc-options='-fPIC -optl-static' "buffet-${buffet_version}"
 
 FROM alpine:3.11.5
 
