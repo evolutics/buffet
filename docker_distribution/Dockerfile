@@ -1,4 +1,4 @@
-FROM evolutics/code-cleaner-buffet:haskell-stack-b01d57793ffe8174 AS build
+FROM evolutics/code-cleaner-buffet:haskell-stack-b3b51795c96b4ebd AS build
 ARG buffet_version
 RUN stack install --ghc-options='-fPIC -optl-static' "buffet-${buffet_version}"
 
