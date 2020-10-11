@@ -6,13 +6,14 @@ import qualified Buffet.Ir.Ir as Ir
 import qualified Data.Text as T
 import qualified Language.Docker as Docker
 import qualified Language.Docker.Syntax as Syntax
-import Prelude (($), foldr, mconcat)
+import Prelude (($), (==), foldr, mconcat)
 
 get :: Ir.DockerfilePart -> Ir.DockerfilePart
 get = foldr process []
   where
-    process (Docker.Run first) (Docker.Run second:rest) =
-      Docker.Run (joinRuns first second) : rest
+    process (Docker.Run (Syntax.RunArgs first flags)) (Docker.Run (Syntax.RunArgs second flags'):rest)
+      | flags == flags' =
+        Docker.Run (Syntax.RunArgs (joinRuns first second) flags) : rest
     process first rest = first : rest
 
 joinRuns ::

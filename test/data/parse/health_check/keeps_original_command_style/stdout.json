@@ -1,7 +1,0 @@
-{
-  "option_to_dish": {
-    "example": {
-      "health_check": "ls \\\n  && echo 'foo' \\\n  && echo \\\n    'bar' \\\n    'baz' \\\n  && ls"
-    }
-  }
-}

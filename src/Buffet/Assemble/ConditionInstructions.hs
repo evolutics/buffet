@@ -30,8 +30,8 @@ conditionInstruction configuration = condition
   where
     condition (Docker.Copy arguments) =
       conditionCopyInstruction configuration arguments
-    condition (Docker.Run (Syntax.ArgumentsText command)) =
-      configuredConditionRunInstruction configuration command
+    condition (Docker.Run (Syntax.RunArgs (Syntax.ArgumentsText command) flags)) =
+      conditionRunInstruction configuration command flags
     condition instruction = instruction
 
 conditionCopyInstruction ::
@@ -46,19 +46,16 @@ conditionCopyInstruction buffet arguments =
     originalSources = Docker.sourcePaths arguments
     dummy = Docker.SourcePath {Docker.unSourcePath = copyDummySourcePath buffet}
 
-configuredConditionRunInstruction ::
-     Configuration -> T.Text -> Docker.Instruction T.Text
-configuredConditionRunInstruction configuration =
-  conditionRunInstruction condition
-  where
-    condition =
-      mconcat
-        [T.pack "[ -n \"${", Ir.option $ option configuration, T.pack "}\" ]"]
-
-conditionRunInstruction :: T.Text -> T.Text -> Docker.Instruction T.Text
-conditionRunInstruction condition thenPart =
-  Docker.Run $ Syntax.ArgumentsText command
+conditionRunInstruction ::
+     Configuration -> T.Text -> Syntax.RunFlags -> Docker.Instruction T.Text
+conditionRunInstruction configuration thenPart =
+  Docker.Run . Syntax.RunArgs (Syntax.ArgumentsText command)
   where
     command =
       mconcat
-        [T.pack "if ", condition, T.pack "; then ", thenPart, T.pack "; fi"]
+        [ T.pack "if [ -n \"${"
+        , Ir.option $ option configuration
+        , T.pack "}\" ]; then "
+        , thenPart
+        , T.pack "; fi"
+        ]
