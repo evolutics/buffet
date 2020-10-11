@@ -4,7 +4,7 @@ github: evolutics/buffet
 license: MIT
 author: Benjamin Fischer
 maintainer: benjamin.fischer@evolutics.info
-copyright: 2019 Benjamin Fischer
+copyright: 2019–2020 Benjamin Fischer
 extra-source-files:
   - README.md
 synopsis: Assembles many Dockerfiles in one.
