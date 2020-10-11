@@ -1,7 +1,7 @@
 {
   "option_to_dish": {
     "example": {
-      "global_build_stage": ["FROM alpine:3.11.5", "RUN ls", "WORKDIR /workdir"]
+      "global_build_stage": ["FROM alpine:3.12.0", "RUN ls", "WORKDIR /workdir"]
     }
   }
 }

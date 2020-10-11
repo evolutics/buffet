@@ -1,4 +1,4 @@
-ARG alpine='3.11.5'
+ARG alpine='3.12.0'
 
 FROM alpine:"${alpine}"
 ARG tidy

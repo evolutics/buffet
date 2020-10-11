@@ -1,4 +1,4 @@
-FROM alpine:3.11.5
+FROM alpine:3.12.0
 ARG bar
 ARG baz
 ARG foo

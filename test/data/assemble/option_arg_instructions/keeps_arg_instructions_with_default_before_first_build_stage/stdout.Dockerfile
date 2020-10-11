@@ -1,4 +1,4 @@
-ARG example='3.11.5'
+ARG example='3.12.0'
 
 FROM alpine:"${example}"
 ARG example

@@ -1,7 +1,7 @@
 {
   "prettier": {
     "health_check_passed": true,
-    "option_value": "@2.0.2"
+    "option_value": "@2.1.2"
   },
   "tidy": {
     "health_check_passed": null,

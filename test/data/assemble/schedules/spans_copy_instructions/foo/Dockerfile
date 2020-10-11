@@ -1,5 +1,5 @@
-FROM alpine:3.11.5 AS foo
+FROM alpine:3.12.0 AS foo
 
-FROM alpine:3.11.5
+FROM alpine:3.12.0
 COPY --from=foo /var/empty /tmp/foo/
 RUN echo 'foo'
