@@ -5,7 +5,6 @@ module Buffet.Assemble.ConditionInstructions
 
 import qualified Buffet.Assemble.InsertOptionArgInstructionUnlessPresent as InsertOptionArgInstructionUnlessPresent
 import qualified Buffet.Ir.Ir as Ir
-import qualified Buffet.Toolbox.TextTools as TextTools
 import qualified Data.Text as T
 import qualified Language.Docker as Docker hiding (sourcePaths)
 import qualified Language.Docker.Syntax as Syntax
@@ -61,15 +60,5 @@ conditionRunInstruction condition thenPart =
   Docker.Run $ Syntax.ArgumentsText command
   where
     command =
-      TextTools.intercalateNewline $
-      mconcat [[conditionLine], indentLines thenLines, [indentLine endLine]]
-    conditionLine = mconcat [T.pack "if ", condition, T.pack "; then \\"]
-    thenLines = T.lines embeddedThen
-    embeddedThen = mconcat [indentLine thenPart, T.pack " \\"]
-    endLine = T.pack "; fi"
-
-indentLines :: [T.Text] -> [T.Text]
-indentLines = fmap indentLine
-
-indentLine :: T.Text -> T.Text
-indentLine = T.append $ T.pack "  "
+      mconcat
+        [T.pack "if ", condition, T.pack "; then ", thenPart, T.pack "; fi"]

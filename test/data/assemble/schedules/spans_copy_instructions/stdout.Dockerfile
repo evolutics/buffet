@@ -7,4 +7,4 @@ COPY --from=bar /var/empty /tmp/bar/
 COPY --from=bar /var/empty /tmp/baz/
 COPY --from=foo /var/empty /tmp/foo/
 RUN echo 'bar' \
-  && echo 'foo'
+ && echo 'foo'

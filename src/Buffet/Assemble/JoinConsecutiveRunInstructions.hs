@@ -20,8 +20,7 @@ joinRuns ::
   -> Docker.Arguments T.Text
   -> Docker.Arguments T.Text
 joinRuns first second =
-  Syntax.ArgumentsText $
-  mconcat [command first, T.pack " \\\n  && ", command second]
+  Syntax.ArgumentsText $ mconcat [command first, T.pack " && ", command second]
   where
     command (Syntax.ArgumentsText shell) = shell
     command (Syntax.ArgumentsList exec) = exec
