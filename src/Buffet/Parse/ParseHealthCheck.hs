@@ -12,14 +12,8 @@ get :: Docker.Dockerfile -> Maybe T.Text
 get stage =
   case lastHealthcheck stage of
     Just (Docker.Check checkArguments) ->
-      Just . reviveCommandStyle . argumentsText $
-      Docker.checkCommand checkArguments
+      Just . argumentsText $ Docker.checkCommand checkArguments
     _ -> Nothing
-
-reviveCommandStyle :: T.Text -> T.Text
-reviveCommandStyle = reviveLineBreaks
-  where
-    reviveLineBreaks = T.replace (T.pack "   ") $ T.pack " \\\n  "
 
 lastHealthcheck :: Docker.Dockerfile -> Maybe (Docker.Check T.Text)
 lastHealthcheck = Maybe.listToMaybe . reverse . Maybe.mapMaybe maybeHealthcheck
