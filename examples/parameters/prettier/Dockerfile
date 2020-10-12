@@ -11,5 +11,5 @@ RUN apk add --no-cache "yarn${yarn}" \
 WORKDIR /workdir
 
 HEALTHCHECK CMD prettier --version \
-  && echo '<!DOCTYPE  html><title>Hi</ title>' > index.html \
+  && echo '<!DOCTYPE html><title>Hi</ title>' > index.html \
   && prettier index.html

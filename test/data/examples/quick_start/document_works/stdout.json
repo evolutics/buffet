@@ -2,7 +2,7 @@
   "dishes": [
     {
       "dockerfile_path": "test/data/examples/quick_start/document_works/../../../../../examples/quick_start/prettier/Dockerfile",
-      "health_check": "prettier --version  && echo '<!DOCTYPE  html><title>Hi</ title>' > index.html  && prettier index.html",
+      "health_check": "prettier --version \\\n && echo '<!DOCTYPE html><title>Hi</ title>' > index.html \\\n && prettier index.html",
       "metadata": {
         "tags": {},
         "title": "Prettier",

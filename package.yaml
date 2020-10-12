@@ -43,6 +43,7 @@ internal-libraries:
       - mustache
       - optparse-applicative
       - parsec
+      - prettyprinter
       - random
       - split
       - text
