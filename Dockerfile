@@ -1,4 +1,4 @@
-FROM evolutics/code-cleaner-buffet:haskell-stack-b3b51795c96b4ebd AS build
+FROM evolutics/code-cleaner-buffet:haskell-stack-eaefafb3a78b09ca AS build
 ARG buffet_version
 WORKDIR /root/.stack/global-project
 COPY stack.yaml .
