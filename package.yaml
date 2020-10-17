@@ -17,16 +17,16 @@ _ghc-options-executable: &ghc-options-executable
   - -rtsopts
   - -with-rtsopts=-N
   - -Weverything
-  - -Wno-unsafe
-  - -Wno-safe
   - -Wno-missing-deriving-strategies
   - -Wno-missing-local-signatures
+  - -Wno-safe
+  - -Wno-unsafe
 _ghc-options-library: &ghc-options-library
   - -Weverything
-  - -Wno-unsafe
-  - -Wno-safe
   - -Wno-missing-deriving-strategies
   - -Wno-missing-local-signatures
+  - -Wno-safe
+  - -Wno-unsafe
 internal-libraries:
   buffet-internal:
     source-dirs: src
