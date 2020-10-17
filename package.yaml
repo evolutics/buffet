@@ -17,12 +17,14 @@ _ghc-options-executable: &ghc-options-executable
   - -rtsopts
   - -with-rtsopts=-N
   - -Weverything
+  - -Wno-all-missed-specialisations
   - -Wno-missing-deriving-strategies
   - -Wno-missing-local-signatures
   - -Wno-safe
   - -Wno-unsafe
 _ghc-options-library: &ghc-options-library
   - -Weverything
+  - -Wno-all-missed-specialisations
   - -Wno-missing-deriving-strategies
   - -Wno-missing-local-signatures
   - -Wno-safe
