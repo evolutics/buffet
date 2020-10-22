@@ -1,7 +1,6 @@
 # Buffet 🍜
 
 [![Build](https://img.shields.io/travis/evolutics/buffet)](https://travis-ci.org/evolutics/buffet)
-[![License](https://img.shields.io/github/license/evolutics/buffet)](LICENSE)
 [![Package](https://img.shields.io/hackage/v/buffet)](https://hackage.haskell.org/package/buffet)
 
 Assemble many Dockerfiles in a single Dockerfile. This gives you the convenience of one Docker image with your favorite tools while keeping a separate Dockerfile per tool.
