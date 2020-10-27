@@ -2,7 +2,6 @@ module Buffet.Assemble.ScheduleParallelInstructions
   ( get
   ) where
 
-import qualified Buffet.Assemble.JoinConsecutiveEnvInstructions as JoinConsecutiveEnvInstructions
 import qualified Buffet.Assemble.JoinConsecutiveRunInstructions as JoinConsecutiveRunInstructions
 import qualified Buffet.Ir.Ir as Ir
 import qualified Data.List.NonEmpty as NonEmpty
@@ -58,7 +57,6 @@ scheduleStep queues =
       , scheduleArgInstructions
       , scheduleShellInstructions
       , scheduleCopyInstructions
-      , scheduleEnvInstructions
       , scheduleRunInstructions
       , scheduleWorkdirInstructions
       , scheduleCommentInstructions
@@ -104,14 +102,6 @@ spanInstructions :: (Docker.Instruction T.Text -> Bool) -> ScheduleStep
 spanInstructions isRelevant queues = (mconcat spans, queues')
   where
     (spans, queues') = unzip $ fmap (span isRelevant) queues
-
-scheduleEnvInstructions :: ScheduleStep
-scheduleEnvInstructions queues =
-  (JoinConsecutiveEnvInstructions.get envs, queues')
-  where
-    (envs, queues') = spanInstructions isEnv queues
-    isEnv (Docker.Env _) = True
-    isEnv _ = False
 
 scheduleRunInstructions :: ScheduleStep
 scheduleRunInstructions queues =
