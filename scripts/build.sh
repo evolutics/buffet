@@ -5,21 +5,27 @@ set -o nounset
 set -o pipefail
 
 check_code() {
-  local -r code_checkers="$(code_checkers_name)"
-  build_code_checkers "${code_checkers}"
-  docker run --rm --volume "$(pwd)":/workdir "${code_checkers}" scripts/check.sh
+  docker run --entrypoint sh --rm --volume "$(pwd)":/workdir \
+    evolutics/travel-kit:0.3.0 -c \
+    'git ls-files -z | xargs -0 travel-kit check --'
+
+  local -r further_code_checkers="$(further_code_checkers_name)"
+  build_further_code_checkers "${further_code_checkers}"
+  docker run --rm --volume "$(pwd)":/workdir "${further_code_checkers}" \
+    scripts/check_further.sh
 }
 
-code_checkers_name() {
-  local -r hash="$(sha256sum scripts/code_checkers_build_arguments \
+further_code_checkers_name() {
+  local -r hash="$(sha256sum scripts/further_code_checkers_build_arguments \
     | cut --characters -16)"
   echo "evolutics/buffet:internal-${hash}"
 }
 
-build_code_checkers() {
+build_further_code_checkers() {
+  # shellcheck disable=SC2046
   docker pull "$1" \
     || (docker build --rm=false --tag "$1" \
-    $(< scripts/code_checkers_build_arguments) \
+    $(< scripts/further_code_checkers_build_arguments) \
     && docker push "$1")
 }
 
