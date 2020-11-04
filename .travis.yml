@@ -13,4 +13,4 @@ install:
   - stack --version
 
 script:
-  - ci/build.sh
+  - scripts/build.sh

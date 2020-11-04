@@ -9,7 +9,7 @@ check_with_git() {
 }
 
 check_with_gitlint() {
-  gitlint --config ci/.gitlint
+  gitlint --config scripts/.gitlint
 }
 
 check_with_hadolint() {
@@ -22,11 +22,11 @@ check_with_hindent() {
 }
 
 check_with_hlint() {
-  hlint --git --hint ci/.hlint.yaml
+  hlint --git --hint scripts/.hlint.yaml
 }
 
 check_with_hunspell() {
-  git log -1 --format=%B | hunspell -l -d en_US -p ci/personal_words.dic \
+  git log -1 --format=%B | hunspell -l -d en_US -p scripts/personal_words.dic \
     | sort | uniq | tr '\n' '\0' | xargs -0 -r -n 1 sh -c \
     'echo "Misspelling: $@"; exit 1' --
 }
