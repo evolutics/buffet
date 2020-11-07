@@ -41,7 +41,7 @@ def _tag(version):
 
 
 def _upload():
-    subprocess.run(["stack", "upload"], check=True)
+    subprocess.run(["stack", "upload", "."], check=True)
 
 
 if __name__ == "__main__":
