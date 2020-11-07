@@ -42,7 +42,7 @@ root =
 
 versionOption :: Options.Parser (a -> a)
 versionOption =
-  Options.infoOption "Buffet 0.5.0" $
+  Options.infoOption "Buffet 1.0.0" $
   mconcat
     [Options.long "version", Options.helpDoc $ Just versionHelp, Options.hidden]
   where
