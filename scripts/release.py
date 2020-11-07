@@ -13,9 +13,7 @@ def main():
     _check_with_user(f"Version to be released is '{version}'.")
     _check_that_current()
     _check_with_user("Check that build has passed.")
-    _tag(version)
-    _check_with_user("Wait until tag build has passed.")
-    _upload()
+    _release(version)
 
 
 def _get_version_to_release():
@@ -33,15 +31,12 @@ def _check_that_current():
     subprocess.run(["git", "diff", "--exit-code", "HEAD", "origin/master"], check=True)
 
 
-def _tag(version):
+def _release(version):
     subprocess.run(
         ["git", "tag", "--annotate", version, "--message", version], check=True
     )
-    subprocess.run(["git", "push", "origin", version], check=True)
-
-
-def _upload():
     subprocess.run(["stack", "upload", "."], check=True)
+    subprocess.run(["git", "push", "origin", version], check=True)
 
 
 if __name__ == "__main__":
