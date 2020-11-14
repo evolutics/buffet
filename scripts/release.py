@@ -12,7 +12,7 @@ def main():
     version = _get_version_to_release()
     _check_with_user(f"Version to be released is '{version}'.")
     _check_that_current()
-    _check_with_user("Check that build has passed.")
+    _check_with_user("Check that test has passed.")
     _release(version)
 
 

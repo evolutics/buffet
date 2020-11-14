@@ -1,7 +1,7 @@
-name: build
+name: test
 on: [push]
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -12,4 +12,4 @@ jobs:
           ghc-version: "8.8.4"
           enable-stack: true
           stack-version: "latest"
-      - run: scripts/build.sh
+      - run: scripts/test.sh
