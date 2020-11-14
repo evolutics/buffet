@@ -6,7 +6,7 @@ set -o pipefail
 
 check_code() {
   docker run --entrypoint sh --rm --volume "$(pwd)":/workdir \
-    evolutics/travel-kit:0.5.0 -c \
+    evolutics/travel-kit:0.6.0 -c \
     'git ls-files -z | xargs -0 travel-kit check --'
 
   local -r further_code_checkers="$(further_code_checkers_name)"
