@@ -25,8 +25,8 @@ build_further_code_checkers() {
   # shellcheck disable=SC2046
   docker pull "$1" \
     || (docker build --rm=false --tag "$1" \
-    $(< scripts/further_code_checkers_build_arguments) \
-    && docker push "$1")
+      $(<scripts/further_code_checkers_build_arguments) \
+      && docker push "$1")
 }
 
 test_code() {
