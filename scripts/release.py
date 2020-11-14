@@ -18,8 +18,8 @@ def main():
 
 def _get_version_to_release():
     version_pattern = re.compile(r"^version: (\S+)$", re.MULTILINE)
-    with pathlib.Path("package.yaml").open() as package:
-        return version_pattern.search(package.read()).group(1)
+    package = pathlib.Path("package.yaml").read_text()
+    return version_pattern.search(package).group(1)
 
 
 def _check_with_user(message):
