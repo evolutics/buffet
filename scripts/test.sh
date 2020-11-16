@@ -36,13 +36,10 @@ test_code() {
 main() {
   local -r script_folder="$(dirname "$(readlink --canonicalize "$0")")"
   local -r project_folder="$(dirname "${script_folder}")"
-
-  pushd "${project_folder}"
+  cd "${project_folder}"
 
   check_code
   test_code
-
-  popd
 }
 
 main "$@"
