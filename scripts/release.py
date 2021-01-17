@@ -28,7 +28,7 @@ def _check_with_user(message):
 
 def _check_that_current():
     subprocess.run(["git", "fetch"], check=True)
-    subprocess.run(["git", "diff", "--exit-code", "HEAD", "origin/master"], check=True)
+    subprocess.run(["git", "diff", "--exit-code", "HEAD", "origin/main"], check=True)
 
 
 def _release(version):
