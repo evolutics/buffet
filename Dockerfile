@@ -9,9 +9,9 @@ LABEL org.opencontainers.image.url='https://github.com/evolutics/buffet'
 
 # hadolint ignore=DL3018
 RUN apk add --no-cache gmp-dev=~6.2.0 \
-  && wget --output-document /etc/apk/keys/sgerrand.rsa.pub \
+  && wget --no-verbose --output-document /etc/apk/keys/sgerrand.rsa.pub \
     https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub \
-  && wget \
+  && wget --no-verbose \
     https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.32-r0/glibc-2.32-r0.apk \
   && apk add --no-cache glibc-2.32-r0.apk \
   && rm glibc-2.32-r0.apk
