@@ -18,7 +18,7 @@ def main():
 
 def _get_version_to_release():
     version_pattern = re.compile(r"^version: (\S+)$", re.MULTILINE)
-    package = pathlib.Path("package.yaml").read_text()
+    package = pathlib.Path("package.yaml").read_text("utf-8")
     return version_pattern.search(package).group(1)
 
 
