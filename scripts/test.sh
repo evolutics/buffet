@@ -5,13 +5,13 @@ set -o nounset
 set -o pipefail
 
 check_code() {
-  docker run --entrypoint sh --rm --volume "$(pwd)":/workdir \
+  docker run --entrypoint sh --rm --volume "${PWD}":/workdir \
     evolutics/travel-kit:0.7.0 -c \
     'git ls-files -z | xargs -0 travel-kit check --'
 
   local -r further_code_checkers="$(further_code_checkers_name)"
   build_further_code_checkers "${further_code_checkers}"
-  docker run --rm --volume "$(pwd)":/workdir "${further_code_checkers}" \
+  docker run --rm --volume "${PWD}":/workdir "${further_code_checkers}" \
     scripts/check_further.sh
 }
 
@@ -35,8 +35,7 @@ test_code() {
 
 main() {
   local -r script_folder="$(dirname "$(readlink --canonicalize "$0")")"
-  local -r project_folder="$(dirname "${script_folder}")"
-  cd "${project_folder}"
+  cd "$(dirname "${script_folder}")"
 
   check_code
   test_code
