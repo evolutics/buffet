@@ -7,7 +7,7 @@ maintainer: benjamin.fischer@evolutics.info
 copyright: 2019 Benjamin Fischer
 extra-source-files:
   - README.md
-synopsis: Assembles many Dockerfiles in one.
+synopsis: Assembles many Dockerfiles in one
 category: Development
 description: See https://github.com/evolutics/buffet
 dependencies:

@@ -28,7 +28,7 @@ main = Options.execParser root >>= Facade.get
 
 root :: Options.ParserInfo Facade.Command
 root =
-  Options.info parser $ Options.progDesc "Assembles many Dockerfiles in one."
+  Options.info parser $ Options.progDesc "Assembles many Dockerfiles in one"
   where
     parser = versionOption <*> Options.helper <*> raw
     raw =
